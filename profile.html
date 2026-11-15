@@ -1,0 +1,264 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<link rel="icon" href="favicon.ico" sizes="any">
+<link rel="icon" type="image/png" sizes="32x32" href="assets/img/logo/favicon-32.png">
+<link rel="apple-touch-icon" href="assets/img/logo/apple-touch-icon.png">
+<title>个人中心 · 千年影戏</title>
+<meta name="description" content="我的名帖：题一句个性签名，看看影窗上挂着哪几只自己画的影偶，再翻翻在社区留下的帖子。">
+<link rel="stylesheet" href="assets/css/brush.css?v=11481">
+<link rel="stylesheet" href="assets/css/token.css?v=11481">
+<link rel="stylesheet" href="assets/css/layout.css?v=11481">
+<link rel="stylesheet" href="assets/css/site.css?v=11481">
+<link rel="stylesheet" href="assets/css/profile.css?v=11500">
+<link rel="stylesheet" href="assets/css/paper-bg.css?v=4">
+</head>
+<body class="inner" data-page="profile" data-need-login>
+
+<header class="site-head">
+  <div class="head-inner">
+    <a class="brand" href="index.html">
+      <span class="brand-seal"><img src="assets/img/logo/logo-128.png" alt="千年影戏" width="40" height="40"></span>
+      <span class="brand-txt"><b>千年影戏</b><i>皮影数字馆</i></span>
+    </a>
+    <nav class="head-nav">
+      <a href="index.html">首页</a>
+      <a href="craft.html">影偶制作</a>
+      <a href="community.html">戏影社区</a>
+      <a href="vault.html">影藏</a>
+      <a href="profile.html" class="is-on">个人中心</a>
+    </nav>
+    <div class="head-user">
+      <a class="hu" href="profile.html">
+        <span class="hu-av" data-user-av>影</span>
+        <span class="hu-tx" data-user-name>登录</span>
+      </a>
+    </div>
+  </div>
+</header>
+
+<main class="page">
+
+  <!-- ================= 名帖头 ================= -->
+  <section class="phero pc-hero">
+    <div>
+      <p class="phero-kick">个人中心 · 名帖</p>
+      <h1>我的<em>名帖</em></h1>
+      <p class="phero-lede">名帖上只记三样：你叫什么、题了一句什么话、影窗上挂着哪几只自己画的影偶。下面的数都是真数——发过几条帖、回过几楼、开过几个吧，有一个算一个。</p>
+    </div>
+    <div class="phero-stats pc-stats">
+      <div class="pstat"><b data-n-wall>0</b><span>墙上</span></div>
+      <div class="pstat"><b data-n-post>0</b><span>发帖</span></div>
+      <div class="pstat"><b data-n-reply>0</b><span>回帖</span></div>
+      <div class="pstat"><b data-n-circle>0</b><span>圈子</span></div>
+    </div>
+  </section>
+
+  <div class="pc-grid">
+
+    <!-- ================= 左：名帖 ================= -->
+    <aside class="pc-card">
+      <div class="pc-seal" data-pc-seal>影</div>
+      <h2 class="pc-name" data-pc-name>无名</h2>
+      <p class="pc-handle" data-pc-handle>@无名</p>
+      <blockquote class="pc-quote" data-pc-quote>还没题签</blockquote>
+
+      <dl class="pc-meta">
+        <div><dt>登录邮箱</dt><dd data-pc-mail>—</dd></div>
+        <div><dt>入班</dt><dd data-pc-since>—</dd></div>
+        <div><dt>墙上</dt><dd><b data-c-wall>0</b> 张</dd></div>
+      </dl>
+
+      <div class="pc-acts">
+        <button class="btn" type="button" data-go-sign>题一句签</button>
+        <a class="btn ghost" href="craft.html">去画影偶</a>
+        <button class="btn ghost" type="button" data-pc-out>退出登录</button>
+      </div>
+    </aside>
+
+    <div class="pc-col">
+
+      <!-- ================= 个性签名 ================= -->
+      <section class="pc-block" id="pcSign">
+        <header class="pc-h">
+          <h2>个性签名</h2>
+          <i></i>
+          <span>一句就够 · 最多 24 字</span>
+        </header>
+
+        <div class="sg-paper" id="sgPaper">
+          <p class="sg-line" data-sg-line><span class="sg-empty">还没题签。挑一句，或者自己写。</span></p>
+          <span class="sg-stamp" aria-hidden="true">签</span>
+        </div>
+
+        <div class="sg-bar">
+          <div class="sg-chips" id="sgChips"></div>
+          <button class="sg-write" type="button" data-sg-write>自己写 →</button>
+        </div>
+
+        <form class="sg-edit" id="sgEdit" hidden>
+          <label class="sg-edit-l" for="sgInput">自己写一句</label>
+          <textarea id="sgInput" rows="2" maxlength="24" placeholder="比如：一盏灯，一张皮，唱到天亮。"></textarea>
+          <div class="sg-edit-f">
+            <span class="sg-count" id="sgCount">0 / 24</span>
+            <button class="btn ghost sg-mini" type="button" data-sg-cancel>取消</button>
+            <button class="btn sg-mini" type="submit">题上</button>
+          </div>
+        </form>
+
+        <p class="sg-note" id="sgNote">签在账号上：换台机器登录，还是这一句。点上面任意一句就直接题上，随时能换。</p>
+      </section>
+
+      <!-- ================= 我的皮影墙 ================= -->
+      <section class="pc-block" id="pcWall">
+        <header class="pc-h">
+          <h2>我的皮影墙</h2>
+          <i></i>
+          <span id="pwCount">0 张</span>
+          <a class="pc-h-a" href="craft.html">去画一张 →</a>
+        </header>
+
+        <div class="pw-win">
+          <div class="pw-lit">
+            <div class="pw-grid" id="pwGrid"></div>
+          </div>
+        </div>
+
+        <p class="pw-note" id="pwNote">这面影窗挂的是你在「影偶制作」里画过的影偶，和那边「画过的」是同一处。图片存在这台电脑的浏览器里，换台机器、清了缓存，墙就空了。</p>
+      </section>
+
+      <!-- ================= 我在社区 ================= -->
+      <section class="pc-block" id="pcComm">
+        <header class="pc-h">
+          <h2>我在社区</h2>
+          <i></i>
+          <span>自己开的吧、发的帖、回的楼</span>
+          <a class="pc-h-a" href="community.html">去社区 →</a>
+        </header>
+
+        <div class="pc-three">
+          <div class="pc-sect">
+            <h3>我的圈子 <em data-c-circle>0</em></h3>
+            <ul class="pc-list" id="pcCircles">
+              <li class="pc-none">还没开过吧，也没关注过别人的。</li>
+            </ul>
+          </div>
+          <div class="pc-sect">
+            <h3>我发的帖 <em data-c-post>0</em></h3>
+            <ul class="pc-list" id="pcPosts">
+              <li class="pc-none">还没发过帖。</li>
+            </ul>
+          </div>
+          <div class="pc-sect">
+            <h3>我回的楼 <em data-c-reply>0</em></h3>
+            <ul class="pc-list" id="pcReplies">
+              <li class="pc-none">还没回过别人的楼。</li>
+            </ul>
+          </div>
+        </div>
+
+        <p class="pc-comm-note" id="pcCommNote" hidden>这三栏不是站方塞的样张：你开过吧、发过帖、回过楼，它们才会长出来。现在都空着，去开第一个吧也行。</p>
+      </section>
+
+      <!-- ================= 账号与登录 ================= -->
+      <section class="pc-block" id="pcAcct">
+        <header class="pc-h">
+          <h2>账号与登录</h2>
+          <i></i>
+          <span>邮箱就是账号</span>
+        </header>
+
+        <div class="acct">
+          <div class="acct-row">
+            <span class="acct-k">邮箱</span>
+            <span class="acct-v" data-pc-mail2>—</span>
+            <span class="acct-t">暂不支持换绑</span>
+          </div>
+
+          <div class="acct-row" id="rowName">
+            <span class="acct-k">昵称</span>
+            <span class="acct-v" data-pc-name2>—</span>
+            <button class="acct-b" type="button" data-name-edit>改</button>
+          </div>
+          <form class="acct-form" id="formName" hidden>
+            <input id="inName" type="text" maxlength="20" autocomplete="nickname" placeholder="1–20 个字">
+            <div class="acct-form-f">
+              <span class="acct-msg" id="msgName"></span>
+              <button class="btn ghost acct-mini" type="button" data-name-cancel>取消</button>
+              <button class="btn acct-mini" type="submit">存下</button>
+            </div>
+            <p class="acct-hint">旧帖上的落款写的是当时的名字，不会跟着一起改。</p>
+          </form>
+
+          <div class="acct-row" id="rowPwd">
+            <span class="acct-k">密码</span>
+            <span class="acct-v">••••••••</span>
+            <button class="acct-b" type="button" data-pwd-edit>改密码</button>
+          </div>
+          <form class="acct-form" id="formPwd" hidden>
+            <input id="inPwdOld" type="password" autocomplete="current-password" placeholder="原密码">
+            <input id="inPwdNew" type="password" autocomplete="new-password" placeholder="新密码，至少 6 位">
+            <input id="inPwdNew2" type="password" autocomplete="new-password" placeholder="再写一遍新密码">
+            <div class="acct-form-f">
+              <span class="acct-msg" id="msgPwd"></span>
+              <button class="btn ghost acct-mini" type="button" data-pwd-cancel>取消</button>
+              <button class="btn acct-mini" type="submit">改掉</button>
+            </div>
+            <p class="acct-hint">改完密码，别的机器上的登录会一起失效，这台留着。</p>
+          </form>
+
+          <div class="acct-row acct-row-last">
+            <span class="acct-k">这台机器</span>
+            <span class="acct-v">登录着，名帖也在本机留了一份</span>
+            <button class="acct-b acct-b-red" type="button" data-pc-out>退出登录</button>
+          </div>
+        </div>
+      </section>
+
+    </div>
+  </div>
+
+</main>
+
+<footer class="foot">
+  <div class="foot-in">
+    <div class="foot-brand"><i>影</i>千年影戏</div>
+    <p class="foot-note">名帖、签名、入班日期存在站点服务端（<b>server/data/db.json</b>）；影窗上的画与社区里的吧帖存在这台电脑的浏览器里。两处都不含预置内容：页面上出现的每个数，都对应一条真实存在的记录。</p>
+  </div>
+</footer>
+
+<!-- ================= 灯下看：影偶大图 ================= -->
+<div class="pwl" id="pwl" hidden>
+  <div class="pwl-mask" data-close></div>
+  <div class="pwl-box" role="dialog" aria-modal="true" aria-label="看影偶">
+    <div class="pwl-pic"><img id="pwlImg" alt="" decoding="async"></div>
+    <div class="pwl-side">
+      <p class="pwl-kick">灯下看</p>
+      <h3 class="pwl-meta" id="pwlMeta">影偶</h3>
+      <dl class="pwl-dl">
+        <div><dt>画于</dt><dd id="pwlWhen">—</dd></div>
+        <div><dt>存在</dt><dd>这台电脑的浏览器</dd></div>
+      </dl>
+      <p class="pwl-desc" id="pwlDesc" hidden></p>
+      <details class="pwl-p" open>
+        <summary>当时那句话</summary>
+        <pre id="pwlPrompt">—</pre>
+      </details>
+      <div class="pwl-acts">
+        <button class="btn" type="button" id="pwlDl">存到本地</button>
+        <button class="btn ghost" type="button" id="pwlDel">从墙上取下</button>
+      </div>
+      <p class="pwl-note">这张只挂在这台电脑的浏览器里，换台机器就看不到；「存到本地」会把图下载下来。</p>
+    </div>
+    <button class="pwl-x" type="button" data-close aria-label="关掉">×</button>
+  </div>
+</div>
+
+<div class="pc-toast" id="pcToast" role="status" aria-live="polite"></div>
+
+<script src="assets/js/site.js?v=11481"></script>
+<script src="assets/js/profile.js?v=11500"></script>
+</body>
+</html>

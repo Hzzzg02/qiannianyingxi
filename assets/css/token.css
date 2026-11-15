@@ -1,0 +1,102 @@
+/* ==========================================================
+   设计变量
+   所有"图片/文字"都换成中性占位块，配色只为让结构看得清，
+   不取自任何原站素材。
+   ========================================================== */
+:root {
+  --paper: #f6f4ef;
+  --paper-2: #efece4;
+  --ink: #1d1f21;
+  --ink-2: #3a3d40;
+  --tick: #a8321f;
+  --tick-2: #7d2418;
+
+  --ph-1: rgba(29, 31, 33, .10);
+  --ph-2: rgba(29, 31, 33, .18);
+  --ph-3: rgba(29, 31, 33, .28);
+  --ph-line: rgba(29, 31, 33, .16);
+
+  --hd-h: 78px;
+  --ease-out: cubic-bezier(.22, 1, .36, 1);
+  --ease-back: cubic-bezier(.34, 1.56, .64, 1);
+  --dur: .9s;
+}
+
+* { box-sizing: border-box; }
+
+html, body {
+  margin: 0;
+  padding: 0;
+  height: 100%;
+  overflow: hidden;                 /* 整屏翻页：由脚本平移 deck */
+  background: var(--paper);
+  color: var(--ink);
+  font-family: "Microsoft YaHei", "PingFang SC", system-ui, sans-serif;
+  -webkit-font-smoothing: antialiased;
+}
+
+/* ---------- 占位元件 ---------- */
+/* 文字 → 灰色圆角条；宽度由 --w 控制 */
+.ph-text {
+  display: inline-block;
+  width: var(--w, 80px);
+  height: 10px;
+  border-radius: 2px;
+  background: var(--ph-2);
+  vertical-align: middle;
+}
+
+/* 标题 → 更粗更高的一条 */
+.ph-title {
+  display: inline-block;
+  width: var(--w, 120px);
+  height: 18px;
+  border-radius: 2px;
+  background: var(--ph-3);
+}
+
+/* 数字 → 短粗块 */
+.ph-num {
+  display: block;
+  width: 62px;
+  height: 22px;
+  border-radius: 3px;
+  background: var(--ph-3);
+}
+
+/* 图片位 → 斜向渐变方块 */
+.ph,
+.card-img,
+.split-figure,
+.slot-bar,
+.map-blob {
+  background-color: var(--ph-1);
+  background-image: repeating-linear-gradient(
+    45deg,
+    rgba(29, 31, 33, .05) 0 8px,
+    rgba(29, 31, 33, 0) 8px 16px
+  );
+}
+
+.ph-logo { width: 46px; height: 46px; border-radius: 50%; display: block; }
+.ph-ico  { width: 20px; height: 20px; border-radius: 3px; display: inline-block; }
+.ph-rail { width: 34px; height: 34px; border-radius: 3px; display: block; }
+
+/* 装饰菱形（自绘，与原站图标无关） */
+.orn {
+  width: 8px; height: 8px;
+  display: inline-block;
+  background: currentColor;
+  transform: rotate(45deg);
+  opacity: .55;
+  flex: none;
+}
+
+/* 深色版占位（叠在深底上时提亮） */
+.sec-tone-4 .ph-text, .sec-tone-4 .ph-title, .sec-tone-4 .ph-num,
+.sec-tone-6 .ph-text, .sec-tone-6 .ph-title,
+.sec-tone-1 .ph-text, .sec-tone-1 .ph-title,
+.sec-tone-2 .ph-text, .sec-tone-2 .ph-title,
+.sec-tone-5 .ph-text, .sec-tone-5 .ph-title {
+  background: rgba(255, 255, 255, .30);
+}

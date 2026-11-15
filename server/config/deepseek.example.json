@@ -1,0 +1,5 @@
+{
+  "key": "在此填入 DeepSeek API Key（sk- 开头），或改用环境变量 QN_DEEPSEEK_KEY",
+  "model": "deepseek-chat",
+  "baseURL": "https://api.deepseek.com"
+}

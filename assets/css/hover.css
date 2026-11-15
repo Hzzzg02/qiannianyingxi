@@ -1,0 +1,338 @@
+/* ==========================================================
+   hover.css —— 卡片交互态
+   对应原站那几类小手感：图卡遮罩、列表项变色、地图点弹层、
+   竖标签变色、侧栏图标换文字。全部作用在占位块上，换真内容后同样生效。
+   每个规则都带 .is-hover 别名，方便用 ?hover 参数截图核对。
+   ========================================================== */
+
+/* 统一的过渡基调 */
+:root { --hov: .32s cubic-bezier(.22, 1, .36, 1); }
+
+/* ---------- 04 图卡：上浮 + 底部遮罩 + 标题滑入 ---------- */
+.card-img {
+  position: relative;
+  overflow: hidden;
+  cursor: pointer;
+  transition: transform .45s var(--ease-out), box-shadow .45s var(--ease-out);
+}
+.card-img::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(180deg, rgba(0, 0, 0, 0) 42%, rgba(40, 28, 20, .55) 100%);
+  opacity: 0;
+  transition: opacity .38s var(--ease-out);
+  pointer-events: none;
+}
+.card-cap {
+  position: absolute;
+  left: 14px;
+  right: 14px;
+  bottom: 13px;
+  height: 10px;
+  border-radius: 2px;
+  background: rgba(255, 255, 255, .88);
+  transform: translateY(16px);
+  opacity: 0;
+  transition: transform .42s var(--ease-out), opacity .42s var(--ease-out);
+  z-index: 2;
+}
+.card-img:hover,
+.card-img.is-hover {
+  transform: translateY(-6px);
+  box-shadow: 0 18px 36px rgba(40, 30, 20, .18);
+}
+.card-img:hover::after,
+.card-img.is-hover::after { opacity: 1; }
+.card-img:hover .card-cap,
+.card-img.is-hover .card-cap { transform: translateY(0); opacity: 1; }
+
+/* ---------- 04 列表行：左移出小方点 + 整行轻微右挪 + 文字加深 ---------- */
+.row,
+.row-block {
+  position: relative;
+  cursor: pointer;
+  transition: background .3s var(--ease-out), transform .3s var(--ease-out), border-color .3s;
+}
+.row::before,
+.row-block::before {
+  content: '';
+  position: absolute;
+  left: -14px;
+  top: 50%;
+  width: 6px;
+  height: 6px;
+  margin-top: -3px;
+  background: var(--tick);
+  transform: scale(0) rotate(45deg);
+  transition: transform .3s var(--ease-back);
+}
+.row:hover,
+.row.is-hover,
+.row-block:hover,
+.row-block.is-hover {
+  background: rgba(168, 50, 31, .045);
+  transform: translateX(6px);
+  border-bottom-color: rgba(168, 50, 31, .28);
+}
+.row:hover::before,
+.row.is-hover::before,
+.row-block:hover::before,
+.row-block.is-hover::before { transform: scale(1) rotate(45deg); }
+.row:hover .ph-text,
+.row-block:hover .ph-text,
+.row.is-hover .ph-text,
+.row-block.is-hover .ph-text { background: var(--ph-3); }
+
+/* ---------- 04 栏目标题：悬停时菱形向外撑开 ---------- */
+.col-head { transition: color .3s; }
+.col-head:hover { color: var(--tick); }
+.col-head:hover .orn:first-child { transform: translateX(-4px) rotate(45deg); }
+.col-head:hover .orn:last-child { transform: translateX(4px) rotate(45deg); }
+.col-head .orn { transition: transform .32s var(--ease-back); }
+
+/* ---------- 05 地图点：点放大 + 浮层弹出 ---------- */
+.map-point {
+  position: absolute;
+  width: 16px;
+  height: 16px;
+  padding: 0;
+  border: 0;
+  background: none;
+  cursor: pointer;
+  transform: translate(-50%, -50%);
+  z-index: 4;
+}
+.map-point i {
+  display: block;
+  width: 100%;
+  height: 100%;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, .45);
+  box-shadow: 0 0 0 0 rgba(255, 255, 255, .35);
+  transition: background .3s, box-shadow .45s var(--ease-out), transform .3s var(--ease-back);
+}
+.map-point::after {
+  content: '';
+  position: absolute;
+  inset: -6px;
+  border-radius: 50%;
+  border: 1px solid rgba(255, 255, 255, .35);
+  transform: scale(.4);
+  opacity: 0;
+  transition: transform .45s var(--ease-out), opacity .45s var(--ease-out);
+}
+.map-point:hover i,
+.map-point.is-hover i {
+  background: #ffd89b;
+  transform: scale(1.25);
+  box-shadow: 0 0 0 8px rgba(255, 216, 155, .16);
+}
+.map-point:hover::after,
+.map-point.is-hover::after { transform: scale(1); opacity: 1; }
+
+.map-pop {
+  position: absolute;
+  left: 50%;
+  bottom: 26px;
+  transform: translate(-50%, 8px) scale(.96);
+  transform-origin: 50% 100%;
+  min-width: 108px;
+  padding: 10px 12px;
+  display: flex;
+  flex-direction: column;
+  gap: 7px;
+  background: rgba(248, 244, 235, .96);
+  border-radius: 3px;
+  box-shadow: 0 10px 24px rgba(0, 0, 0, .28);
+  opacity: 0;
+  visibility: hidden;
+  transition: opacity .3s var(--ease-out), transform .35s var(--ease-back), visibility .3s;
+  pointer-events: none;
+}
+.map-pop::after {
+  content: '';
+  position: absolute;
+  left: 50%;
+  bottom: -5px;
+  width: 10px;
+  height: 10px;
+  margin-left: -5px;
+  background: rgba(248, 244, 235, .96);
+  transform: rotate(45deg);
+}
+.map-pop .ph-text { background: rgba(74, 63, 44, .30); height: 8px; }
+.map-point:hover .map-pop,
+.map-point.is-hover .map-pop {
+  opacity: 1;
+  visibility: visible;
+  transform: translate(-50%, 0) scale(1);
+}
+
+/* ---------- 05 统计格：底色提亮 + 数字微放大 ---------- */
+.sp-cell {
+  cursor: pointer;
+  transition: background .3s var(--ease-out), transform .3s var(--ease-out), box-shadow .3s;
+}
+.sp-cell .ph-num { transition: transform .34s var(--ease-back); transform-origin: left center; }
+.sp-cell:hover,
+.sp-cell.is-hover {
+  background: rgba(255, 255, 255, .68);
+  transform: translateY(-2px);
+  box-shadow: 0 6px 14px rgba(74, 63, 44, .14);
+}
+.sp-cell:hover .ph-num,
+.sp-cell.is-hover .ph-num { transform: scale(1.08); }
+
+/* ---------- 06 竖标签：只有指到的那一条放大，其余保持原样 ---------- */
+.vtab, .vmore { cursor: pointer; }
+
+.vtab .orn, .vmore .orn { transition: transform .32s var(--ease-back); }
+.vtab .vtab-txt, .vmore .vtab-txt {
+  transition: background .3s var(--ease-out),
+              height .36s var(--ease-out),
+              width .36s var(--ease-out);
+}
+
+.vtab:hover .orn:first-child,
+.vtab.is-hover .orn:first-child,
+.vmore:hover .orn:first-child,
+.vmore.is-hover .orn:first-child { transform: translateY(-5px) rotate(45deg); }
+
+.vtab:hover .orn:last-child,
+.vtab.is-hover .orn:last-child,
+.vmore:hover .orn:last-child,
+.vmore.is-hover .orn:last-child { transform: translateY(5px) rotate(45deg); }
+
+.vtab:hover .vtab-txt,
+.vtab.is-hover .vtab-txt {
+  height: 232px;
+  width: 22px;
+  background: linear-gradient(180deg, var(--tick), rgba(168, 50, 31, .25));
+}
+
+/* 最右边那条"更多"同样给交互，只是放大后短一些 */
+.vmore:hover .vtab-txt,
+.vmore.is-hover .vtab-txt {
+  height: 126px;
+  width: 18px;
+  background: linear-gradient(180deg, var(--tick), rgba(168, 50, 31, .25));
+}
+
+/* ---------- 07 双块：标题颜色 + "更多"横线延伸 ---------- */
+.duo-block .duo-head { transition: color .3s; }
+.duo-block:hover .duo-head { color: rgba(255, 255, 255, .9); }
+.duo-more { position: relative; padding-bottom: 6px; cursor: pointer; }
+.duo-more::after {
+  content: '';
+  position: absolute;
+  right: 0;
+  bottom: 0;
+  height: 1px;
+  width: 22px;
+  background: rgba(255, 255, 255, .45);
+  transition: width .38s var(--ease-out), background .3s;
+}
+.duo-more:hover::after { width: 72px; background: rgba(255, 255, 255, .9); }
+
+/* ---------- 08 六列：整列提亮 + 竖条上移 + "更多"转红 ---------- */
+.six-col {
+  cursor: pointer;
+  transition: flex-grow .52s var(--ease-out),
+              background .38s var(--ease-out),
+              transform .38s var(--ease-out);
+}
+
+/* 手风琴：指到哪列，那列撑开，剩下五列一起收到 --six-other。
+   五列共用同一个 flex-grow，宽度必然相等。 */
+.six-wrap:hover .six-col { flex-grow: var(--six-other); }
+.six-wrap:hover .six-col:hover { flex-grow: var(--six-open); }
+
+/* 调试用（?hover）：父级加 .is-hovered 模拟"正在悬停整片区域" */
+.six-wrap.is-hovered .six-col { flex-grow: var(--six-other); }
+.six-wrap.is-hovered .six-col.is-hover { flex-grow: var(--six-open); }
+.six-col .six-fig img { transition: transform .95s var(--ease-out), filter .5s var(--ease-out); }
+.six-col .six-txt { transition: color .32s var(--ease-out), letter-spacing .6s var(--ease-out); }
+.six-col .six-more { transition: max-height .55s var(--ease-out), color .32s var(--ease-out); }
+
+.six-col:hover,
+.six-col.is-hover {
+  background: rgba(255, 255, 255, .16);
+  transform: translateY(-4px);
+}
+
+/* 撑开的那列：图顺着放大一点，工序名转暖金，说明再多露两行，序号下的短线抽长 */
+.six-col:hover .six-fig img,
+.six-col.is-hover .six-fig img { transform: scale(1.05); filter: saturate(1.02) contrast(1.06); }
+.six-col:hover .six-txt,
+.six-col.is-hover .six-txt { color: #f8cd92; letter-spacing: .26em; }
+.six-col:hover .six-more,
+.six-col.is-hover .six-more { max-height: 44vh; color: rgba(240, 222, 190, .88); }
+.six-col:hover .six-no::after,
+.six-col.is-hover .six-no::after { width: 46px; background: rgba(214, 148, 74, .95); }
+
+/* ---------- 左侧悬浮栏：图标 → 文字 的换态 ---------- */
+.rail-item {
+  position: relative;
+  display: block;
+  width: 34px;
+  height: 34px;
+  border-radius: 3px;
+  transition: background .28s var(--ease-out);
+}
+.rail-ico {
+  position: absolute;
+  inset: 0;
+  border-radius: 3px;
+  background: var(--rail-ico, var(--ph-2));
+  background-image: repeating-linear-gradient(45deg, var(--rail-ico-line, rgba(29, 31, 33, .08)) 0 6px, transparent 6px 12px);
+  transition: opacity .22s var(--ease-out),
+              transform .32s var(--ease-out),
+              background-color .6s var(--ease-out);
+}
+.rail-txt {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  width: 8px;
+  height: 22px;
+  margin: -11px 0 0 -4px;
+  border-radius: 2px;
+  background: var(--rail-accent, var(--tick));
+  opacity: 0;
+  transform: scale(.6);
+  transition: opacity .26s var(--ease-out),
+              transform .32s var(--ease-back),
+              background-color .6s var(--ease-out);
+}
+.rail-item:hover,
+.rail-item.is-hover { background: var(--rail-hover, rgba(168, 50, 31, .08)); }
+.rail-item:hover .rail-ico,
+.rail-item.is-hover .rail-ico { opacity: 0; transform: scale(.7); }
+.rail-item:hover .rail-txt,
+.rail-item.is-hover .rail-txt { opacity: 1; transform: scale(1); }
+
+/* 顶部导航的下划线已由 layout.css 接管（那里按字距做过对中），此处不再重复定义 */
+
+/* ---------- 底部竖条带：鼠标离开后自然回落，无悬停样式 ---------- */
+
+/* ---------- 页脚列：悬停整列提亮 ---------- */
+.foot-col { transition: opacity .3s; }
+.foot-col:hover { opacity: .8; }
+.foot-col:hover .ph-title { background: rgba(255, 255, 255, .75); }
+.foot-col .ph-title { transition: background .3s; }
+
+/* ---------- 触屏设备不需要这些悬停态 ---------- */
+@media (hover: none) {
+  .card-img:hover, .row:hover, .sp-cell:hover, .vtab:hover .vtab-txt { transform: none; }
+}
+
+/* ---------- 键盘可达：焦点环用主题色，不用浏览器默认蓝框 ---------- */
+a:focus-visible,
+button:focus-visible,
+.rail-item:focus-visible,
+.map-point:focus-visible {
+  outline: 2px solid var(--tick);
+  outline-offset: 3px;
+  border-radius: 3px;
+}

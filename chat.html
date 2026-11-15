@@ -1,0 +1,72 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<link rel="icon" href="favicon.ico" sizes="any">
+<link rel="icon" type="image/png" sizes="32x32" href="assets/img/logo/favicon-32.png">
+<link rel="apple-touch-icon" href="assets/img/logo/apple-touch-icon.png">
+<title>影窗问答 · AI × 皮影工厂</title>
+<meta name="description" content="皮影的事，问这座影窗里的说戏人。">
+<link rel="stylesheet" href="assets/css/chat.css?v=11662">
+<script>
+/* 调试用：?still 关掉所有过渡与动画，直接看终态（截图核对版式用） */
+(function () {
+  if (!/[?&]still/.test(location.search)) return;
+  var st = document.createElement('style');
+  st.textContent = '*,*::before,*::after{transition:none!important;animation:none!important}';
+  document.head.appendChild(st);
+})();
+</script>
+</head>
+<body>
+
+<header class="ch-head">
+  <a class="ch-back" href="index.html" aria-label="回到首页">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"
+         stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+      <path d="M15 18 8 12l7-6"/>
+    </svg>
+    <span>回影窗</span>
+  </a>
+
+  <div class="ch-brand">
+    <span class="ch-seal"><img src="assets/img/logo/logo-128.png" alt="" width="28" height="28"></span>
+    <span class="ch-name">影窗问答</span>
+    <span class="ch-sub">说戏人</span>
+  </div>
+
+  <button class="ch-new" id="chNew" type="button">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"
+         stroke-linecap="round" aria-hidden="true">
+      <path d="M12 5v14M5 12h14"/>
+    </svg>
+    <span>新开一窗</span>
+  </button>
+</header>
+
+<main class="ch-main" id="chMain">
+  <div class="ch-stream" id="chStream"></div>
+</main>
+
+<footer class="ch-foot">
+  <div class="ch-sugs" id="chSugs" hidden></div>
+
+  <form class="ch-box" id="chBox">
+    <textarea class="ch-input" id="chInput" rows="1" maxlength="300"
+              placeholder="接着问：影偶的手是怎么连上的？"
+              aria-label="输入问题"></textarea>
+    <button class="ch-go" id="chGo" type="submit" aria-label="发送">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+           stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+        <path d="M12 19V5M5 12l7-7 7 7"/>
+      </svg>
+    </button>
+  </form>
+
+  <p class="ch-tip">回车发送 · Shift + 回车换行</p>
+</footer>
+
+<script src="assets/js/chat.js?v=11377"></script>
+</body>
+</html>

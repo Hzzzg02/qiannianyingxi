@@ -1,0 +1,38 @@
+# ——— 密钥与配置（真实 Key 绝不入库，模板见 *.example.json / .env.example）———
+server/config/*.json
+!server/config/*.example.json
+.env
+.env.*
+!.env.example
+
+# ——— 运行时数据 ———
+server/data/db.json
+server/data/mail.log
+server/data/*.db
+uploads/ai/
+x/
+
+# ——— 构建与部署产物 ———
+_deploy/
+_tmp/
+_shots/
+*.tar.gz
+*.zip
+
+# ——— 素材原始件（体积大、非交付物）———
+_archive/
+_src/
+_srv/
+预览/
+
+# ——— 调试与运维脚本（含服务器地址与口令，绝不入库）———
+_tools/
+
+# ——— 系统与编辑器 ———
+.DS_Store
+Thumbs.db
+desktop.ini
+node_modules/
+*.log
+.vscode/
+.idea/

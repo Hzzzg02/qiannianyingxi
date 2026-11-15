@@ -1,0 +1,415 @@
+/* ==========================================================
+   eras.css —— 03 屏「影戏两千年」
+   上半：竖条墙 + 一条流动的曲线，六朝钉在线上
+   下半：左侧朝代名与年份，右侧三段说明 + 关键词
+   ========================================================== */
+
+/* 竖条墙已撤掉，底色用一层极淡的静态渐变托住上半场，不留死板的平涂 */
+.sec-slots-half {
+  background-image: radial-gradient(118% 76% at 50% 20%,
+    #434a43 0%, #3a4038 56%, #333a34 100%);
+}
+
+.era-band {
+  position: absolute;
+  inset: 0 0 auto 0;
+  height: 52%;
+  pointer-events: none;
+}
+
+/* 角标：左上总题、右上提示，都压得很轻，不抢曲线 */
+.era-kicker,
+.era-hint {
+  position: absolute;
+  top: 13.5%;
+  margin: 0;
+  font-size: 12.5px;
+  line-height: 1;
+  color: rgba(240, 231, 212, .46);
+  pointer-events: none;
+}
+.era-kicker,
+.era-hint { text-shadow: 0 0 9px rgba(56, 63, 55, .95), 0 0 18px rgba(56, 63, 55, .75); }
+.era-kicker {
+  left: 6.2%;
+  letter-spacing: .42em;
+  text-indent: .42em;
+}
+.era-hint {
+  right: 6.2%;
+  letter-spacing: .16em;
+}
+
+/* 整屏的剪纸花纹：六朝各一张，四角布局，中间留空给字。
+   图是从米色底上分离出来的，只留纹样，所以背景色仍由本屏的渐变决定 */
+.era-figs {
+  position: absolute;
+  inset: 0;
+  overflow: hidden;
+  pointer-events: none;
+  opacity: .17;
+  /* 只在「正文那一段」压暗；过了正文就是屏幕底边，纹样要重新提亮，
+     否则像明清这种四边框式的图，底边整条会被淡没，看着就不贴边 */
+  -webkit-mask-image: linear-gradient(to bottom,
+    #000 0%, #000 50%, rgba(0, 0, 0, .40) 60%,
+    rgba(0, 0, 0, .26) 70%, rgba(0, 0, 0, .55) 82%, rgba(0, 0, 0, .88) 100%);
+  mask-image: linear-gradient(to bottom,
+    #000 0%, #000 50%, rgba(0, 0, 0, .40) 60%,
+    rgba(0, 0, 0, .26) 70%, rgba(0, 0, 0, .55) 82%, rgba(0, 0, 0, .88) 100%);
+}
+.era-figs img {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  /* fill：整幅纹样压进屏幕，四角一个不裁，也不留边。
+     图 1.6:1、屏 1.78:1，纵向只压 11%，人物看不出变形 */
+  object-fit: fill;
+  opacity: 0;
+  transition: opacity .85s var(--ease-out);
+}
+.era-figs img.is-on { opacity: 1; }
+/* 明清那张是「四边围一圈」的边框式构图，边带比另外五朝的角落花纹细，
+   只把这一张放大一点，边带跟着加粗、更贴住屏幕边。其余五朝不动 */
+.era-figs img[src*="ming"] { transform: scale(1.08); }
+
+
+/* 曲线：一粗一细两条同形 path，粗的那条当光晕 */
+.era-curve {
+  position: absolute;
+  inset: 0;
+  display: block;
+  width: 100%;
+  height: 100%;
+  overflow: visible;
+}
+.era-line {
+  fill: none;
+  stroke: rgba(240, 231, 212, .46);
+  stroke-width: 1.2;
+  stroke-linecap: round;
+}
+.era-glow {
+  fill: none;
+  stroke: rgba(240, 231, 212, .07);
+  stroke-width: 9;
+  stroke-linecap: round;
+}
+
+/* ---------- 朝代节点 ---------- */
+.era-nodes { position: absolute; inset: 0; }
+
+.era-node {
+  position: absolute;
+  left: 0;
+  top: 0;
+  width: 11px;
+  height: 11px;
+  margin: -5.5px 0 0 -5.5px;
+  padding: 0;
+  border: 0;
+  background: none;
+  cursor: pointer;
+  pointer-events: auto;
+  -webkit-tap-highlight-color: transparent;
+  transition: opacity .45s var(--ease-out);
+}
+/* 透明热区：圆点只有 11px，单点圆点很难命中。
+   这块把「圆点 + 朝代名 + 年份」整片都算作可点，但不动视觉 */
+.era-node::before {
+  content: '';
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  width: 72px;
+  height: 96px;
+  transform: translate(-50%, -50%);
+  border-radius: 10px;
+}
+.era-node:focus-visible { outline: none; }
+.era-node:focus-visible .en-dot { box-shadow: 0 0 0 5px rgba(240, 231, 212, .2); }
+
+.era-nodes.has-on .era-node:not(.is-on) { opacity: .5; }
+
+.en-dot {
+  position: absolute;
+  inset: 0;
+  border-radius: 50%;
+  border: 1px solid rgba(240, 231, 212, .58);
+  background: #3a4038;
+  transition:
+    background-color .35s var(--ease-out),
+    border-color .35s var(--ease-out),
+    box-shadow .45s var(--ease-out),
+    transform .45s var(--ease-back);
+}
+.era-node:hover .en-dot {
+  background: #8b7a5a;
+  border-color: rgba(246, 240, 226, .9);
+  transform: scale(1.45);
+}
+.era-node.is-on .en-dot {
+  background: #c0402b;
+  border-color: #d76a52;
+  box-shadow: 0 0 0 5px rgba(192, 64, 43, .16);
+  transform: scale(1.3);
+}
+
+.en-name,
+.en-year {
+  position: absolute;
+  left: 50%;
+  transform: translateX(-50%);
+  white-space: nowrap;
+  pointer-events: none;
+  transition: color .35s var(--ease-out), opacity .35s var(--ease-out);
+}
+.en-name {
+  bottom: 17px;
+  font-family: var(--brush);
+  font-size: clamp(21px, 1.66vw, 27px);
+  line-height: 1;
+  letter-spacing: .14em;
+  text-indent: .14em;
+  color: rgba(240, 231, 212, .84);
+}
+.en-year {
+  top: 17px;
+  font-size: 11.5px;
+  line-height: 1;
+  letter-spacing: .07em;
+  color: rgba(240, 231, 212, .34);
+}
+.era-node:hover .en-name { color: #f6ecd8; }
+.era-node.is-on .en-name { color: #f6ecd8; }
+.era-node.is-on .en-year { color: rgba(214, 122, 96, .9); }
+
+/* ---------- 下半：说明 ---------- */
+.era-copy {
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: 52%;
+  bottom: 0;
+  padding: clamp(26px, 3.4vh, 42px) 6.2% clamp(22px, 3vh, 36px);
+  color: #efe6d2;
+  display: flex;
+  align-items: center;
+}
+
+.ec {
+  display: grid;
+  grid-template-columns: minmax(380px, 1fr) 2.55fr;
+  gap: clamp(26px, 3.2vw, 62px);
+  width: 100%;
+  align-items: start;
+  transition: opacity .26s var(--ease-out), transform .26s var(--ease-out);
+}
+.ec.is-fading {
+  opacity: 0;
+  transform: translateY(7px);
+}
+
+.ec-left {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+  padding-top: 2px;
+}
+.ec-kicker {
+  margin: 0;
+  font-size: 12px;
+  line-height: 1;
+  letter-spacing: .34em;
+  text-indent: .34em;
+  color: #c4705a;
+}
+.ec-title {
+  margin: 12px 0 8px;
+  font-family: var(--brush);
+  font-size: clamp(34px, 2.9vw, 46px);
+  font-weight: 400;
+  line-height: 1.24;
+  letter-spacing: .04em;
+  color: #f4ead6;
+}
+.ec.is-total .ec-title { font-size: clamp(34px, 2.9vw, 46px); }
+.ec-title i {
+  display: block;
+  margin-top: 10px;
+  font-family: var(--serif);
+  font-style: normal;
+  font-size: clamp(15px, 1.15vw, 18px);
+  line-height: 1.5;
+  letter-spacing: .04em;
+  color: rgba(240, 231, 212, .78);
+}
+.ec-left { text-shadow: 0 0 12px rgba(48, 54, 47, .92), 0 0 24px rgba(48, 54, 47, .7); }
+.ec-years {
+  margin: 0;
+  font-size: 13px;
+  letter-spacing: .13em;
+  color: rgba(240, 231, 212, .46);
+}
+.ec-lead {
+  margin: 14px 0 0;
+  font-size: 15.4px;
+  line-height: 1.95;
+  color: rgba(240, 231, 212, .62);
+  max-width: 30em;
+}
+
+.ec-right {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+}
+
+.ec-body {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: clamp(18px, 2.2vw, 42px);
+}
+.ec-body h3 {
+  margin: 0 0 9px;
+  font-size: 12px;
+  font-weight: 400;
+  letter-spacing: .3em;
+  text-indent: .3em;
+  color: #c4705a;
+}
+.ec-body p {
+  margin: 0;
+  font-size: clamp(15.6px, 1.24vw, 17px);
+  line-height: 2;
+  color: rgba(240, 231, 212, .8);
+  text-align: justify;
+}
+
+.ec-keys {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin: 28px 0 0;
+  padding: 0;
+  list-style: none;
+}
+.ec-keys li {
+  padding: 5px 13px;
+  border: 1px solid rgba(240, 231, 212, .16);
+  border-radius: 2px;
+  font-size: 12.5px;
+  letter-spacing: .05em;
+  color: rgba(240, 231, 212, .58);
+}
+
+/* ---------- 窄一点的桌面：三列挤，字号和留白一起收 ---------- */
+@media (max-width: 1360px) {
+  .ec { grid-template-columns: minmax(336px, 1fr) 2.5fr; }
+  .ec-title { font-size: clamp(26px, 2.3vw, 32px); }
+  .ec-body p { line-height: 1.94; font-size: 15px; }
+  .ec-keys li { padding: 3px 9px; font-size: 10.5px; }
+  .en-name { font-size: 20px; }
+}
+
+@media (max-width: 1180px) {
+  .era-copy { padding-left: max(84px, 5%); padding-right: max(84px, 5%); }
+  .ec-corner { width: 68px; height: 68px; }
+  .ec { grid-template-columns: minmax(272px, 1fr) 2.45fr; gap: 28px; }
+  .ec-title { font-size: 26px; }
+  .ec-body { gap: 20px; }
+  .ec-body p { font-size: 14px; line-height: 1.9; }
+  .ec-keys { padding-top: 12px; }
+}
+
+/* ---------- 窄屏（不做整屏翻页的那一档） ---------- */
+@media (max-width: 900px) {
+  .sec-slots-half { height: auto; min-height: 100vh; }
+  .sec-slots-half .slots-half { position: relative; height: 46vh; }
+  /* 竖条墙已撤掉，底色用一层极淡的静态渐变托住上半场，不留死板的平涂 */
+.sec-slots-half {
+  background-image: radial-gradient(118% 76% at 50% 20%,
+    #434a43 0%, #3a4038 56%, #333a34 100%);
+}
+
+.era-band {
+    position: relative;
+    height: 46vh;
+    margin-top: -46vh;
+  }
+  .era-copy {
+    position: relative;
+    top: auto;
+    padding: 26px 5% 40px;
+  }
+  .ec { grid-template-columns: 1fr; gap: 20px; height: auto; }
+  .ec-body { grid-template-columns: 1fr; gap: 16px; }
+  .ec-keys { margin-top: 16px; }
+}
+
+/* ---------- 说明区：细金外框 + 左上/右下两枚卷草角花 ---------- */
+/* 框画在 .era-copy 上（比文字块大一圈），角花压在框的角上、一半在框外，
+   这样既贴着框、又不会压到任何一个字 */
+.era-copy {
+  --frame: rgba(200, 167, 101, .30);
+  --rule: rgba(214, 196, 163, .19);
+  /* 框的底边比顶边收得多，给右下角花留位置；
+     左右用 max() 把下限钉在 96px —— 窄屏时角花才不会压到字 */
+  padding-bottom: calc(clamp(22px, 3vh, 36px) + 30px);
+  padding-left: max(96px, 6.4%);
+  padding-right: max(96px, 6.4%);
+}
+.era-copy::before {
+  content: '';
+  position: absolute;
+  left: 42px;
+  right: 42px;
+  top: 24px;
+  bottom: 50px;
+  border: 1px solid var(--frame);
+  pointer-events: none;
+}
+.ec {
+  align-items: stretch;
+  gap: 0;
+}
+.ec-corner {
+  position: absolute;
+  width: 78px;
+  height: 78px;
+  opacity: .9;
+  pointer-events: none;
+  background-repeat: no-repeat;
+  background-size: contain;
+}
+/* 角花的心落在框的角上：框角 ± 38px */
+.ec-corner--tl {
+  left: 30px;
+  top: -2px;
+  background-position: left top;
+  background-image: url("../img/eras/frame-tl.svg?v=11376");
+}
+.ec-corner--br {
+  right: 16px;
+  bottom: 24px;
+  background-position: right bottom;
+  background-image: url("../img/eras/frame-br.svg?v=11376");
+}
+
+/* 内部：一律一条细线，竖线分栏、横线分标头 */
+.ec-left {
+  padding-right: clamp(14px, 1.6vw, 28px);
+  border-right: 1px solid var(--rule);
+}
+.ec-right { padding-left: clamp(14px, 1.6vw, 28px); }
+.ec-body { gap: 0; }
+.ec-body section { padding-right: clamp(12px, 1.4vw, 24px); }
+.ec-body section + section {
+  border-left: 1px solid var(--rule);
+  padding-left: clamp(12px, 1.4vw, 24px);
+}
+.ec-body h3 {
+  margin: 0 0 11px;
+  padding-bottom: 8px;
+  border-bottom: 1px solid var(--rule);
+}

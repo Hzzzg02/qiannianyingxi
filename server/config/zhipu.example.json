@@ -1,0 +1,5 @@
+{
+  "key": "在此填入智谱开放平台 API Key，或改用环境变量 QN_ZHIPU_KEY",
+  "model": "cogview-3-flash",
+  "baseURL": "https://open.bigmodel.cn/api/paas/v4"
+}

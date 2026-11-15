@@ -1,0 +1,212 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<link rel="icon" href="favicon.ico" sizes="any">
+<link rel="icon" type="image/png" sizes="32x32" href="assets/img/logo/favicon-32.png">
+<link rel="apple-touch-icon" href="assets/img/logo/apple-touch-icon.png">
+<title>影偶制作 · 千年影戏</title>
+<meta name="description" content="说清是哪一路流派、哪一门行当、摆个什么架子，系统拿这三样去皮影资料库里检索同类形象，再按你补的那句话重画一只——单件、全身、白底。">
+<link rel="stylesheet" href="assets/css/brush.css?v=11377">
+<link rel="stylesheet" href="assets/css/token.css?v=11377">
+<link rel="stylesheet" href="assets/css/layout.css?v=11377">
+<link rel="stylesheet" href="assets/css/site.css?v=11377">
+<link rel="stylesheet" href="assets/css/studio.css?v=11377">
+<link rel="stylesheet" href="assets/css/paper-bg.css?v=4">
+</head>
+<body class="inner" data-page="craft">
+<header class="site-head">
+  <div class="head-inner">
+    <a class="brand" href="index.html">
+      <span class="brand-seal"><img src="assets/img/logo/logo-128.png" alt="千年影戏" width="40" height="40"></span>
+      <span class="brand-txt"><b>千年影戏</b><i>皮影数字馆</i></span>
+    </a>
+    <nav class="head-nav">
+      <a href="index.html">首页</a>
+      <a href="craft.html" class="is-on">影偶制作</a>
+      <a href="community.html">戏影社区</a>
+      <a href="vault.html">影藏</a>
+      <a href="profile.html">个人中心</a>
+    </nav>
+    <div class="head-user">
+      <a class="hu" href="profile.html">
+        <span class="hu-av" data-user-av>影</span>
+        <span class="hu-tx" data-user-name>登录</span>
+      </a>
+    </div>
+  </div>
+</header>
+
+<main class="page">
+
+  <section class="phero">
+    <div>
+      <h1>一言<em>成影</em></h1>
+      <p class="phero-lede">先说清是谁：哪一路流派、哪一门行当、摆个什么架子。系统拿这三样去皮影资料库里检索同类形象，再按你补的那句话重画一只——单件、全身、白底，刻刀口子和皮子透光的暖都留在画里。画出来的影偶只归你。</p>
+    </div>
+    <div class="phero-stats">
+      <div class="pstat"><b>六</b><span>路流派</span></div>
+      <div class="pstat"><b>十八</b><span>门行当</span></div>
+      <div class="pstat"><b>六</b><span>种架子</span></div>
+    </div>
+  </section>
+
+  <div class="studio-page">
+
+  <section class="sec tight">
+    <div class="gw">
+
+      <!-- ================= 左：画心 ================= -->
+      <div class="gw-heart">
+        <div class="gwh-frame" id="gw-frame">
+          <div class="gwh-mount">
+            <div class="gwh-paper" id="gw-paper">
+              <img id="gw-img" alt="" hidden>
+              <canvas id="gw-rig" hidden></canvas>
+              <div class="gwh-idle" id="gw-idle">
+                <span class="gwh-idle-t">还没落笔</span>
+                <span class="gwh-idle-n">右边挑流派、行当，添一句话，按「落笔」</span>
+              </div>
+              <div class="gwh-load" id="gw-load" hidden>
+                <div class="gwl-seal">刻</div>
+                <div class="gwl-t" id="gw-load-t">正在检索资料库</div>
+                <div class="gwl-bar"><i></i></div>
+              </div>
+            </div>
+            <div class="gwh-seal" id="gw-seal" hidden>影</div>
+          </div>
+        </div>
+
+        <div class="gwh-meta">
+          <div class="gwm-line" id="gw-meta">未落笔</div>
+          <div class="gwm-desc" id="gw-desc"></div>
+        </div>
+
+        <div class="gwh-acts" id="gw-acts" hidden>
+          <button class="btn" id="gw-again" type="button">再画一张</button>
+          <button class="btn ghost" id="gw-dl" type="button">存到本地</button>
+          <button class="btn ghost" id="gw-copy" type="button">复制提示词</button>
+          <button class="btn ghost" id="gw-edit" type="button">改一句再画</button>
+        </div>
+
+        <!-- 可动影偶：可动/整图切换、几个现成动作、关节校准 -->
+        <div class="rig-bar" id="rig-bar" hidden>
+          <div class="rig-seg" id="rig-seg">
+            <button type="button" data-view="rig" class="on">可动</button>
+            <button type="button" data-view="img">整图</button>
+          </div>
+          <div class="rig-acts" id="rig-acts">
+            <button type="button" data-act="stand">站定</button>
+            <button type="button" data-act="shili">行礼</button>
+            <button type="button" data-act="zoutai">走台</button>
+            <button type="button" data-act="kaida">开打</button>
+            <button type="button" data-act="zuoyi">整冠</button>
+          </div>
+          <button class="rig-cal" id="rig-cal" type="button">校准关节</button>
+        </div>
+        <p class="rig-hint" id="rig-hint" hidden>拖动四肢的关节就能摆姿势；关节对不准图上的接缝时，点「校准关节」把红点拖到位置上。</p>
+      </div>
+
+      <!-- ================= 右：戏箱 ================= -->
+      <aside class="gw-box">
+        <div class="gb-head">
+          <h2>戏箱</h2>
+          <span>三步成图</span>
+        </div>
+
+        <div class="gb-step">
+          <span class="gb-no">壹</span>
+          <div class="gb-b">
+            <b>选流派</b>
+            <p id="s-note">皮料、刀法、配色都跟着流派走，选哪一路，画出来就是哪一路的样子。</p>
+          </div>
+        </div>
+        <div class="chips gb-chips" id="c-school"></div>
+
+        <div class="gb-step">
+          <span class="gb-no">贰</span>
+          <div class="gb-b">
+            <b>定行当</b>
+            <p id="r-note">先分大门，再挑细行。细行决定冠戴、脸谱和手里的东西。</p>
+          </div>
+        </div>
+        <div class="chips gb-chips" id="c-role"></div>
+        <div class="chips gb-chips gb-sub" id="c-sub"></div>
+
+        <div class="gb-step">
+          <span class="gb-no">叁</span>
+          <div class="gb-b">
+            <b>说一句</b>
+            <p>想要的样子、手里拿的、什么脾气，随便写。写得越具体，画得越像。</p>
+          </div>
+        </div>
+        <div class="gb-want">
+          <textarea id="gw-want" rows="3" maxlength="120" placeholder="例如：守边的老兵，风雪里抱着刀，鬓角结霜"></textarea>
+          <div class="gb-want-f">
+            <span id="gw-count">0 / 120</span>
+            <button class="gb-dice" id="gw-dice" type="button">换一个例子</button>
+          </div>
+        </div>
+
+        <div class="gb-step gb-step-last">
+          <span class="gb-no">架</span>
+          <div class="gb-b"><b>摆个架子</b></div>
+        </div>
+        <div class="chips gb-chips" id="c-pose"></div>
+
+        <button class="btn gb-go" id="gw-go" type="button">落 笔</button>
+        <p class="gb-tip" id="gw-tip">一张约 15–30 秒。同一句话每次画出来都不一样。</p>
+
+        <details class="gb-prompt" id="gb-prompt">
+          <summary>看看底层提示词</summary>
+          <p class="gbp-base" id="p-base">检索资料库中的皮影形象，根据用户提供的提示词来生成个性化皮影。</p>
+          <p class="gbp-n">这一句永远排在最前面。后面接的是检索到的流派、行当、姿态和你那句话，最后才是成品规格：单件、全身、白底、不画操纵杆。</p>
+          <pre class="gbp-full" id="p-full">还没画过，画一张就能看到完整提示词。</pre>
+        </details>
+      </aside>
+
+    </div>
+  </section>
+
+  <!-- ================= 流派图鉴 ================= -->
+  <section class="sec">
+    <div class="sec-head">
+      <div class="sh-main">
+        <h2>六路影箱</h2>
+        <p>皮影不是一个样子。秦岭南北、黄河上下，皮料、刀法、脸谱、配色各不相同。下面这六路是资料库里现存的条目，选了哪一路，画出来的影偶就照着哪一路的规矩走。</p>
+      </div>
+      <p class="sec-note">每一路的说明都是<b>可进提示词的形</b>，不是文案。所以选流派是真的改画法，不是换个名字。</p>
+    </div>
+    <div class="gk-grid" id="gk-grid"></div>
+  </section>
+
+  <!-- ================= 画过的 ================= -->
+  <section class="sec">
+    <div class="sec-head">
+      <div class="sh-main">
+        <h2>画过的</h2>
+        <p>这张纸上存着你在这个浏览器里画过的影偶。点一张重新看，也可以照着改一句再画一张。</p>
+      </div>
+      <button class="btn ghost" id="gw-clear" type="button">清空</button>
+    </div>
+    <div class="gwall" id="gwall">
+      <p class="gwall-empty">还空着。上面画第一张，它就挂在这儿。</p>
+    </div>
+  </section>
+  </div>
+
+</main>
+
+<footer class="foot">
+  <div class="foot-in">
+    <div class="foot-brand"><i>影</i>千年影戏</div>
+    <p class="foot-note">页面照搬「千年影戏」原站的影偶创作台：流派、行当、姿态三张表取自皮影资料库，画由智谱 CogView 依这些形生成，提示词可在「看看底层提示词」里逐字查看。生成的影偶只存在你自己的浏览器里。</p>
+  </div>
+</footer>
+
+<script src="assets/js/site.js?v=11377"></script>
+<script src="assets/js/rig.js?v=11377a"></script>
+<script src="assets/js/gen.js?v=11377a"></script>
+</body>
+</html>

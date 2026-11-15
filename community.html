@@ -1,0 +1,265 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<link rel="icon" href="favicon.ico" sizes="any">
+<link rel="icon" type="image/png" sizes="32x32" href="assets/img/logo/favicon-32.png">
+<link rel="apple-touch-icon" href="assets/img/logo/apple-touch-icon.png">
+<title>戏影社区 · 千年影戏</title>
+<meta name="description" content="戏影社区：吧由戏友自己开。起个名、定个分区，你就是吧主，第一帖由你发。">
+<link rel="stylesheet" href="assets/css/brush.css?v=11481">
+<link rel="stylesheet" href="assets/css/token.css?v=11481">
+<link rel="stylesheet" href="assets/css/layout.css?v=11481">
+<link rel="stylesheet" href="assets/css/site.css?v=11481">
+<link rel="stylesheet" href="assets/css/community.css?v=11481">
+<link rel="stylesheet" href="assets/css/paper-bg.css?v=4">
+</head>
+<body class="inner is-square" data-page="community">
+
+<header class="site-head">
+  <div class="head-inner">
+    <a class="brand" href="index.html">
+      <span class="brand-seal"><img src="assets/img/logo/logo-128.png" alt="千年影戏" width="40" height="40"></span>
+      <span class="brand-txt"><b>千年影戏</b><i>皮影数字馆</i></span>
+    </a>
+    <nav class="head-nav">
+      <a href="index.html">首页</a>
+      <a href="craft.html">影偶制作</a>
+      <a href="community.html" class="is-on">戏影社区</a>
+      <a href="vault.html">影藏</a>
+      <a href="profile.html">个人中心</a>
+    </nav>
+    <div class="head-user">
+      <a class="hu" href="profile.html">
+        <span class="hu-av" data-user-av>影</span>
+        <span class="hu-tx" data-user-name>登录</span>
+      </a>
+    </div>
+  </div>
+</header>
+
+<main class="page comm">
+
+<!-- ==================== 广场：有哪些吧 ==================== -->
+<div class="comm-square">
+
+  <section class="phero comm-hero">
+    <div>
+      <h1>灯下<em>说戏</em></h1>
+      <p class="phero-lede">这儿不摆现成的吧。想聊哪一路，自己开一个：起个名、写明这收什么，你就是吧主，规矩也由你先写。开过的吧都留在下面，点进去发帖、回帖，跟贴吧一样一楼一楼往下接。</p>
+    </div>
+  </section>
+
+  <div class="sqhead">
+    <nav class="barcat sqzones" id="sqZones"></nav>
+    <form class="barsearch sqsearch" id="sqSearch" role="search">
+      <input type="text" id="sqQ" placeholder="搜吧名、搜简介" autocomplete="off" aria-label="搜吧">
+      <button type="submit">找吧</button>
+    </form>
+    <button class="bt-new" id="btnNewCircle" type="button"><i>＋</i>开个吧</button>
+  </div>
+
+  <div class="board">
+    <div class="sqmain">
+      <section class="csec" id="secMine" hidden>
+        <h2 class="csec-h">我的圈子<b id="mineCount"></b></h2>
+        <div class="cgrid" id="mineList"></div>
+      </section>
+
+      <section class="csec">
+        <h2 class="csec-h">全部吧<b id="allCount"></b></h2>
+        <div class="cgrid" id="allList"></div>
+      </section>
+    </div>
+
+    <aside class="board-aside">
+      <div class="side-card">
+        <h3>开吧三步</h3>
+        <ol class="kstep">
+          <li><b>起名</b>两到十二个字。名字开出去就改不了了，想清楚。</li>
+          <li><b>定分区</b>归到制作、唱念、考据、晒件、问答或杂谈，别人按类翻得到。</li>
+          <li><b>发第一帖</b>吧里空着没人进来。第一句话得你先说。</li>
+        </ol>
+      </div>
+
+      <div class="side-card" id="secNew" hidden>
+        <h3>最近开张</h3>
+        <div class="side-links" id="newList"></div>
+      </div>
+
+      <div class="side-card">
+        <h3>存在哪儿</h3>
+        <p class="sc-tight">这一版还没有社区服务端：吧、帖子、签到都记在你这台机器的浏览器里。换台机器、换个浏览器，或者清掉站点数据，就又是一张空台子。</p>
+      </div>
+    </aside>
+  </div>
+</div>
+
+<!-- ==================== 某个吧 ==================== -->
+<section class="comm-bar" id="barview">
+
+  <div class="tw-crumb"><a href="#/">戏影社区</a><i>›</i><span id="barCrumb">吧</span></div>
+
+  <section class="barhead">
+    <div class="bh-seal" id="bhSeal">吧</div>
+    <div class="bh-id">
+      <h2 id="bhName">吧名<small></small></h2>
+      <p class="bh-say" id="bhSay"></p>
+      <div class="bh-nums" id="bhNums"></div>
+    </div>
+    <div class="bh-act">
+      <button class="bh-btn bh-follow" id="bhFollow" type="button">+ 关注本吧</button>
+      <button class="bh-btn bh-check" id="bhCheck" type="button">签到</button>
+      <div class="bh-lv">
+        <span class="lv-badge" id="bhLv">LV.1</span>
+        <span class="lv-bar"><i id="bhLvBar" style="width:0"></i></span>
+        <span id="bhLvTx"></span>
+      </div>
+    </div>
+  </section>
+
+  <nav class="barcat" id="barcat"></nav>
+
+  <div class="bartools">
+    <div class="bt-tabs" id="btTabs">
+      <button type="button" class="on" data-kind="all">全部主题</button>
+      <button type="button" data-kind="mine">我发的</button>
+      <button type="button" data-kind="reply">有回复</button>
+    </div>
+    <span class="bt-sep"></span>
+    <select class="bt-sort" id="barSort" aria-label="排序">
+      <option value="last">按最后回复</option>
+      <option value="new">按发帖时间</option>
+      <option value="hot">按回复多少</option>
+    </select>
+    <form class="barsearch" id="barSearch" role="search">
+      <input type="text" id="barQ" placeholder="搜本吧的帖子" autocomplete="off" aria-label="搜本吧的帖子">
+      <button type="submit">找</button>
+    </form>
+    <button class="bt-new" id="btnNew" type="button"><i>＋</i>发表新帖</button>
+  </div>
+
+  <div class="board">
+    <div>
+      <div class="barlist" id="barlist"></div>
+      <div class="bpager" id="bpager"></div>
+    </div>
+    <aside class="board-aside" id="barAside"></aside>
+  </div>
+</section>
+
+<!-- ==================== 帖子楼层 ==================== -->
+<section class="comm-thread" id="tview">
+  <div class="board">
+    <div id="tvMain"></div>
+    <aside class="board-aside" id="tvAside"></aside>
+  </div>
+</section>
+
+</main>
+
+<footer class="foot">
+  <div class="foot-in">
+    <div class="foot-brand"><i>影</i>千年影戏</div>
+    <p class="foot-note">社区里的吧与帖子都由访问者自己开、自己发，内容记在本机浏览器中，本站不预置任何吧、帖子或人数。</p>
+  </div>
+</footer>
+
+<!-- 开吧弹层 -->
+<div class="cmodal" id="kmodal" aria-hidden="true">
+  <div class="cmodal-bg" id="kmBg"></div>
+  <div class="cmodal-card" role="dialog" aria-label="开个吧">
+    <div class="cm-head">
+      <h3>开个吧</h3>
+      <span>名字开出去就改不了</span>
+      <button class="cm-x" id="kmX" type="button" aria-label="关闭">×</button>
+    </div>
+    <div class="cm-body">
+      <div class="cf cf-half">
+        <div>
+          <label for="kfName">吧名</label>
+          <input type="text" id="kfName" maxlength="12" placeholder="两到十二个字，别带「吧」字">
+        </div>
+        <div>
+          <label for="kfSeal">印章上的字</label>
+          <input type="text" id="kfSeal" maxlength="1" placeholder="影">
+        </div>
+      </div>
+      <div class="cf">
+        <label>归到哪个分区</label>
+        <div class="cf-cats" id="kfZones"></div>
+        <p class="cf-tip">分区只影响别人在广场怎么翻到你，开完还能改。</p>
+      </div>
+      <div class="cf">
+        <label for="kfDesc">一句话说清这儿收什么</label>
+        <input type="text" id="kfDesc" maxlength="40" placeholder="比如：只谈刻皮，别的一概不聊">
+      </div>
+    </div>
+    <div class="cm-foot">
+      <p id="kmWho">开吧要留个名。</p>
+      <button class="cm-pub" id="kmPub" type="button">开 吧</button>
+    </div>
+  </div>
+</div>
+
+<!-- 发帖弹层 -->
+<div class="cmodal" id="cmodal" aria-hidden="true">
+  <div class="cmodal-bg" id="cmBg"></div>
+  <div class="cmodal-card" role="dialog" aria-label="发表新帖">
+    <div class="cm-head">
+      <h3>发个新帖</h3>
+      <span>帖要写实，图要自己的</span>
+      <button class="cm-x" id="cmX" type="button" aria-label="关闭">×</button>
+    </div>
+    <div class="cm-body">
+      <div class="cf">
+        <label for="cfTitle">标题</label>
+        <input type="text" id="cfTitle" maxlength="46" placeholder="一句话说清卡在哪儿，别写「求助」两个字就完了">
+      </div>
+      <div class="cf">
+        <label>归到哪一类</label>
+        <div class="cf-cats" id="cfCats">
+          <button type="button" data-c="craft" class="on">影偶制作</button>
+          <button type="button" data-c="sing">唱腔念白</button>
+          <button type="button" data-c="school">流派考据</button>
+          <button type="button" data-c="show">晒件</button>
+          <button type="button" data-c="ask">求谱问答</button>
+          <button type="button" data-c="newbie">新手求助</button>
+        </div>
+      </div>
+      <div class="cf">
+        <label for="cfBody">正文</label>
+        <textarea id="cfBody" placeholder="皮料、尺寸、刀、色、试过什么、卡在哪一步。空一行分一段。"></textarea>
+      </div>
+      <div class="cf">
+        <label>标签（最多三个）</label>
+        <div class="cf-tags" id="cfTags">
+          <button type="button" data-t="1">雕刻</button>
+          <button type="button" data-t="1">唱腔</button>
+          <button type="button" data-t="1">上色</button>
+          <button type="button" data-t="1">皮料</button>
+          <button type="button" data-t="1">流派</button>
+          <button type="button" data-t="1">剧目</button>
+          <button type="button" data-t="1">入门</button>
+          <button type="button" data-t="1">材料</button>
+          <button type="button" data-t="1">考据</button>
+          <button type="button" data-t="1">修复</button>
+        </div>
+        <p class="cf-tip">挂对了标签，别人翻分类时才找得到。</p>
+      </div>
+    </div>
+    <div class="cm-foot">
+      <p id="cmWho">发帖要先登录。</p>
+      <button class="cm-pub" id="cmPub" type="button">发 布</button>
+    </div>
+  </div>
+</div>
+
+<div class="ctoast" id="ctoast" role="status"></div>
+
+<script src="assets/js/site.js?v=11481"></script>
+<script src="assets/js/community-data.js?v=11481"></script>
+<script src="assets/js/community.js?v=11481"></script>
+</body>
+</html>

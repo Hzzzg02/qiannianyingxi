@@ -1,0 +1,195 @@
+/* ==========================================================================
+   paper-bg.css —— 全站内页「工笔花鸟」底 + 白纸板块
+   仅作用于非首页（index.html 不引用本文件）
+   --------------------------------------------------------------------------
+   1) 页面底：工笔花鸟图（assets/img/bg/gongbi.jpg，1819×940，已裁掉右下角水印）
+      上覆一层极淡的米白纱，保证正文对比度够
+   2) 板块：每个大块单独一张白纸（.pb-panel 那套），彼此留 20px 缝，
+      让底图在缝隙里透出来
+   ========================================================================== */
+
+:root {
+  --pb-panel: #fffdf8;
+  --pb-panel-2: #fffefb;
+  --pb-line: rgba(97, 68, 36, .15);
+  --pb-line-soft: rgba(97, 68, 36, .09);
+  --pb-shadow: 0 18px 42px rgba(72, 46, 20, .07), 0 1px 2px rgba(72, 46, 20, .05);
+  --pb-r: 3px;
+  --pb-pad-x: clamp(20px, 3.1vw, 46px);
+  --pb-gap: clamp(14px, 1.6vw, 22px);
+}
+
+/* ---------------- 1. 纸底 ---------------- */
+body.inner,
+body.login-page {
+  background-color: #f6f1e6;
+  background-image:
+    linear-gradient(180deg, rgba(253, 250, 243, .52) 0%, rgba(250, 245, 236, .62) 46%, rgba(248, 243, 232, .70) 100%),
+    url("../img/bg/gongbi.jpg");
+  background-repeat: no-repeat, no-repeat;
+  background-position: center top, center top;
+  background-size: cover, cover;
+  background-attachment: fixed, fixed;
+}
+
+/* 原来的窗花底纹撤掉：两层花纹叠在一起会糊 */
+body.inner::before,
+body.login-page::before { display: none !important; }
+
+/* ---------------- 2. 白纸板块的公共形 ---------------- */
+body.inner .phero,
+body.inner .psec,
+body.inner .studio-page .sec,
+body.inner .comm-square,
+body.inner .comm-bar,
+body.inner .comm-thread,
+body.inner .tp-hero,
+body.inner .tp-sec,
+body.inner .tp-foot,
+body.inner .pc-card,
+body.inner .pc-block,
+body.inner .foot {
+  position: relative;
+  background: var(--pb-panel);
+  border: 1px solid var(--pb-line);
+  border-radius: var(--pb-r);
+  box-shadow: var(--pb-shadow);
+  margin-top: var(--pb-gap);
+  padding-left: var(--pb-pad-x);
+  padding-right: var(--pb-pad-x);
+}
+
+/* 板块左上角那道朱红细线，作为「纸页」的记认 */
+body.inner .phero::before,
+body.inner .psec::before,
+body.inner .studio-page .sec::before,
+body.inner .comm-square::before,
+body.inner .tp-hero::before,
+body.inner .tp-sec::before,
+body.inner .tp-foot::before,
+body.inner .pc-block::before,
+body.inner .foot::before {
+  content: '';
+  position: absolute;
+  left: 0; right: 0; top: 0;
+  height: 2px;
+  border-radius: var(--pb-r) var(--pb-r) 0 0;
+  background: linear-gradient(90deg, rgba(157, 44, 28, .42), rgba(157, 44, 28, .10) 34%, rgba(157, 44, 28, 0) 62%);
+  pointer-events: none;
+}
+
+/* ---------------- 3. 各页的板块内边距 ---------------- */
+
+/* 影偶制作 / 影藏 / 社区 / 个人中心：共用 .phero */
+body.inner .phero {
+  padding-top: 34px;
+  padding-bottom: 34px;
+  border-bottom: 1px solid var(--pb-line-soft);
+}
+
+body.inner .psec {
+  padding-top: 34px;
+  padding-bottom: 40px;
+}
+
+/* 制作页：三段 .sec 各自成块 */
+body.inner .studio-page .sec {
+  padding-top: 32px;
+  padding-bottom: 38px;
+}
+body.inner .studio-page .sec + .sec::before { display: none; }
+
+/* 社区：三种视图各成一块 */
+body.inner .comm-square,
+body.inner .comm-bar,
+body.inner .comm-thread {
+  padding-top: 28px;
+  padding-bottom: 34px;
+}
+
+/* 专题页（影史 / 流派 / 剧目 / 影讯 / 工艺 / 传承） */
+body.inner .tp-hero {
+  padding-top: 30px;
+  padding-bottom: 34px;
+  border-bottom: 1px solid var(--pb-line-soft);
+}
+body.inner .tp-hero::after { display: none; }
+
+body.inner .tp-sec {
+  padding-top: 38px;
+  padding-bottom: 46px;
+}
+
+body.inner .tp-foot {
+  padding-top: 32px;
+  padding-bottom: 34px;
+  border-top: 1px solid var(--pb-line-soft);
+  margin-bottom: 40px;
+}
+
+/* 专题页目录：跟着变成一条白条，吸顶时也看得清 */
+body.inner .tp-nav {
+  background: rgba(255, 253, 248, .94);
+  border: 1px solid var(--pb-line);
+  border-radius: var(--pb-r);
+  box-shadow: 0 10px 24px rgba(72, 46, 20, .06);
+  margin-top: var(--pb-gap);
+  padding: 0 clamp(8px, 1.4vw, 18px);
+  backdrop-filter: saturate(1.15) blur(8px);
+  border-bottom: 1px solid var(--pb-line);
+}
+
+/* 个人中心 */
+body.inner .pc-hero { padding-bottom: 30px; }
+body.inner .pc-card { padding-top: 24px; padding-bottom: 22px; background: var(--pb-panel-2); margin-top: 0; }
+body.inner .pc-block {
+  padding-top: 24px;
+  padding-bottom: 26px;
+  margin-top: 18px;
+}
+body.inner .pc-col > .pc-block:first-child { margin-top: 0; }
+
+/* 页脚 */
+body.inner .foot {
+  padding-top: 30px;
+  padding-bottom: 30px;
+}
+
+/* 登录页：舞台底换成花鸟，卡片本身已是白卡，不再叠一层 */
+body.login-page .lg-card {
+  background: var(--pb-panel);
+  border-color: var(--pb-line);
+  box-shadow: var(--pb-shadow);
+}
+
+/* ---------------- 4. 板块内的浅色小卡：在白纸上要能分出来 ---------------- */
+body.inner .psec .chip,
+body.inner .tp-sec .chip {
+  background: #fff;
+}
+
+/* 深底模块放进白纸里，圆角对齐 */
+body.inner .ax-map,
+body.inner .tp-dark {
+  border-radius: var(--pb-r);
+  overflow: hidden;
+}
+
+/* ---------------- 5. 窄屏 ---------------- */
+@media (max-width: 900px) {
+  :root { --pb-pad-x: 20px; }
+  body.inner .phero,
+  body.inner .tp-hero { padding-top: 24px; padding-bottom: 26px; }
+  body.inner .psec,
+  body.inner .tp-sec,
+  body.inner .studio-page .sec { padding-top: 26px; padding-bottom: 30px; }
+}
+
+@media (max-width: 560px) {
+  :root { --pb-pad-x: 16px; --pb-gap: 12px; }
+  body.inner .tp-sec { padding-top: 22px; padding-bottom: 26px; }
+  body.inner .tp-foot { margin-bottom: 24px; }
+  /* 标题在窄屏会掉一个字到第二行，收一档字号 */
+  body.inner .tp-hero h1,
+  body.inner .phero h1 { font-size: clamp(32px, 10.2vw, 44px); letter-spacing: .02em; }
+}

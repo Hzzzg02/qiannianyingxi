@@ -1,0 +1,259 @@
+/* ==========================================================================
+   登录 / 注册（login.html）
+   一张窄卡，两页签：邮箱 + 密码 + 图形验证码；注册多一格邮箱验证码。
+   顶栏与站内其它页同一块朱红横匾（样式在 layout.css）。
+   原来开场那两道红丝绒幕布已去掉：整页只用花鸟底 + 一张白卡。
+   ========================================================================== */
+
+body.login-page {
+  padding-top: var(--hd-h, 78px);
+  background: var(--paper);
+  color: var(--ink);
+}
+body.login-page::before { display: block; }
+
+/* ---------------- 主体 ---------------- */
+.lg-main {
+  position: relative;
+  z-index: 1;
+  display: grid;
+  place-items: center;
+  min-height: calc(100vh - var(--hd-h, 78px));
+  padding: clamp(34px, 6vh, 64px) 20px clamp(38px, 7.5vh, 76px);
+}
+
+.lg-card {
+  width: min(404px, 100%);
+  padding: clamp(26px, 4vw, 38px) clamp(22px, 4vw, 36px) 26px;
+  background: #fffdf7;
+  border: 1px solid rgba(90, 62, 32, .2);
+  border-top: 2px solid var(--red);
+  box-shadow: 0 18px 42px rgba(70, 40, 14, .07);
+}
+
+.lg-kick {
+  margin: 0 0 14px;
+  font-size: 10px;
+  letter-spacing: .3em;
+  color: rgba(157, 44, 28, .8);
+}
+.lg-title {
+  margin: 0 0 8px;
+  font-family: var(--brush);
+  font-weight: 400;
+  font-size: 34px;
+  line-height: 1.2;
+  letter-spacing: .1em;
+  color: #241a12;
+}
+.lg-sub {
+  margin: 0 0 20px;
+  font-size: 12.5px;
+  line-height: 1.85;
+  color: rgba(91, 74, 53, .78);
+}
+
+/* ---------------- 页签 ---------------- */
+.lg-tabs {
+  display: flex;
+  gap: 22px;
+  margin: 0 0 18px;
+  border-bottom: 1px solid var(--line);
+}
+.lg-tab {
+  position: relative;
+  padding: 0 0 9px;
+  font-family: var(--serif);
+  font-size: 13.5px;
+  letter-spacing: .14em;
+  color: rgba(91, 74, 53, .66);
+  background: none;
+  border: 0;
+  cursor: pointer;
+  transition: color .22s;
+}
+.lg-tab:hover { color: var(--ink); }
+.lg-tab.is-on { color: var(--red); }
+.lg-tab.is-on::after {
+  content: '';
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: -1px;
+  height: 2px;
+  background: var(--red);
+}
+
+/* ---------------- 表单 ---------------- */
+.lg-form.is-hidden { display: none; }
+
+.lg-field { margin-bottom: 15px; }
+.lg-field > label {
+  display: block;
+  margin-bottom: 6px;
+  font-size: 10.5px;
+  letter-spacing: .16em;
+  color: rgba(91, 74, 53, .72);
+}
+.lg-field input {
+  width: 100%;
+  height: 42px;
+  padding: 0 12px;
+  font-family: var(--serif);
+  font-size: 14px;
+  color: var(--ink);
+  background: #fff;
+  border: 1px solid rgba(90, 62, 32, .26);
+  border-radius: 0;
+  outline: none;
+  transition: border-color .2s, box-shadow .2s;
+}
+.lg-field input::placeholder { color: rgba(91, 74, 53, .38); }
+.lg-field input:focus {
+  border-color: rgba(157, 44, 28, .55);
+  box-shadow: 0 0 0 3px rgba(157, 44, 28, .07);
+}
+
+/* 图形验证码：输入框在左，图在右，点图换一张 */
+.lg-caprow {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 128px;
+  gap: 10px;
+}
+.lg-capbtn {
+  display: block;
+  height: 44px;
+  padding: 0;
+  overflow: hidden;
+  background: #f7f1e3;
+  border: 1px solid rgba(90, 62, 32, .26);
+  cursor: pointer;
+}
+.lg-capbtn img {
+  display: block;
+  width: 100%;
+  height: 100%;
+  /* 图是 132×44，别用 cover 去裁——裁了字就变大变糊 */
+  object-fit: fill;
+}
+.lg-capbtn:hover { border-color: rgba(157, 44, 28, .5); }
+.lg-capbtn.is-loading { opacity: .5; }
+
+/* 邮箱验证码：输入框 + 发送按钮 */
+.lg-coderow {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 104px;
+  gap: 10px;
+}
+.lg-send {
+  height: 42px;
+  font-family: var(--serif);
+  font-size: 12.5px;
+  letter-spacing: .08em;
+  color: var(--red);
+  background: rgba(157, 44, 28, .05);
+  border: 1px solid rgba(157, 44, 28, .34);
+  cursor: pointer;
+  transition: background .2s, color .2s, border-color .2s;
+}
+.lg-send:hover:not(:disabled) { background: rgba(157, 44, 28, .1); }
+.lg-send:disabled {
+  color: rgba(91, 74, 53, .5);
+  background: transparent;
+  border-color: rgba(90, 62, 32, .2);
+  cursor: default;
+}
+
+.lg-hint {
+  margin: 8px 0 0;
+  font-size: 10.5px;
+  line-height: 1.75;
+  letter-spacing: .02em;
+  color: rgba(91, 74, 53, .56);
+}
+.lg-hint b {
+  font-weight: 400;
+  color: rgba(157, 44, 28, .9);
+}
+
+/* 主按钮 */
+.lg-submit {
+  display: block;
+  width: 100%;
+  margin-top: 6px;
+  padding: 13px;
+  font-family: var(--serif);
+  font-size: 13px;
+  letter-spacing: .3em;
+  color: var(--cream);
+  background: linear-gradient(180deg, var(--red-l), var(--red));
+  border: 1px solid var(--red-d);
+  cursor: pointer;
+  transition: filter .2s, transform .2s;
+}
+.lg-submit:hover { filter: brightness(1.06); }
+.lg-submit:active { transform: translateY(1px); }
+.lg-submit:disabled { filter: grayscale(.4) brightness(.92); cursor: default; }
+
+/* 提示 / 报错 */
+.lg-msg {
+  margin: 0 0 14px;
+  font-size: 11.5px;
+  line-height: 1.7;
+  color: var(--red);
+}
+.lg-msg:empty { display: none; }
+.lg-msg.is-ok { color: #4a6b3c; }
+
+.lg-foot {
+  margin: 22px 0 0;
+  padding-top: 14px;
+  border-top: 1px solid var(--line);
+  font-size: 10.5px;
+  line-height: 1.9;
+  letter-spacing: .02em;
+  color: rgba(91, 74, 53, .52);
+}
+.lg-foot a { color: rgba(157, 44, 28, .85); text-decoration: none; }
+.lg-foot a:hover { text-decoration: underline; }
+
+/* 矮屏（1024×768、1366×650 这类）：整张卡原本比视口高一截，登录按钮得往下滚才看得见。
+   幕布撤掉后这张卡就是整页唯一的实体，压缩它自己的留白比让它滚更合适。 */
+/* 注册页签比登录多两格（图形码 + 邮箱验证码），卡高出 120 多，
+   外框再按登录那套留白就会顶到视口外、底边贴着屏幕——切到注册时收窄留白 */
+body[data-tab="register"] .lg-main {
+  padding-top: clamp(16px, 2.6vh, 34px);
+  padding-bottom: clamp(16px, 2.6vh, 34px);
+}
+
+@media (max-height: 830px) and (min-width: 901px) {
+  .lg-main { padding: 18px 20px 24px; }
+  .lg-card { padding: 22px 26px 18px; }
+  .lg-kick { margin-bottom: 9px; }
+  .lg-title { font-size: 30px; margin-bottom: 6px; }
+  .lg-sub { margin-bottom: 14px; line-height: 1.74; }
+  .lg-tabs { margin-bottom: 14px; }
+  .lg-field { margin-bottom: 12px; }
+  .lg-field input { height: 40px; }
+  .lg-foot { margin-top: 16px; padding-top: 11px; }
+}
+
+/* 再矮一档（1366×650 的老笔记本横屏）：上面那档还不够，按钮仍要滚两行 */
+@media (max-height: 700px) and (min-width: 901px) {
+  .lg-main { padding: 12px 20px 16px; }
+  .lg-card { padding: 18px 24px 14px; }
+  .lg-kick { margin-bottom: 7px; }
+  .lg-title { font-size: 26px; margin-bottom: 5px; }
+  .lg-sub { margin-bottom: 11px; line-height: 1.62; }
+  .lg-tabs { margin-bottom: 11px; }
+  .lg-field { margin-bottom: 10px; }
+  .lg-foot { margin-top: 12px; padding-top: 9px; }
+}
+
+@media (max-width: 480px) {
+  .lg-main { padding-left: 14px; padding-right: 14px; align-items: start; }
+  .lg-card { padding: 24px 18px 20px; }
+  .lg-title { font-size: 29px; }
+  .lg-caprow { grid-template-columns: minmax(0, 1fr) 112px; }
+  .lg-coderow { grid-template-columns: minmax(0, 1fr) 92px; }
+}

@@ -1,0 +1,3408 @@
+/* ==========================================================
+   版面：整屏分页、各板块栅格
+   ========================================================== */
+
+/* ---------- 顶部导航：一块朱红横匾 ---------- */
+.site-head {
+  position: fixed;
+  inset: 0 0 auto 0;
+  height: var(--hd-h);
+  z-index: 60;
+  /* 取 AMD RADEON 那块贴纸的红 #d12a31（取样中位数 209,42,49），上下各收半档 */
+  background:
+    linear-gradient(180deg, #d7343b 0%, #d12a31 52%, #bc242b 100%);
+  box-shadow:
+    0 12px 30px rgba(58, 12, 5, .32),
+    inset 0 1px 0 rgba(255, 232, 196, .18),
+    inset 0 -1px 0 rgba(244, 222, 180, .26);
+  transition: transform .55s var(--ease-out);
+}
+/* 匾下沿一道金线：中间实、两头淡，像装裱的双线 */
+.site-head::after {
+  content: '';
+  position: absolute;
+  left: 0; right: 0; bottom: 5px;
+  height: 1px;
+  background: linear-gradient(90deg,
+    rgba(238, 214, 170, 0) 0%, rgba(238, 214, 170, .40) 16%,
+    rgba(238, 214, 170, .40) 84%, rgba(238, 214, 170, 0) 100%);
+  pointer-events: none;
+}
+/* 导航只在首屏出现；翻到第二屏起整条收出屏幕上沿，把那一条还给内容 */
+body.past-first .site-head { transform: translateY(-104%); }
+
+.head-inner {
+  height: 100%;
+  max-width: 1440px;
+  margin: 0 auto;
+  padding: 0 40px;
+  display: flex;
+  align-items: center;
+  gap: 26px;
+}
+
+/* 左：一枚圆形皮影徽标 + 站名
+   原来是「影」字白文印，换成圆形的皮影头茬图。
+   米白底圈 + 一道暗影，把圆从朱红横匾上隔开，不然红脸跟红底会糊在一起。 */
+.brand { display: flex; align-items: center; gap: 12px; text-decoration: none; }
+.brand-seal {
+  display: block;
+  width: 40px; height: 40px;
+  flex: none;
+  border-radius: 50%;
+  overflow: hidden;
+  background: #f8eeda;
+  box-shadow:
+    0 0 0 2px rgba(248, 238, 218, .92),
+    0 0 0 3px rgba(96, 30, 12, .30),
+    0 3px 10px rgba(38, 10, 4, .34);
+  transition: transform .34s var(--ease-out);
+}
+.brand-seal img {
+  display: block;
+  width: 100%; height: 100%;
+  object-fit: cover;
+  /* 原图四周留了一圈纸白，直接缩到 40px 图案就只剩中间一小坨；
+     放大一点让头茬顶到圆边，切掉的都是空白 */
+  transform: scale(1.16);
+}
+.brand:hover .brand-seal { transform: rotate(-5deg); }
+.brand-txt { display: flex; flex-direction: column; gap: 4px; }
+.brand-txt b {
+  font-family: "MSZ", "STKaiti", "KaiTi", serif;
+  font-weight: 400;
+  font-size: 22px;
+  line-height: 1;
+  letter-spacing: .1em;
+  color: #fbefd8;
+}
+.brand-txt i {
+  font-style: normal;
+  font-size: 10px;
+  line-height: 1;
+  letter-spacing: .26em;
+  color: rgba(250, 232, 199, .6);
+}
+
+/* 中：五个毛笔字，当前那一项用一道金线收底 */
+.head-nav {
+  display: flex;
+  align-items: center;
+  gap: 30px;
+  margin: 0 auto;
+}
+.head-nav a {
+  /* --ls 记着字距：字距会在末字后面留一段空白，下划线要按这个值往回让 */
+  --ls: .12em;
+  position: relative;
+  padding: 7px 2px 9px;
+  font-family: "MSZ", "STKaiti", "KaiTi", serif;
+  font-size: 21px;
+  line-height: 1;
+  letter-spacing: var(--ls);
+  color: rgba(252, 240, 214, .82);
+  text-decoration: none;
+  white-space: nowrap;
+  transition: color .24s, text-shadow .24s;
+}
+/* 左右各留 2px 内边距、右侧再让掉一个字距，线宽就正好等于字的墨迹宽度，
+   从中间往两边长出来时也不会偏 */
+.head-nav a::after {
+  content: '';
+  position: absolute;
+  left: 2px;
+  right: calc(2px + var(--ls));
+  bottom: 0;
+  height: 2px;
+  /* 橙底上黄线会打架，换米白：压得住又不抢字 */
+  background: linear-gradient(90deg,
+    rgba(255, 244, 224, 0), #ffe9cb 20%, #fffaf0 50%, #ffe9cb 80%, rgba(255, 244, 224, 0));
+  transform: scaleX(0);
+  transform-origin: 50% 50%;
+  opacity: 0;
+  transition: transform .34s var(--ease-out), opacity .3s;
+}
+.head-nav a:hover { color: #fff7e6; }
+.head-nav a:hover::after,
+.head-nav a.is-on::after { transform: scaleX(1); opacity: 1; }
+.head-nav a.is-on { color: #fff7e6; text-shadow: 0 1px 14px rgba(255, 214, 150, .42); }
+
+/* 右：头像 + 名字（未登录时是「登录」两个字，点了进个人中心，没登录会被带去登录页） */
+.head-user {
+  display: flex;
+  align-items: center;
+  /* 让「登录」再往右贴一点，整块不必跟左边距对称 */
+  margin-right: -12px;
+}
+.hu {
+  display: flex;
+  align-items: center;
+  /* 拉大字与头像的间距：头像自然往左靠，字留在最右 */
+  gap: 26px;
+  padding-left: 24px;
+  border-left: 1px solid rgba(246, 226, 190, .24);
+  text-decoration: none;
+}
+.hu-av {
+  display: grid;
+  place-items: center;
+  width: 34px; height: 34px;
+  flex: none;
+  border-radius: 50%;
+  background: #f8eeda;
+  color: #ad2026;
+  font-family: "MSZ", "STKaiti", "KaiTi", serif;
+  font-size: 20px;
+  line-height: 1;
+  box-shadow:
+    0 0 0 1px rgba(255, 240, 210, .55),
+    0 4px 12px rgba(60, 12, 6, .26);
+  transition: transform .3s var(--ease-back);
+}
+.hu:hover .hu-av { transform: scale(1.08); }
+.hu-tx {
+  font-family: "MSZ", "STKaiti", "KaiTi", serif;
+  font-size: 15px;
+  letter-spacing: .08em;
+  color: rgba(250, 236, 210, .9);
+  max-width: 6em;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  transition: color .24s;
+}
+.hu:hover .hu-tx { color: #fff7e6; }
+
+@media (max-width: 1180px) {
+  .head-inner { padding: 0 26px; gap: 18px; }
+  .head-nav { gap: 20px; }
+  .head-nav a { font-size: 19px; }
+  .brand-txt i { display: none; }
+}
+@media (max-width: 860px) {
+  .head-inner { padding: 0 16px; gap: 12px; }
+  .brand-txt { display: none; }
+  .head-nav { gap: 14px; }
+  .head-nav a { font-size: 17px; --ls: .06em; }
+  .hu { padding-left: 12px; }
+  .hu-tx { display: none; }
+}
+/* 窄屏：五项横着放不下，导航自己横滑，别把「个人中心」挤出屏幕 */
+@media (max-width: 560px) {
+  .head-inner { gap: 8px; padding: 0 12px; }
+  .brand-seal { width: 32px; height: 32px; }
+  .head-nav {
+    flex: 1 1 auto;
+    min-width: 0;
+    gap: 12px;
+    overflow-x: auto;
+    scrollbar-width: none;
+    -ms-overflow-style: none;
+    margin: 0 0 0 4px;
+    /* 右边淡出去一点：告诉人这里还能滑，而不是被切掉 */
+    -webkit-mask-image: linear-gradient(90deg, #000 0, #000 calc(100% - 20px), transparent 100%);
+    mask-image: linear-gradient(90deg, #000 0, #000 calc(100% - 20px), transparent 100%);
+  }
+  .head-nav::-webkit-scrollbar { display: none; }
+  .head-nav a { font-size: 15.5px; padding: 7px 0 9px; }
+  .head-user { flex: none; }
+  .hu { padding-left: 8px; border-left: 0; }
+  .hu-av { width: 30px; height: 30px; font-size: 18px; }
+}
+
+/* ---------- 左侧悬浮栏 ---------- */
+/* 抽屉式：平时只露出 --peek 那么一条边，鼠标压上去整只拉出来 */
+.side-rail {
+  /* 露出的宽度必须小于左侧 padding（现在 13 < 15），否则图标的边缘会跟着露出来 */
+  --peek: 13px;
+
+  /* 四个可随屏切换的颜色，默认是米白底的那套 */
+  --rail-bg: rgba(246, 244, 239, .94);
+  --rail-accent: var(--tick);
+  --rail-ico: rgba(29, 31, 33, .18);
+  --rail-ico-line: rgba(29, 31, 33, .08);
+  --rail-hover: rgba(168, 50, 31, .08);
+
+  position: fixed;
+  right: 0;
+  top: 50%;
+  z-index: 55;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  padding: 14px 12px 14px 15px;
+  background: var(--rail-bg);
+  border-radius: 6px 0 0 6px;
+  box-shadow: 0 8px 30px rgba(0, 0, 0, .08);
+  /* 收起：整体往右抽出屏幕，只留最左一条边在屏幕里 */
+  transform: translate(calc(100% - var(--peek)), -50%);
+  opacity: 0;
+  visibility: hidden;
+  /* 收回时晚一点点，鼠标从边上扫过不会闪 */
+  transition: transform .46s var(--ease-out) .12s,
+              opacity .5s var(--ease-out),
+              visibility .5s,
+              background-color .6s var(--ease-out),
+              box-shadow .6s var(--ease-out);
+}
+body.past-first .side-rail { opacity: 1; visibility: visible; }
+
+/* ---------- 抽屉跟着当前这一屏换色 ----------
+   每屏一套：底色取该屏色系的浅纸色，强调色（把手 + 悬停条）取深一档，
+   所以翻页时整条栏的冷暖会跟着变。影讯那一屏本身很亮，反过来用深底。 */
+
+/* 02 影藏：这一屏是深色幕布，抽屉跟着换成深玻璃 */
+/* 第 2 屏是六色墙，抽屉再压深色就成了一道黑疤；改成磨砂白玻璃，压在任何色块上都服帖 */
+body.is-viewing-1 .side-rail {
+  --rail-bg: rgba(250, 246, 238, .32);
+  --rail-accent: #8c4a2c;
+  --rail-ico: rgba(46, 28, 16, .55);
+  --rail-ico-line: rgba(46, 28, 16, .16);
+  --rail-hover: rgba(255, 255, 255, .22);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  box-shadow: -4px 0 22px rgba(40, 20, 8, .18);
+}
+/* 03 灰绿 */
+body.is-viewing-2 .side-rail {
+  --rail-bg: #dfe4da;
+  --rail-accent: #556553;
+  --rail-ico: rgba(29, 31, 33, .16);
+  --rail-hover: rgba(85, 101, 83, .14);
+}
+/* 04 深棕 */
+body.is-viewing-3 .side-rail {
+  --rail-bg: #f2e6d8;
+  --rail-accent: #9c5330;
+  --rail-ico: rgba(46, 33, 24, .16);
+  --rail-hover: rgba(156, 83, 48, .14);
+}
+/* 05 蓝灰 */
+body.is-viewing-4 .side-rail {
+  --rail-bg: #dde7f0;
+  --rail-accent: #4a6b8c;
+  --rail-ico: rgba(29, 31, 33, .16);
+  --rail-hover: rgba(74, 107, 140, .14);
+}
+/* 06 浅米：这一屏本身很亮，抽屉反过来用深底 */
+body.is-viewing-5 .side-rail {
+  --rail-bg: #2a2e30;
+  --rail-accent: #d4613f;
+  --rail-ico: rgba(255, 255, 255, .20);
+  --rail-ico-line: rgba(255, 255, 255, .10);
+  --rail-hover: rgba(212, 97, 63, .18);
+}
+/* 07 近黑 */
+body.is-viewing-6 .side-rail {
+  --rail-bg: #dbdfe2;
+  --rail-accent: #566166;
+  --rail-ico: rgba(29, 31, 33, .16);
+  --rail-hover: rgba(86, 97, 102, .16);
+}
+/* 08 青灰：这一屏是左深右浅的拼接底，抽屉挂在右边正好落在浅米那半，所以用深底 */
+body.is-viewing-7 .side-rail {
+  --rail-bg: #23302c;
+  --rail-accent: #6fa08c;
+  --rail-ico: rgba(255, 255, 255, .20);
+  --rail-ico-line: rgba(255, 255, 255, .10);
+  --rail-hover: rgba(111, 160, 140, .22);
+}
+/* 页脚 */
+body.is-viewing-8 .side-rail {
+  --rail-bg: #d7dbde;
+  --rail-accent: #4e585e;
+  --rail-ico: rgba(29, 31, 33, .16);
+  --rail-hover: rgba(78, 88, 94, .16);
+}
+
+/* 露出的那条边上一根朱砂短杆，当抽屉的拉手 */
+.side-rail::before {
+  content: '';
+  position: absolute;
+  /* 收起时露出来的是容器左侧那 13px，拉手必须贴着左边，否则会被一起抽到屏幕外 */
+  left: 4px;
+  top: 50%;
+  width: 4px;
+  height: 46px;
+  margin-top: -23px;
+  border-radius: 2px;
+  background: var(--rail-accent);
+  opacity: .85;
+  transition: opacity .28s var(--ease-out), background-color .6s var(--ease-out);
+}
+
+/* 露出的边只有 13px，左边再撑一块透明热区，鼠标不用压得那么准 */
+.side-rail::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: -10px;
+  width: 10px;
+}
+
+/* 鼠标压到边上、或 Tab 焦点进来，就整只拉出来 */
+body.past-first .side-rail:hover,
+body.past-first .side-rail:focus-within,
+body.past-first .side-rail.is-open {
+  transform: translate(0, -50%);
+  /* 这里重写了 transition，底色和阴影那两条也要带上，否则悬停时翻页颜色会瞬变 */
+  transition: transform .46s var(--ease-out) 0s,
+              opacity .5s var(--ease-out),
+              visibility .5s,
+              background-color .6s var(--ease-out),
+              box-shadow .6s var(--ease-out);
+}
+
+/* 拉出来之后拉手就没用了，淡掉 */
+body.past-first .side-rail:hover::before,
+body.past-first .side-rail:focus-within::before,
+body.past-first .side-rail.is-open::before {
+  opacity: 0;
+}
+
+/* ---------- 左侧圆点导航 ---------- */
+.dot-nav {
+  /* 两个颜色都随屏切换：未激活的点要压在背景上看得见，
+     激活的点用该屏色系里更亮的一档，不再固定是朱砂红 */
+  --dot-idle: rgba(29, 31, 33, .30);
+  --dot-on: var(--tick);
+
+  position: fixed;
+  left: 12px;
+  top: 50%;
+  transform: translateY(-50%);
+  z-index: 55;
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+.dot-nav button {
+  position: relative;
+  width: 26px;
+  height: 26px;
+  padding: 0;
+  border: 0;
+  background: none;
+  cursor: pointer;
+  display: grid;
+  place-items: center;
+}
+.dot-nav i {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: var(--dot-idle);
+  transition: transform .35s var(--ease-back), background-color .4s var(--ease-out);
+}
+
+/* 深色底的那几屏，圆点翻成浅色；影讯那屏（浅米）保持深点。
+   激活点的颜色取该屏色系里更亮的一档——它落在深色页面上，
+   抽屉那套给浅底用的深绿/深棕在这里会糊掉。 */
+/* 第 2 屏是彩色竖条墙，圆点用暖白才压得住任何一根条 */
+/* 首屏是深色幕布，圆点得用浅色才看得见；激活色取首屏那抹朱砂 */
+/* 页码牌（--tip-*）也跟着每屏走：底色取该屏主色调本身（不是统一米白），
+   上面压一层同色系的纵向渐变，半透明 + 背景模糊，底下的画面还透得出来；
+   字取同色系里最亮/最深的那一层，保证在任何底子上都读得清。 */
+body.is-viewing-0 .dot-nav {
+  --dot-idle: rgba(247, 241, 231, .34); --dot-on: #d97a52;
+  /* 首屏是暖褐色实拍：牌子取照片里那层老木色，压得太实会像块黑胶布 */
+  --tip-rgb: 76, 52, 32;
+  --tip-a1: .90;
+  --tip-a2: .74;
+  --tip-fg: #f7e6ce;
+  --tip-bd: rgba(247, 227, 199, .18);
+}
+body.is-viewing-1 .dot-nav {
+  --dot-idle: rgba(255, 255, 255, .45); --dot-on: #f4ece0;
+  /* 影藏：六色竖条墙，圆点落在最左一根朱红条上 */
+  --tip-rgb: 132, 50, 32;
+  --tip-fg: #f9e9d9;
+  --tip-bd: rgba(249, 233, 217, .18);
+}
+/* 第一件展开时，宣纸会铺到页码点底下——圆点这时得翻成深色，牌子也回到米纸 */
+body.is-viewing-1.has-paper-first .dot-nav {
+  --dot-idle: rgba(70, 44, 22, .4); --dot-on: #8c4a2c;
+  --tip-rgb: 250, 243, 230;
+  --tip-a1: .94;
+  --tip-a2: .86;
+  --tip-fg: #8a3a20;
+  --tip-bd: rgba(97, 68, 36, .14);
+}
+body.is-viewing-2 .dot-nav {
+  --dot-idle: rgba(255, 255, 255, .40); --dot-on: #9dae9a;
+  --tip-rgb: 54, 62, 52;                /* 影史：灰绿 */
+  --tip-fg: #e9e9d9;
+  --tip-bd: rgba(233, 233, 217, .15);
+}
+body.is-viewing-3 .dot-nav {
+  --dot-idle: rgba(255, 255, 255, .40); --dot-on: #d08b5e;
+  --tip-rgb: 92, 44, 30;                /* 流派地图：深栗红 */
+  --tip-fg: #f7e5cf;
+  --tip-bd: rgba(247, 229, 207, .16);
+}
+body.is-viewing-4 .dot-nav {
+  --dot-idle: rgba(255, 255, 255, .40); --dot-on: #8fb4d4;
+  --tip-rgb: 42, 56, 68;                /* 经典剧目：蓝灰 */
+  --tip-fg: #e3ecf4;
+  --tip-bd: rgba(226, 236, 244, .16);
+}
+body.is-viewing-5 .dot-nav {
+  --dot-idle: rgba(29, 31, 33, .30); --dot-on: #b24a2e;
+  --tip-rgb: 251, 245, 233;             /* 影讯：米宣纸 */
+  --tip-a1: .95;
+  --tip-a2: .87;
+  --tip-fg: #8a3a20;
+  --tip-bd: rgba(97, 68, 36, .14);
+}
+body.is-viewing-6 .dot-nav {
+  --dot-idle: rgba(255, 255, 255, .40); --dot-on: #9aa3a8;
+  --tip-rgb: 38, 44, 48;                /* 工序：铁黑 */
+  --tip-fg: #e4e9eb;
+  --tip-bd: rgba(226, 231, 233, .15);
+}
+body.is-viewing-7 .dot-nav {
+  --dot-idle: rgba(255, 255, 255, .40); --dot-on: #7fb8a1;
+  /* 传承是左深右纸的拼接底，圆点落在左边深绿那半 */
+  --tip-rgb: 42, 56, 50;
+  --tip-fg: #e4efe8;
+  --tip-bd: rgba(227, 239, 232, .15);
+}
+body.is-viewing-8 .dot-nav {
+  --dot-idle: rgba(255, 255, 255, .40); --dot-on: #8f989d;
+  --tip-rgb: 36, 42, 46;                /* 页脚：近黑 */
+  --tip-fg: #e3e8ea;
+  --tip-bd: rgba(226, 231, 234, .14);
+}
+/* 原来鼠标移上去会有页码数字淡入当反馈，数字去掉后得补一个：
+   悬停时先透出该屏的强调色、点略微放大，告诉用户这里能点 */
+.dot-nav button:hover i {
+  background: var(--dot-on);
+  opacity: .75;
+  transform: scale(1.7);
+}
+
+/* ---------- 页码提示条 ---------- */
+/* 宽度交给文字自己撑，不再按字数写死一个 --tip-w：字宽一变、字数一多，
+   尾字就会被 overflow 裁掉（「皮影工厂」就是这么缺角的）。
+   现在整条宽度由内容决定，「抽出来」的观感改成 clip-path 从左往右擦，
+   再加一点横向位移，看上去仍然是那条横条从圆点后面滑出来。
+   另外垫一张小牌：圆点固定在左边，底下压着各屏自己的正文
+   （影讯那屏的标题行就贴着左边界），光靠字色飘在字上会糊成一团。
+   牌面的色相取该屏主色调（--tip-rgb / --tip-fg，见上方 is-viewing-N），
+   半透明 + 背景模糊 + 一层极浅的纵向渐变，底下的画面还透得出来，
+   不是一块刷平的死色。 */
+.dot-tip {
+  position: absolute;
+  left: 100%;
+  top: 50%;
+  height: 26px;
+  margin-left: 6px;
+  padding: 0 11px 0 9px;
+  display: flex;
+  align-items: center;
+  border-radius: 2px;
+  /* 兜底色（万一没匹配到屏，或老浏览器不认渐变），再叠一层同色渐变做纸感。
+     默认值写在 var() 的兜底位上——写在选择器里会盖掉 .dot-nav 继承下来的分屏色。 */
+  background-color: rgba(var(--tip-rgb, 250, 244, 232), var(--tip-a2, .84));
+  background-image: linear-gradient(180deg,
+                    rgba(var(--tip-rgb, 250, 244, 232), var(--tip-a1, .94)),
+                    rgba(var(--tip-rgb, 250, 244, 232), var(--tip-a2, .84)));
+  -webkit-backdrop-filter: blur(9px) saturate(1.06);
+  backdrop-filter: blur(9px) saturate(1.06);
+  box-shadow: 0 0 0 1px var(--tip-bd, rgba(97, 68, 36, .12)),
+              0 4px 14px rgba(18, 12, 6, .20);
+  transform: translate(-4px, -50%);
+  opacity: 0;
+  pointer-events: none;
+  /* 负的上下内缩留出投影的空间，否则投影会被自己裁掉 */
+  clip-path: inset(-10px 100% -10px 0);
+  transition: clip-path .44s var(--ease-out),
+              opacity .3s var(--ease-out),
+              transform .44s var(--ease-out);
+}
+/* 贴圆点那一侧的细亮条，取该屏的强调色 */
+.dot-tip::before {
+  content: '';
+  flex: 0 0 auto;
+  width: 2px;
+  height: 13px;
+  margin-right: 9px;
+  border-radius: 1px;
+  background: var(--dot-on);
+}
+.dot-tip b {
+  flex: 0 0 auto;
+  color: var(--tip-fg, #8a3a20);
+  font-size: 14px;
+  font-weight: 400;
+  letter-spacing: .05em;
+  white-space: nowrap;
+  transition: color .5s var(--ease-out);
+}
+.dot-nav button:hover .dot-tip,
+.dot-nav button.is-peek .dot-tip {
+  opacity: 1;
+  transform: translate(0, -50%);
+  clip-path: inset(-10px -10px -10px 0);
+}
+.dot-nav button.is-active i {
+  background: var(--dot-on);
+  opacity: 1;
+  transform: scale(2.1);
+}
+
+/* 翻页时先把悬停态压回去。
+   圆点是 fixed 的，用滚轮翻页时鼠标常常一动不动地停在上面，
+   :hover 就会一路挂到新的一屏上——「都翻走了，那一屏的名字还吊在这儿」。
+   deck.js 每次翻页给 .dot-nav 加 is-quiet，指针真的挪动 8px 以上才摘掉；
+   刚落地那一屏的自动提示（is-peek）不受影响。 */
+.dot-nav.is-quiet button:not(.is-peek) .dot-tip {
+  opacity: 0;
+  transform: translate(-4px, -50%);
+  clip-path: inset(-10px 100% -10px 0);
+}
+.dot-nav.is-quiet button:hover:not(.is-active) i {
+  background: var(--dot-idle);
+  opacity: 1;
+  transform: none;
+}
+
+/* ---------- 分屏容器 ---------- */
+.deck {
+  will-change: transform;
+  transition: transform .95s var(--ease-out);
+}
+.sec {
+  position: relative;
+  width: 100%;
+  height: 100vh;
+  overflow: hidden;
+}
+
+/* 各屏底色（纯色，不用任何背景图） */
+.sec-tone-1 { background: #2f3a33; }
+.sec-tone-2 { background: #3a4038; }
+.sec-tone-3 { background: var(--paper-2); }
+.sec-tone-4 { background: #3b2119; }
+.sec-tone-5 { background: linear-gradient(90deg, #2a3330 0 48%, #efece4 48% 100%); }
+.sec-tone-6 { background: #2b3742; }
+.sec-tone-7 { background: #1f2326; }
+
+/* ---------- 01 AI 问答首屏 ---------- */
+/* 这一屏只做一件事：把问题交出去。居中一个大输入框，发出去就跳对话页。 */
+.sec-ask {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0 7%;
+  background: #17110e;
+  overflow: hidden;
+}
+/* 首屏背景：六张实拍轮换。图本身压暗压灰，正文才压得住；
+   底下的 #17110e 是图片没加载出来时的兜底色 */
+.hero-bg {
+  position: absolute;
+  inset: 0;
+  overflow: hidden;
+  pointer-events: none;
+  background: #17110e;
+}
+.hero-slide {
+  position: absolute;
+  inset: -4%;
+  background-position: 50% 50%;
+  background-size: cover;
+  opacity: 0;
+  transition: opacity 1.5s ease;
+  will-change: opacity, transform;
+  animation: heroDrift 19s ease-in-out infinite alternate;
+}
+.hero-slide:nth-child(2) { animation-duration: 23s; animation-direction: alternate-reverse; }
+.hero-slide:nth-child(3) { animation-duration: 21s; }
+.hero-slide:nth-child(4) { animation-duration: 25s; animation-direction: alternate-reverse; }
+.hero-slide:nth-child(5) { animation-duration: 20s; }
+.hero-slide:nth-child(6) { animation-duration: 24s; animation-direction: alternate-reverse; }
+.hero-slide.is-on { opacity: 1; }
+/* 原图直出，不再压黑色蒙版；字靠自己的投影和暖黑玻璃层站住 */
+
+/* 幕布正中那点灯：靠一层极淡的光撑出纵深，不用任何图片 */
+.ask-veil {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  /* 只留幕布正中那点灯，底部那层黑影去掉了，照片不再被压 */
+  background:
+    radial-gradient(56% 50% at 50% 40%, rgba(214, 122, 74, .13), rgba(214, 122, 74, 0) 72%);
+}
+
+.ask-wrap {
+  position: relative;
+  z-index: 2;
+  width: min(880px, 100%);
+  margin-top: -3vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+}
+
+/* 入场：逐件上浮 */
+.ask-kicker, .ask-title, .ask-lede, .ask-box, .ask-chips, .ask-note {
+  opacity: 0;
+  transform: translateY(18px);
+  transition: opacity .85s var(--ease-out), transform .85s var(--ease-out);
+}
+.sec-ask.is-in .ask-kicker { opacity: 1; transform: none; transition-delay: .10s; }
+.sec-ask.is-in .ask-title  { opacity: 1; transform: none; transition-delay: .20s; }
+.sec-ask.is-in .ask-lede   { opacity: 1; transform: none; transition-delay: .30s; }
+.sec-ask.is-in .ask-box    { opacity: 1; transform: none; transition-delay: .42s; }
+.sec-ask.is-in .ask-chips  { opacity: 1; transform: none; transition-delay: .54s; }
+.sec-ask.is-in .ask-note   { opacity: 1; transform: none; transition-delay: .70s; }
+
+/* 整屏的黑色蒙版去掉了，只留这一块：罩着文字这一栏、往外羽化干净，
+   照片四边还是原样，中间读得清 */
+.ask-wrap::before {
+  content: '';
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  width: 132%;
+  height: 168%;
+  transform: translate(-50%, -50%);
+  z-index: -1;
+  pointer-events: none;
+  background: radial-gradient(58% 50% at 50% 50%,
+    rgba(9, 5, 3, .40) 0%, rgba(9, 5, 3, .28) 46%, rgba(9, 5, 3, .10) 70%, rgba(9, 5, 3, 0) 88%);
+}
+
+.ask-kicker {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  margin: 0 0 20px;
+  font-size: 12px;
+  letter-spacing: .34em;
+  text-indent: .34em;
+  color: rgba(251, 246, 236, .88);
+  text-shadow: 0 1px 3px rgba(4, 2, 1, .85), 0 0 18px rgba(4, 2, 1, .7);
+}
+.ask-kicker::before,
+.ask-kicker::after {
+  content: '';
+  width: 28px;
+  height: 1px;
+  background: rgba(200, 86, 58, .6);
+}
+
+.ask-title {
+  margin: 0 0 18px;
+  text-shadow: 0 1px 3px rgba(4, 2, 1, .62), 0 4px 18px rgba(4, 2, 1, .82), 0 10px 60px rgba(4, 2, 1, .7);
+  font-size: clamp(30px, 4.1vw, 54px);
+  font-weight: 600;
+  line-height: 1.26;
+  letter-spacing: .05em;
+  color: #f7f1e7;
+}
+.ask-title em {
+  font-style: normal;
+  /* 跟导航匾同一个红 */
+  color: #d12a31;
+}
+
+.ask-lede {
+  max-width: 34em;
+  margin: 0 0 40px;
+  font-size: 15px;
+  line-height: 1.95;
+  letter-spacing: .02em;
+  color: rgba(251, 246, 236, .94);
+  /* 不压图了，小字只能靠自己的影：紧贴的一层 + 一圈散开的 */
+  text-shadow: 0 1px 3px rgba(4, 2, 1, .9), 0 2px 10px rgba(4, 2, 1, .82), 0 0 26px rgba(4, 2, 1, .7);
+}
+
+/* ---------- 大输入框 ---------- */
+.ask-box {
+  position: relative;
+  display: flex;
+  align-items: center;
+  width: 100%;
+  height: 74px;
+  padding: 0 11px 0 28px;
+  border-radius: 999px;
+  border: 1px solid rgba(247, 241, 231, .2);
+  /* 照片变亮之后，白玻璃的输入框会被背景吃掉；换暖黑玻璃，哪张图上都读得出来 */
+  background: rgba(26, 16, 11, .4);
+  box-shadow: 0 22px 64px rgba(0, 0, 0, .42), inset 0 1px 0 rgba(255, 255, 255, .08);
+  backdrop-filter: blur(14px);
+  -webkit-backdrop-filter: blur(14px);
+  transition: border-color .35s, background .35s, box-shadow .35s;
+}
+.ask-box:focus-within {
+  border-color: rgba(209, 42, 49, .72);
+  background: rgba(26, 16, 11, .52);
+  box-shadow: 0 26px 76px rgba(0, 0, 0, .52), 0 0 0 4px rgba(209, 42, 49, .14);
+}
+.ask-box.is-shake { animation: askShake .42s var(--ease-out); }
+@keyframes askShake {
+  0%, 100% { transform: translateX(0); }
+  22% { transform: translateX(-7px); }
+  52% { transform: translateX(6px); }
+  78% { transform: translateX(-3px); }
+}
+
+.ask-ico {
+  flex: 0 0 auto;
+  width: 20px;
+  height: 20px;
+  margin-right: 14px;
+  color: rgba(247, 241, 231, .34);
+  transition: color .35s;
+}
+.ask-box:focus-within .ask-ico { color: rgba(214, 122, 74, .9); }
+
+.ask-input {
+  flex: 1 1 auto;
+  min-width: 0;
+  height: 100%;
+  padding: 0;
+  border: 0;
+  outline: 0;
+  background: none;
+  color: #f7f1e7;
+  font-family: inherit;
+  font-size: 16px;
+  letter-spacing: .02em;
+}
+.ask-input::placeholder { color: rgba(247, 241, 231, .5); }
+
+.ask-go {
+  flex: 0 0 auto;
+  width: 52px;
+  height: 52px;
+  display: grid;
+  place-items: center;
+  border: 0;
+  border-radius: 50%;
+  background: linear-gradient(158deg, #dc3a41, #a71e25);
+  color: #fff6ef;
+  cursor: pointer;
+  box-shadow: 0 10px 26px rgba(167, 30, 37, .48);
+  transition: transform .32s var(--ease-back), filter .3s, box-shadow .3s;
+}
+.ask-go svg { width: 20px; height: 20px; }
+.ask-go:hover { transform: scale(1.07); filter: brightness(1.1); box-shadow: 0 14px 34px rgba(167, 30, 37, .58); }
+.ask-go:active { transform: scale(.95); }
+
+/* ---------- 下方几个问法 ---------- */
+.ask-chips {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 10px;
+  margin-top: 24px;
+}
+.ask-chips button {
+  padding: 9px 19px;
+  border-radius: 999px;
+  border: 1px solid rgba(247, 241, 231, .2);
+  background: rgba(26, 16, 11, .34);
+  color: rgba(247, 241, 231, .82);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  font-family: inherit;
+  font-size: 13px;
+  letter-spacing: .02em;
+  cursor: pointer;
+  transition: color .28s, border-color .28s, background .28s, transform .28s var(--ease-out);
+}
+.ask-chips button:hover {
+  color: #f7f1e7;
+  border-color: rgba(214, 122, 74, .55);
+  background: rgba(214, 122, 74, .13);
+  transform: translateY(-2px);
+}
+
+/* ---------- 首屏就地作答 ---------- */
+/* 问完不跳页：答案就摊在输入框下面，暖黑玻璃 + 顶上一道朱红细线，
+   跟输入框、问法胶囊是同一套料。弹出时整块往上顶，下面的问法先收起来。 */
+.ask-live {
+  position: relative;
+  width: 100%;
+  margin-top: 20px;
+  padding: 20px 24px 16px;
+  text-align: left;
+  border-radius: 14px;
+  border: 1px solid rgba(247, 241, 231, .16);
+  background: rgba(24, 15, 10, .62);
+  box-shadow: 0 24px 70px rgba(0, 0, 0, .46), inset 0 1px 0 rgba(255, 255, 255, .06);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  opacity: 0;
+  transform: translateY(14px);
+  transition: opacity .5s var(--ease-out), transform .5s var(--ease-out);
+}
+.ask-live[hidden] { display: none; }
+.ask-live.is-on { opacity: 1; transform: none; }
+/* 顶上那根朱红短杆：跟站里其它强调条的用法一致 */
+.ask-live::before {
+  content: '';
+  position: absolute;
+  left: 24px;
+  top: -1px;
+  width: 46px;
+  height: 2px;
+  background: linear-gradient(90deg, #d12a31, rgba(209, 42, 49, 0));
+}
+
+.ask-live-head {
+  display: flex;
+  align-items: baseline;
+  gap: 9px;
+  margin-bottom: 12px;
+  font-size: 12.5px;
+  letter-spacing: .04em;
+  color: rgba(251, 246, 236, .58);
+}
+.ask-live-head i {
+  flex: 0 0 auto;
+  width: 5px;
+  height: 5px;
+  margin-bottom: 3px;
+  border-radius: 50%;
+  background: #d12a31;
+  box-shadow: 0 0 10px rgba(209, 42, 49, .9);
+}
+.ask-live-head b {
+  font-weight: 400;
+  color: rgba(247, 240, 229, .92);
+}
+
+/* 正文：只让这一块滚，头尾钉住；长回答不会把首屏撑破 */
+.ask-live-body {
+  max-height: min(30vh, 268px);
+  overflow: auto;
+  padding-right: 6px;
+  font-size: 14.5px;
+  line-height: 1.92;
+  letter-spacing: .015em;
+  color: rgba(247, 241, 231, .93);
+  scrollbar-width: thin;
+  scrollbar-color: rgba(214, 122, 74, .45) transparent;
+}
+.ask-live-body::-webkit-scrollbar { width: 6px; }
+.ask-live-body::-webkit-scrollbar-thumb {
+  border-radius: 3px;
+  background: rgba(214, 122, 74, .38);
+}
+.ask-live-body p { margin: 0 0 10px; }
+.ask-live-body p:last-child { margin-bottom: 0; }
+.ask-live-body b { font-weight: 600; color: #fff4e4; }
+/* 行首 "- " 的条目：朱红小点做悬挂缩进 */
+.ask-live-body p.is-li {
+  position: relative;
+  padding-left: 16px;
+  color: rgba(247, 241, 231, .86);
+}
+.ask-live-body p.is-li::before {
+  content: '';
+  position: absolute;
+  left: 2px;
+  top: .78em;
+  width: 4px;
+  height: 4px;
+  border-radius: 50%;
+  background: rgba(214, 122, 74, .85);
+}
+
+/* 等回答时的三个点 */
+.ask-live-wait {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  color: rgba(247, 241, 231, .6);
+}
+.ask-live-wait i {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: rgba(214, 122, 74, .9);
+  animation: askPulse 1.1s ease-in-out infinite;
+}
+@keyframes askPulse {
+  0%, 100% { opacity: .25; transform: scale(.8); }
+  50% { opacity: 1; transform: scale(1.15); box-shadow: 0 0 12px rgba(214, 122, 74, .8); }
+}
+.ask-live-text { white-space: pre-wrap; }
+/* 打字时末尾那点灯 */
+.ask-live-text::after {
+  content: '';
+  display: inline-block;
+  width: 2px;
+  height: 1em;
+  margin-left: 3px;
+  vertical-align: -2px;
+  background: rgba(214, 122, 74, .9);
+  animation: askCaret .9s steps(1) infinite;
+}
+@keyframes askCaret { 0%, 50% { opacity: 1; } 50.1%, 100% { opacity: 0; } }
+
+.ask-live-err { color: rgba(247, 220, 200, .86); }
+.ask-live-err a { color: #f0a58a; text-decoration: none; border-bottom: 1px solid rgba(240, 165, 138, .45); }
+
+.ask-live-foot {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 14px;
+  margin-top: 14px;
+  padding-top: 12px;
+  border-top: 1px solid rgba(247, 241, 231, .12);
+  font-size: 12.5px;
+}
+.ask-live-more {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  color: rgba(247, 241, 231, .78);
+  text-decoration: none;
+  letter-spacing: .04em;
+  transition: color .28s;
+}
+.ask-live-more:hover { color: #f7f1e7; }
+.ask-live-more span { color: #d9805c; transition: transform .28s var(--ease-out); }
+.ask-live-more:hover span { transform: translateX(3px); }
+.ask-live-close {
+  padding: 4px 12px;
+  border-radius: 999px;
+  border: 1px solid rgba(247, 241, 231, .16);
+  background: none;
+  color: rgba(247, 241, 231, .6);
+  font-family: inherit;
+  font-size: 12px;
+  cursor: pointer;
+  transition: color .28s, border-color .28s, background .28s;
+}
+.ask-live-close:hover {
+  color: #f7f1e7;
+  border-color: rgba(214, 122, 74, .5);
+  background: rgba(214, 122, 74, .1);
+}
+
+/* 有答案时问法收起来，别和答案抢地方；收起答案再露出来 */
+.ask-wrap.has-answer .ask-chips {
+  display: none;
+}
+
+@media (max-width: 900px) {
+  .ask-live { padding: 16px 16px 12px; border-radius: 12px; }
+  .ask-live::before { left: 16px; }
+  .ask-live-body { max-height: min(38vh, 300px); font-size: 14px; }
+}
+
+/* 矮屏（笔记本横屏、窗口没拉满）：答案一开，整块会比屏高，
+   内容会被 .sec 的 overflow 从上面切掉 → 把纵向间距和字号一起收紧 */
+@media (min-width: 901px) and (max-height: 760px) {
+  .ask-wrap { margin-top: 0; }
+  .ask-kicker { margin-bottom: 12px; }
+  .ask-title { margin-bottom: 12px; font-size: clamp(26px, 3.2vw, 40px); }
+  .ask-lede { margin-bottom: 22px; font-size: 14px; line-height: 1.8; }
+  .ask-box { height: 62px; }
+  .ask-chips { margin-top: 16px; }
+  .ask-live { margin-top: 14px; padding: 15px 20px 11px; }
+  .ask-live-head { margin-bottom: 9px; }
+  .ask-live-body { max-height: min(24vh, 200px); font-size: 13.6px; line-height: 1.8; }
+  .ask-live-foot { margin-top: 10px; padding-top: 9px; }
+}
+
+.ask-note {
+  position: absolute;
+  left: 50%;
+  bottom: 6.5%;
+  transform: translate(-50%, 18px);
+  margin: 0;
+  font-size: 12px;
+  letter-spacing: .16em;
+  color: rgba(251, 246, 236, .62);
+  text-shadow: 0 1px 3px rgba(4, 2, 1, .8), 0 0 14px rgba(4, 2, 1, .6);
+  white-space: nowrap;
+}
+.sec-ask.is-in .ask-note { transform: translate(-50%, 0); }
+
+/* ---------- 02 / 03 竖条 ---------- */
+.slots {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: stretch;
+  gap: 0;
+  padding: 0;
+}
+.sec-slots-half .slots-half {
+  inset: 0 0 auto 0;
+  height: 58%;
+  padding-bottom: 0;
+}
+.slot {
+  position: relative;
+  flex: 1 1 0;
+  overflow: hidden;
+  height: 100%;
+  /* 条滑走后露出的底，压深一点，滚动才有厚度 */
+  background: rgba(0, 0, 0, .22);
+}
+.slot-bar {
+  position: absolute;
+  /* 条和槽等高：往上滚时底部露底、往下滚时顶部露底，
+     位移才看得出来（铺满反而看不出在动） */
+  left: 0;
+  right: 0;
+  top: 0;
+  bottom: 0;
+  background-color: rgba(255, 255, 255, .10);
+  box-shadow: inset -1px 0 0 rgba(0, 0, 0, .14), inset 0 1px 0 rgba(255, 255, 255, .10);
+  /* 入场飞入走 transform */
+  transform: translateY(var(--from, 100%));
+  transition: transform 1.15s var(--ease-back);
+  transition-delay: var(--d, 0s);
+}
+/* 条内两道横缝，随鼠标在条身上上下滑。
+   条本身是满屏的，整体位移会被导航和底部滚动条挡住看不见，
+   所以把"能看见的位移"放在条内部。 */
+.sec-slots-half .slot-bar::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background-image: linear-gradient(180deg,
+    transparent 0,
+    rgba(0, 0, 0, .22) 32%,
+    rgba(0, 0, 0, .22) 68%,
+    transparent 100%);
+  background-repeat: no-repeat;
+  background-size: 100% 34px;
+  background-position: 0 calc(50% + var(--py, 0px));
+  /* 鼠标不动时整条暗带藏起来，页面回到原来那面干净的条纹墙 */
+  opacity: 0;
+  transition: opacity .45s var(--ease-out);
+}
+body.slots-live .sec-slots-half .slot-bar::after { opacity: 1; }
+.sec.is-in .slot-bar { transform: translateY(0); }
+
+/* ---------- 02 六色墙 + 影箱六件 ---------- */
+/* 六块彩色底，一块一色。块身比画面高出一截（上下各溢出 22%），
+   翻页时奇数块往上滑、偶数块往下滑，相邻两块永远反着走。 */
+.panels {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  overflow: hidden;
+}
+.panels i {
+  position: relative;
+  top: -22%;
+  height: 144%;
+  flex: 1 1 0;
+  background-color: var(--pc, #6d6a55);
+  /* 一块布的光影。纯色块平移肉眼是看不出来的，得靠这层明暗：
+     块一滑，亮暗边界就跟着走，六块又各走各的，错落才看得出来 */
+  background-image:
+    var(--pt, none),
+    linear-gradient(180deg,
+      rgba(255, 255, 255, .13) 0%,
+      rgba(255, 255, 255, .02) 16%,
+      rgba(0, 0, 0, .14) 46%,
+      rgba(255, 255, 255, .05) 64%,
+      rgba(0, 0, 0, .17) 100%);
+  background-size: var(--ps, auto), 100% 100%;
+  background-repeat: repeat, no-repeat;
+  transform: translateY(var(--sh, 9%));
+  transition: transform 1.02s cubic-bezier(.22, .72, .18, 1);
+  transition-delay: var(--pd, 0s);
+  will-change: transform;
+}
+/* 一上一下，相邻两块永远反向 */
+.panels i:nth-child(odd)  { --sh: -9%; }
+.panels i:nth-child(even) { --sh: 9%; }
+/* 进屏时错开的块合拢归位；往上翻则符号互换，方向也就反了 */
+.sec.is-in .panels i { transform: translateY(0); }
+body[data-dir="up"] .panels i:nth-child(odd)  { --sh: 9%; }
+body[data-dir="up"] .panels i:nth-child(even) { --sh: -9%; }
+
+/* 六块底各自压一种非遗剪纸纹样：团花、回纹、缠枝、鱼鳞、如意云、方胜。
+   纹样走 --pt（图）+ --ps（大小），叠在光影之上，块一滑花纹也跟着走 */
+.panels i:nth-child(1) { --pt: url("data:image/svg+xml,%3Csvg%20xmlns%3D%27http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%27%20width%3D%27170%27%20height%3D%27170%27%20viewBox%3D%270%200%20170%20170%27%3E%0A%3Cg%20fill%3D%27none%27%20stroke%3D%27%23fff%27%20stroke-opacity%3D%27.145%27%20stroke-width%3D%271.8%27%20stroke-linecap%3D%27round%27%3E%0A%3Ccircle%20cx%3D%2785%27%20cy%3D%2785%27%20r%3D%2746%27%2F%3E%0A%3Ccircle%20cx%3D%2785%27%20cy%3D%2785%27%20r%3D%2727%27%20stroke-dasharray%3D%275%208%27%2F%3E%0A%3Ccircle%20cx%3D%2785%27%20cy%3D%2785%27%20r%3D%279%27%2F%3E%0A%3Cellipse%20cx%3D%2785%27%20cy%3D%2749%27%20rx%3D%276%27%20ry%3D%2714%27%2F%3E%0A%3Cellipse%20cx%3D%2785%27%20cy%3D%2749%27%20rx%3D%276%27%20ry%3D%2714%27%20transform%3D%27rotate%2845%2085%2085%29%27%2F%3E%0A%3Cellipse%20cx%3D%2785%27%20cy%3D%2749%27%20rx%3D%276%27%20ry%3D%2714%27%20transform%3D%27rotate%2890%2085%2085%29%27%2F%3E%0A%3Cellipse%20cx%3D%2785%27%20cy%3D%2749%27%20rx%3D%276%27%20ry%3D%2714%27%20transform%3D%27rotate%28135%2085%2085%29%27%2F%3E%0A%3Cellipse%20cx%3D%2785%27%20cy%3D%2749%27%20rx%3D%276%27%20ry%3D%2714%27%20transform%3D%27rotate%28180%2085%2085%29%27%2F%3E%0A%3Cellipse%20cx%3D%2785%27%20cy%3D%2749%27%20rx%3D%276%27%20ry%3D%2714%27%20transform%3D%27rotate%28225%2085%2085%29%27%2F%3E%0A%3Cellipse%20cx%3D%2785%27%20cy%3D%2749%27%20rx%3D%276%27%20ry%3D%2714%27%20transform%3D%27rotate%28270%2085%2085%29%27%2F%3E%0A%3Cellipse%20cx%3D%2785%27%20cy%3D%2749%27%20rx%3D%276%27%20ry%3D%2714%27%20transform%3D%27rotate%28315%2085%2085%29%27%2F%3E%0A%3Ccircle%20cx%3D%270%27%20cy%3D%270%27%20r%3D%2717%27%2F%3E%3Ccircle%20cx%3D%27170%27%20cy%3D%270%27%20r%3D%2717%27%2F%3E%0A%3Ccircle%20cx%3D%270%27%20cy%3D%27170%27%20r%3D%2717%27%2F%3E%3Ccircle%20cx%3D%27170%27%20cy%3D%27170%27%20r%3D%2717%27%2F%3E%0A%3C%2Fg%3E%3C%2Fsvg%3E"); --ps: 170px 170px; }
+.panels i:nth-child(2) { --pt: url("data:image/svg+xml,%3Csvg%20xmlns%3D%27http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%27%20width%3D%2756%27%20height%3D%2756%27%20viewBox%3D%270%200%2056%2056%27%3E%0A%3Cg%20fill%3D%27none%27%20stroke%3D%27%23fff%27%20stroke-opacity%3D%27.145%27%20stroke-width%3D%271.8%27%20stroke-linecap%3D%27round%27%3E%0A%3Cpath%20d%3D%27M5%2051V5h46v46H19V19h18v18%27%2F%3E%0A%3C%2Fg%3E%3C%2Fsvg%3E"); --ps: 66px 66px; }
+.panels i:nth-child(3) { --pt: url("data:image/svg+xml,%3Csvg%20xmlns%3D%27http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%27%20width%3D%27130%27%20height%3D%27130%27%20viewBox%3D%270%200%20130%20130%27%3E%0A%3Cg%20fill%3D%27none%27%20stroke%3D%27%23fff%27%20stroke-opacity%3D%27.145%27%20stroke-width%3D%271.8%27%20stroke-linecap%3D%27round%27%3E%0A%3Cpath%20d%3D%27M0%2065c21-31%2044-31%2065%200s44%2031%2065%200%27%2F%3E%0A%3Cpath%20d%3D%27M0%2065c21%2031%2044%2031%2065%200s44-31%2065%200%27%2F%3E%0A%3Ccircle%20cx%3D%2732%27%20cy%3D%2747%27%20r%3D%274.5%27%2F%3E%3Ccircle%20cx%3D%2798%27%20cy%3D%2783%27%20r%3D%274.5%27%2F%3E%0A%3Cpath%20d%3D%27M32%2047l7-10M98%2083l-7%2010%27%2F%3E%0A%3C%2Fg%3E%3C%2Fsvg%3E"); --ps: 130px 130px; }
+.panels i:nth-child(4) { --pt: url("data:image/svg+xml,%3Csvg%20xmlns%3D%27http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%27%20width%3D%2792%27%20height%3D%2746%27%20viewBox%3D%270%200%2092%2046%27%3E%0A%3Cg%20fill%3D%27none%27%20stroke%3D%27%23fff%27%20stroke-opacity%3D%27.145%27%20stroke-width%3D%271.8%27%20stroke-linecap%3D%27round%27%3E%0A%3Cpath%20d%3D%27M0%2046a23%2023%200%200%201%2046%200%2023%2023%200%200%201%2046%200%27%2F%3E%0A%3Cpath%20d%3D%27M-23%2023a23%2023%200%200%201%2046%200%2023%2023%200%200%201%2046%200%27%2F%3E%0A%3C%2Fg%3E%3C%2Fsvg%3E"); --ps: 110px 55px; }
+.panels i:nth-child(5) { --pt: url("data:image/svg+xml,%3Csvg%20xmlns%3D%27http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%27%20width%3D%27104%27%20height%3D%27104%27%20viewBox%3D%270%200%20104%20104%27%3E%0A%3Cg%20fill%3D%27none%27%20stroke%3D%27%23fff%27%20stroke-opacity%3D%27.145%27%20stroke-width%3D%271.8%27%20stroke-linecap%3D%27round%27%3E%0A%3Cellipse%20cx%3D%2752%27%20cy%3D%2736%27%20rx%3D%2711%27%20ry%3D%2715%27%2F%3E%0A%3Cellipse%20cx%3D%2731%27%20cy%3D%2748%27%20rx%3D%279%27%20ry%3D%2712%27%20transform%3D%27rotate%28-28%2031%2048%29%27%2F%3E%0A%3Cellipse%20cx%3D%2773%27%20cy%3D%2748%27%20rx%3D%279%27%20ry%3D%2712%27%20transform%3D%27rotate%2828%2073%2048%29%27%2F%3E%0A%3Cpath%20d%3D%27M20%2062q32%2012%2064%200%27%2F%3E%0A%3Cpath%20d%3D%27M52%2062v10%27%2F%3E%0A%3Ccircle%20cx%3D%2752%27%20cy%3D%2778%27%20r%3D%273.5%27%2F%3E%0A%3Ccircle%20cx%3D%270%27%20cy%3D%270%27%20r%3D%2711%27%2F%3E%3Ccircle%20cx%3D%27104%27%20cy%3D%27104%27%20r%3D%2711%27%2F%3E%0A%3C%2Fg%3E%3C%2Fsvg%3E"); --ps: 104px 104px; }
+.panels i:nth-child(6) { --pt: url("data:image/svg+xml,%3Csvg%20xmlns%3D%27http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%27%20width%3D%2772%27%20height%3D%2772%27%20viewBox%3D%270%200%2072%2072%27%3E%0A%3Cg%20fill%3D%27none%27%20stroke%3D%27%23fff%27%20stroke-opacity%3D%27.145%27%20stroke-width%3D%271.8%27%20stroke-linecap%3D%27round%27%3E%0A%3Cpath%20d%3D%27M36%205%2067%2036%2036%2067%205%2036Z%27%2F%3E%0A%3Cpath%20d%3D%27M36%2020%2052%2036%2036%2052%2020%2036Z%27%2F%3E%0A%3Cpath%20d%3D%27M36%200v6M36%2066v6M0%2036h6M66%2036h6%27%2F%3E%0A%3C%2Fg%3E%3C%2Fsvg%3E"); --ps: 72px 72px; }
+
+/* 一块接一块，合拢时像一波推过去 */
+.panels i:nth-child(1) { --pd: 0s; }
+.panels i:nth-child(2) { --pd: .05s; }
+.panels i:nth-child(3) { --pd: .10s; }
+.panels i:nth-child(4) { --pd: .15s; }
+.panels i:nth-child(5) { --pd: .20s; }
+.panels i:nth-child(6) { --pd: .25s; }
+
+/* 六格＝六根色条：一格宽 16.6667%，正好一条色底。
+   卡片和纸片都以这一格的中线为准，所以每一件都落在自己那条色的正中 */
+.pcards {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: stretch;
+  pointer-events: none;
+}
+.pcell {
+  position: relative;
+  width: 16.6667%;
+  display: flex;
+  justify-content: center;
+  /* 一定要 flex-start：默认 stretch 会把卡片拉成整格高，3:4 就没了 */
+  align-items: flex-start;
+  pointer-events: none;
+}
+/* 展开的那一格整体抬到最上面，纸片才不会被隔壁卡片压住 */
+.pcell.is-open { z-index: 9; }
+
+.pcard {
+  --ink: #6b4529;
+  position: relative;
+  top: var(--y, 35%);
+  width: var(--cw, 68%);
+  aspect-ratio: 3 / 4;
+  z-index: 2;
+  margin: 0;
+  background: var(--c, #efe6d6);
+  border-radius: 1px;
+  cursor: pointer;
+  pointer-events: auto;
+  /* 外框：一道实线 + 外侧一圈暗影，像装裱的绫边 */
+  box-shadow: 0 0 0 1px rgba(107, 69, 41, .55),
+              0 14px 30px rgba(28, 14, 6, .22),
+              0 1px 0 rgba(255, 255, 255, .45) inset;
+  opacity: 0;
+  /* --sy 是入场位移（±50% → 0） */
+  transform: translate(var(--ox, 0), var(--sy, 50%)) rotate(var(--r, 0deg));
+  transition: opacity .8s var(--ease-out), transform 1.05s var(--ease-back),
+              box-shadow .5s var(--ease-out);
+  transition-delay: var(--d, 0s);
+  will-change: transform, opacity;
+}
+.pcell:nth-child(even) .pcard { --sy: -50%; }
+.sec.is-in .pcard {
+  --sy: 0%;
+  opacity: 1;
+}
+/* 点开：1/3/5 往下走、2/4/6 往上走，连名字一起让开。
+   这里直接写死 transform，不走变量——变量一变 Chrome 有可能算成"跳变"，
+   卡片会一帧到位，看起来就是"纸片先进来、卡片后消失"两段。
+   is-closing 是收起途中挂的临时类：不挂的话类一摘就退回 1.05s + 入场延迟。 */
+.pcard.is-open,
+.pcard.is-closing {
+  transition: transform .62s cubic-bezier(.34, 0, .16, 1);
+  transition-delay: 0s;
+}
+.pcell:nth-child(odd) .pcard.is-open {
+  transform: translate(var(--ox, 0), 58vh) rotate(var(--r, 0deg));
+}
+.pcell:nth-child(even) .pcard.is-open {
+  transform: translate(var(--ox, 0), -58vh) rotate(var(--r, 0deg));
+}
+.sec.is-in .pcard.is-open,
+.sec.is-in .pcard.is-open:hover { transition-delay: 0s; }
+/* 名字跟着卡片滑，走到屏边还会留半截，一起淡掉更干净 */
+.pcard-name { transition: opacity .28s linear; }
+.pcard.is-open .pcard-name { opacity: 0; }
+
+/* 宣纸方块：横排大字压头，著录竖排四列，从卡片让开的那头滑进来 */
+.pintro {
+  position: absolute;
+  left: 50%;
+  /* 纸片一律落在屏幕正中：1/3/5 的卡片靠下、2/4/6 靠上，
+     但介绍要同一个高度，不跟着卡片走 */
+  top: 50%;
+  /* 86% 一格 ≈ 一条色底的四分之三，且以格中线对称 */
+  width: 86%;
+  margin-left: -43%;
+  padding: 17px 15px 19px;
+  /* 正文一个字多大：1440 下约 20px，1920 下封顶 25px */
+  --pi-fs: clamp(15px, 1.38vw, 25px);
+  background-color: #f5edd8;
+  background-image:
+    /* 纸的颗粒 */
+    url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='120' height='120'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='4'/%3E%3C/filter%3E%3Crect width='120' height='120' filter='url(%23n)' opacity='.06'/%3E%3C/svg%3E"),
+    /* 纸的暖调，中间亮四周沉 */
+    radial-gradient(120% 90% at 50% 34%, #fbf5e6 0%, #f2e8d0 58%, #e7d9bb 100%);
+  box-shadow:
+    0 0 0 1px rgba(126, 92, 52, .45),
+    0 0 0 4px rgba(251, 246, 234, .5),
+    0 18px 44px rgba(36, 16, 4, .34),
+    inset 0 0 32px rgba(178, 148, 100, .28);
+  opacity: 0;
+  /* 跟卡片同一个位移量：两边同起同落，卡片被推出画面的同时纸片正好落位 */
+  transform: translateY(calc(-50% - 58vh));
+  transition: transform .62s cubic-bezier(.34, 0, .16, 1), opacity .42s linear;
+  pointer-events: none;
+  z-index: 1;
+}
+.pcell:nth-child(even) .pintro { transform: translateY(calc(-50% + 58vh)); }
+.pcard.is-open ~ .pintro {
+  opacity: 1;
+  transform: translateY(-50%);
+  pointer-events: auto;
+  cursor: pointer;          /* 再点一下收回去 */
+  transition-delay: 0s;
+}
+
+.pintro-title {
+  margin: 0 0 14px;
+  font-family: "Yingxi Name", "STXinwei", "华文新魏", serif;
+  font-size: clamp(33px, 3.1vw, 48px);
+  font-weight: normal;
+  line-height: 1.1;
+  letter-spacing: 0;
+  text-align: center;
+  text-indent: 0;      /* 抵掉字距在末尾留的空，视觉才真居中 */
+  color: #472c17;
+}
+.pintro-txt {
+  display: block;
+  /* width: fit-content 让这块正好等于「列数 × 列宽」，再 margin auto 居中，
+     四列才真的落在纸的正中，不会挤在右半边 */
+  width: -moz-fit-content;
+  width: fit-content;
+  margin: 0 auto;
+  /* 竖排：高度定死，一列排满自动往左开下一列；每列 21 字 × 4 列 = 84 字（含字距），
+     六段最长 83 字，不会溢出成第五列 */
+  writing-mode: vertical-rl;
+  text-orientation: upright;
+  height: calc(var(--pi-fs) * 22.5);
+  font-family: "Songti SC", "SimSun", "STSong", serif;
+  font-size: var(--pi-fs);
+  line-height: 2.05;
+  letter-spacing: .02em;
+  color: #43301c;
+  text-align: justify;
+}
+
+/* 内框 + 四边回纹带：一条细线兜住卡面，线内压一圈方折雷纹 */
+.pcard::before {
+  content: '';
+  position: absolute;
+  inset: 5px;
+  border: 1px solid rgba(107, 69, 41, .38);
+  pointer-events: none;
+  background-image:
+    url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='14' height='7' viewBox='0 0 14 7'%3E%3Cpath d='M0 6.5h2.2V1.5h3.4v5h3.4V1.5h3.4v5H14' fill='none' stroke='%236b4529' stroke-opacity='.5' stroke-width='.9'/%3E%3C/svg%3E"),
+    url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='14' height='7' viewBox='0 0 14 7'%3E%3Cpath d='M0 6.5h2.2V1.5h3.4v5h3.4V1.5h3.4v5H14' fill='none' stroke='%236b4529' stroke-opacity='.5' stroke-width='.9'/%3E%3C/svg%3E"),
+    url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='7' height='14' viewBox='0 0 7 14'%3E%3Cpath d='M6.5 0v2.2h-5v3.4h5v3.4h-5v3.4h5V14' fill='none' stroke='%236b4529' stroke-opacity='.5' stroke-width='.9'/%3E%3C/svg%3E"),
+    url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='7' height='14' viewBox='0 0 7 14'%3E%3Cpath d='M6.5 0v2.2h-5v3.4h5v3.4h-5v3.4h5V14' fill='none' stroke='%236b4529' stroke-opacity='.5' stroke-width='.9'/%3E%3C/svg%3E");
+  background-repeat: repeat-x, repeat-x, repeat-y, repeat-y;
+  background-position: left top, right bottom, left bottom, right top;
+  background-size: 14px 7px, 14px 7px, 7px 14px, 7px 14px;
+}
+
+/* 四角各钉一枚小方胜，把边框收住 */
+.pcard::after {
+  content: '';
+  position: absolute;
+  inset: 2px;
+  pointer-events: none;
+  background-image:
+    url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='9' height='9' viewBox='0 0 9 9'%3E%3Cpath d='M4.5 0 9 4.5 4.5 9 0 4.5Z' fill='%236b4529' fill-opacity='.62'/%3E%3Cpath d='M4.5 2.4 6.6 4.5 4.5 6.6 2.4 4.5Z' fill='%23f6efe3' fill-opacity='.7'/%3E%3C/svg%3E"),
+    url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='9' height='9' viewBox='0 0 9 9'%3E%3Cpath d='M4.5 0 9 4.5 4.5 9 0 4.5Z' fill='%236b4529' fill-opacity='.62'/%3E%3Cpath d='M4.5 2.4 6.6 4.5 4.5 6.6 2.4 4.5Z' fill='%23f6efe3' fill-opacity='.7'/%3E%3C/svg%3E"),
+    url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='9' height='9' viewBox='0 0 9 9'%3E%3Cpath d='M4.5 0 9 4.5 4.5 9 0 4.5Z' fill='%236b4529' fill-opacity='.62'/%3E%3Cpath d='M4.5 2.4 6.6 4.5 4.5 6.6 2.4 4.5Z' fill='%23f6efe3' fill-opacity='.7'/%3E%3C/svg%3E"),
+    url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='9' height='9' viewBox='0 0 9 9'%3E%3Cpath d='M4.5 0 9 4.5 4.5 9 0 4.5Z' fill='%236b4529' fill-opacity='.62'/%3E%3Cpath d='M4.5 2.4 6.6 4.5 4.5 6.6 2.4 4.5Z' fill='%23f6efe3' fill-opacity='.7'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: left top, right top, left bottom, right bottom;
+  background-size: 9px 9px;
+}
+
+/* 分类名：竖排大字，压在卡片上沿或下沿外面。
+   1/3/5 在卡片上方，2/4/6 在下方——正好一上一下错开 */
+.pcard-name {
+  position: absolute;
+  left: 50%;
+  transform: translateX(-50%);
+  writing-mode: vertical-rl;
+  text-orientation: upright;
+  font-family: "Yingxi Name", "STXinwei", "华文新魏", "STLiti", "KaiTi", serif;
+  font-size: clamp(34px, 5.6vw, 92px);
+  line-height: 1.02;
+  letter-spacing: .1em;
+  color: #fff6ea;
+  white-space: nowrap;
+  pointer-events: none;
+  /* 亮块上白字容易糊，垫一层暖色暗影把它压出来 */
+  text-shadow: 0 2px 14px rgba(34, 14, 4, .5), 0 1px 3px rgba(34, 14, 4, .35);
+}
+.pcell:nth-child(odd) .pcard-name { bottom: 100%; margin-bottom: 15px; }
+.pcell:nth-child(even) .pcard-name { top: 100%; margin-top: 15px; }
+/* 名字长一点的单独收一档，免得竖排比卡片还长 */
+.pcard-name--long { font-size: clamp(28px, 3.9vw, 64px); letter-spacing: .08em; }
+
+/* 器物图统一按卡片宽高的 86% 摆中间，横的竖的都不裁 */
+.pcard img {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  width: 86%;
+  height: 86%;
+  transform: translate(-50%, -50%);
+  object-fit: contain;
+  filter: drop-shadow(0 8px 16px rgba(90, 50, 26, .18));
+}
+
+/* 指到哪件，哪件轻轻抬一下、扶正一点 */
+/* 展开/收起途中不许 hover 抢 transform：:hover 的权重跟 .is-open 一样，
+   又排在后面，鼠标还压在卡片上时会把 fly-out 的位移顶掉，
+   看上去就成了"纸片先进来、卡片再飞走"两段 */
+.sec.is-in .pcard:not(.is-open):not(.is-closing):hover {
+  transform: translate(var(--ox, 0), -10px) rotate(0deg);
+  box-shadow: 0 0 0 1px rgba(107, 69, 41, .7),
+              0 26px 44px rgba(28, 14, 6, .3),
+              0 1px 0 rgba(255, 255, 255, .55) inset;
+  transition-delay: 0s;
+}
+
+/* 窄一点的桌面：一格只有 170px 上下，卡片和纸片都得收一档，不然四列贴边 */
+@media (max-width: 1200px) {
+  .pcard { width: 58%; }
+  .pintro {
+    width: 84%;
+    margin-left: -42%;
+    padding: 12px 9px 14px;
+    --pi-fs: clamp(13px, 1.32vw, 16px);
+  }
+  .pintro-title { font-size: 27px; margin-bottom: 9px; }
+  .pintro-txt { line-height: 1.92; }
+}
+
+/* 右下角「查看更多」：一条短横线起头，指过去横线伸长、字提亮，箭头轻推 */
+.p-more {
+  position: absolute;
+  right: clamp(44px, 4.6vw, 82px);
+  bottom: clamp(32px, 7vh, 64px);
+  z-index: 6;
+  display: inline-flex;
+  align-items: center;
+  gap: 11px;
+  padding: 8px 0;
+  font-size: clamp(13px, .95vw, 15px);
+  letter-spacing: .22em;
+  text-decoration: none;
+  color: rgba(252, 246, 234, .92);
+  text-shadow: 0 1px 14px rgba(16, 36, 34, .62);
+  transition: color .4s var(--ease-out);
+}
+.p-more::before {
+  content: '';
+  width: 24px;
+  height: 1px;
+  background: currentColor;
+  opacity: .62;
+  transition: width .5s var(--ease-out), opacity .4s ease;
+}
+.p-more::after {
+  content: '→';
+  margin-left: -3px;              /* 抵掉 letter-spacing 在末字后留的那点空 */
+  font-size: 12.5px;
+  letter-spacing: 0;
+  opacity: .8;
+  transition: transform .45s var(--ease-out), opacity .4s ease;
+}
+.p-more:hover,
+.p-more:focus-visible {
+  color: #fdf7ea;
+  outline: none;
+}
+.p-more:hover::before,
+.p-more:focus-visible::before { width: 32px; opacity: .9; }
+.p-more:hover::after,
+.p-more:focus-visible::after { transform: translateX(3px); opacity: 1; }
+
+/* ---------- 04 三栏 ---------- */
+/* 04 头条：米白纸 + 上下两条宝相花纹带（原图裁出的云头与莲纹，宽度铺满、高度按比例） */
+.sec-col3 {
+  background-color: #fbf6e5;
+  background-image: radial-gradient(86% 62% at 50% 46%, #fdf9ee 0%, #f8f1de 68%, #f2e8d0 100%);
+}
+
+/* 上下两条回纹带：窄带横铺，中间大片留白，不抢正文 */
+.sec-col3::before,
+.sec-col3::after {
+  content: '';
+  position: absolute;
+  left: 0;
+  right: 0;
+  height: clamp(46px, 6.2vh, 64px);
+  background: url("../img/news-bg/orn-band.svg?v=11357") repeat-x center / auto 100%;
+  opacity: .78;
+  pointer-events: none;
+}
+.sec-col3::before { top: 0; }
+.sec-col3::after { bottom: 0; transform: scaleY(-1); }
+
+.col3 {
+  position: absolute;
+  left: 6.2%;
+  right: 6.2%;
+  top: 15%;
+  bottom: 12%;
+  display: grid;
+  grid-template-columns: 1fr 1.06fr 0.94fr;
+  gap: 64px;
+}
+.col { display: flex; flex-direction: column; gap: 20px; min-width: 0; }
+.col-head {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  color: #6c5b47;
+  padding-bottom: 10px;
+  border-bottom: 1px solid var(--ph-line);
+}
+.card-img { width: 100%; border-radius: 2px; aspect-ratio: 16 / 9; }
+.ratio-4-3 { aspect-ratio: 4 / 3; margin-top: auto; }
+.row-list { display: flex; flex-direction: column; gap: 14px; }
+.row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding-bottom: 10px;
+  border-bottom: 1px dashed var(--ph-line);
+}
+.row-block { display: flex; flex-direction: column; gap: 8px; padding-bottom: 14px; border-bottom: 1px dashed var(--ph-line); }
+.row-date { height: 8px; }
+.row-list-lg { gap: 18px; }
+
+/* ---------- 04 影讯：真实文字 ---------- */
+.col3 .col { gap: 13px; }
+/* 中间那栏只有三条，让列表吃掉剩余高度、三条均分，否则底下空一大片 */
+.col3 > .col:nth-child(2) .row-list {
+  flex: 1 1 auto;
+  justify-content: space-between;
+  gap: 26px;
+}
+.col3 > .col:nth-child(2) .row-block {
+  border-bottom: 0;
+  border-top: 1px dashed var(--ph-line);
+  padding: 14px 0 0;
+}
+.col3 > .col:nth-child(2) .row-block:first-child {
+  border-top: 0;
+  padding-top: 0;
+}
+
+.col-title {
+  margin: 0;
+  font-family: "Songti SC", "SimSun", "STSong", "Noto Serif SC", serif;
+  font-size: 15px;
+  font-weight: 600;
+  letter-spacing: .3em;
+  text-indent: .3em;
+  color: #6b4529;
+}
+
+/* 配图：一圈细线压边，像贴上去的藏品照片 */
+.nw-fig {
+  margin: 0;
+  overflow: hidden;
+  border-radius: 1px;
+  background: var(--paper);
+  box-shadow: 0 0 0 1px rgba(107, 69, 41, .32),
+              0 12px 26px rgba(28, 14, 6, .13);
+}
+.nw-fig img {
+  display: block;
+  width: 100%;
+  /* 必须写 height: auto，否则 img 上的 height 属性会顶掉 aspect-ratio */
+  height: auto;
+  aspect-ratio: 16 / 9;
+  object-fit: cover;
+  object-position: center;
+}
+.nw-fig figcaption {
+  margin: 0;
+  padding: 7px 9px 8px;
+  font-size: 11px;
+  line-height: 1.55;
+  letter-spacing: .01em;
+  color: #8c7b63;
+  background: rgba(255, 255, 255, .5);
+}
+/* 头条那张吃满整栏剩下的高度：宽屏下面不至于空一大片，像杂志的通栏图 */
+.col3 > .col:first-child .nw-fig {
+  flex: 1 1 auto;
+  min-height: 150px;
+  display: flex;
+  flex-direction: column;
+}
+.col3 > .col:first-child .nw-fig img {
+  flex: 1 1 auto;
+  min-height: 0;
+  aspect-ratio: auto;
+}
+.col3 > .col:first-child .nw-fig figcaption { flex: none; }
+
+/* 右栏那张压到栏底，比例收成 4:3 */
+.nw-fig--bottom { margin-top: auto; }
+.nw-fig--bottom img { aspect-ratio: 4 / 3; }
+
+/* 眉标：分类（朱砂）+ 来源 + 日期 */
+.nw-kicker {
+  display: flex;
+  align-items: center;
+  gap: 9px;
+  margin: 0;
+  font-size: 11px;
+  letter-spacing: .06em;
+  color: #8c7b63;
+  font-variant-numeric: tabular-nums;
+}
+.nw-kicker b {
+  font-weight: 600;
+  letter-spacing: .14em;
+  color: var(--tick);
+}
+.nw-kicker i {
+  width: 1px;
+  height: 9px;
+  background: rgba(107, 69, 41, .26);
+}
+
+.nw-title {
+  margin: 0;
+  font-family: "Songti SC", "SimSun", "STSong", "Noto Serif SC", serif;
+  font-size: clamp(18px, 1.6vw, 28px);
+  font-weight: 600;
+  line-height: 1.48;
+  letter-spacing: .01em;
+  color: #241f19;
+}
+.nw-title--sm { font-size: clamp(15px, 1.25vw, 22px); line-height: 1.55; }
+
+.nw-text {
+  margin: 0;
+  font-size: clamp(11.6px, 0.95vw, 17px);
+  line-height: 1.95;
+  letter-spacing: .01em;
+  text-align: justify;
+  color: #4a4038;
+}
+.nw-sum {
+  margin: 0;
+  font-size: clamp(11.2px, 0.9vw, 16px);
+  line-height: 1.88;
+  letter-spacing: .01em;
+  text-align: justify;
+  color: #6a5c4c;
+}
+/* 段首缩进两格，像排印的报纸正文 */
+.nw-text + .nw-text { margin-top: -3px; }
+
+
+/* 窄一点的桌面：三栏各只剩 250px 上下，间距和图注都得收一档 */
+@media (max-width: 1200px) {
+  .col3 { gap: 44px; }
+  .col3 .col { gap: 10px; }
+  .nw-fig figcaption { padding: 6px 8px 7px; font-size: 10px; line-height: 1.5; }
+  .nw-kicker { font-size: 10px; gap: 7px; }
+}
+
+/* ---------- 05 流派地图 + 地区介绍 ---------- */
+.sec-title {
+  position: absolute;
+  left: 0; right: 0;
+  top: 11.6%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 16px;
+  color: rgba(233, 214, 182, .92);
+}
+.sec-title .orn { background: currentColor; opacity: .5; }
+.map-h {
+  margin: 0;
+  font-family: "Songti SC", "SimSun", "STSong", "Noto Serif SC", serif;
+  font-size: clamp(19px, 1.55vw, 27px);
+  font-weight: 600;
+  letter-spacing: .34em;
+  text-indent: .34em;
+  color: #eddfc4;
+}
+.map-sub {
+  position: absolute;
+  left: 0; right: 0;
+  top: 16.4%;
+  margin: 0;
+  text-align: center;
+  font-size: 11.5px;
+  letter-spacing: .1em;
+  color: rgba(226, 205, 172, .5);
+}
+
+.map-wrap {
+  position: absolute;
+  left: 5%;
+  right: 5%;
+  top: 21.4%;
+  bottom: 9.2%;
+  display: grid;
+  grid-template-columns: 1fr 372px;
+  gap: 42px;
+  min-height: 0;
+}
+.map-canvas {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  gap: 11px;
+  min-width: 0;
+  min-height: 0;
+}
+
+/* 一张贴在深色墙上的地图纸：外一道实线、内一道细线 */
+.map-plate {
+  position: relative;
+  flex: 1 1 auto;
+  min-height: 0;
+  /* 纸内留一圈白边：花带贴着边跑，不压国境线 */
+  padding: 7px;
+  background: #f1e7d3;
+  background-image:
+    radial-gradient(120% 90% at 50% 30%, #f8f0de 0%, #f0e5cf 62%, #e6d8bd 100%);
+  border-radius: 2px;
+  box-shadow:
+    0 0 0 1px rgba(52, 30, 12, .55),
+    0 20px 44px rgba(14, 6, 2, .45);
+}
+/* 推近时四周压一道暗角，视线收在选中的那一省上 */
+.map-plate::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  box-shadow: inset 0 0 76px rgba(74, 48, 20, .16);
+  opacity: 0;
+  transition: opacity .5s var(--ease-out);
+}
+.map-plate.is-focus::before { opacity: 1; }
+
+/* 花边：四角角花由矢量图一次铺成，随纸面缩放都保持清晰 */
+/* 四角卷草叶：四张各管一角（同一张图不能分别旋转，所以拆成四张） */
+.map-plate::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background-image:
+    url("../img/map/orn-corner-lt.svg?v=11353"),
+    url("../img/map/orn-corner-rt.svg?v=11353"),
+    url("../img/map/orn-corner-lb.svg?v=11353"),
+    url("../img/map/orn-corner-rb.svg?v=11353");
+  background-repeat: no-repeat;
+  /* 左上角被图例占着，那朵撤掉，免得线条从字上穿过去 */
+  background-position: -400px -400px, right top, left bottom, right bottom;
+  background-size: 84px 84px;
+  pointer-events: none;
+}
+.cn-map { display: block; width: 100%; height: 100%; }
+
+/* 省面。线宽不在这里定：放大时由 JS 按屏幕像素写到 #cnProv 上，
+   不然推近四倍，省界就成了一圈粗黑边 */
+.cn-prov {
+  fill: #d8c9a6;
+  stroke: rgba(86, 60, 30, .34);
+  stroke-linejoin: round;
+  transition: fill .22s var(--ease-out), stroke .22s var(--ease-out);
+}
+/* 有流派的省亮一档，一眼扫得到 */
+.cn-prov.is-has { fill: #f2e6c6; cursor: pointer; }
+.cn-prov.is-has:hover { fill: #f8efd9; }
+/* 选中：省面提亮，轮廓交给下面那层浅蓝去描 */
+.cn-prov.is-on { fill: #fbf4e2; stroke: rgba(70, 48, 24, .3); }
+.cn-prov.is-has.is-on:hover { fill: #fbf4e2; }
+
+/* ---------- 聚焦层：一道浅蓝的线沿选中省的边流走 ---------- */
+.cn-focus {
+  opacity: 0;
+  transition: opacity .34s linear;
+  pointer-events: none;
+}
+.cn-focus.is-on { opacity: 1; }
+
+.cn-focus-glow,
+.cn-focus-line {
+  fill: none;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  pointer-events: none;
+}
+/* 外圈：一圈薄光，宽一点但不抢线 */
+.cn-focus-glow {
+  stroke: rgba(150, 205, 245, .8);
+  filter: blur(calc(1.8px * var(--iz, 1)));
+  animation: cnFocusBreath 2.8s ease-in-out infinite;
+}
+/* 里圈：浅蓝的实线，虚线沿边跑，就是"在动"的那一下 */
+.cn-focus-line {
+  fill: rgba(140, 198, 238, .1);
+  stroke: #6fb3e2;
+  filter: drop-shadow(0 0 calc(3px * var(--iz, 1)) rgba(140, 196, 238, .9));
+  animation: cnFocusLine 2.8s ease-in-out infinite;
+}
+@keyframes cnFocusBreath {
+  0%, 100% { opacity: .38; }
+  50%      { opacity: .95; }
+}
+@keyframes cnFocusLine {
+  0%, 100% { opacity: .8; }
+  50%      { opacity: 1; }
+}
+
+/* 标记 */
+.cn-pin { cursor: pointer; outline: none; }
+.cn-pin-halo {
+  fill: none;
+  stroke-width: 1;
+  opacity: .5;
+  transition: opacity .2s var(--ease-out), stroke-width .2s var(--ease-out);
+}
+.cn-pin-core { stroke: #f8f0de; stroke-width: 1.2; transition: stroke .2s; }
+.cn-pin:hover .cn-pin-halo { opacity: 1; stroke-width: 1.35; }
+.cn-pin.is-on .cn-pin-halo { opacity: .95; stroke: #6aa8d4; stroke-width: 1.6; }
+.cn-pin.is-on .cn-pin-core { stroke: #fffaf0; }
+.cn-map :focus { outline: none; }
+.cn-pin:focus-visible .cn-pin-halo { opacity: 1; stroke-width: 1.8; }
+
+.cn-lab {
+  font-family: "Songti SC", "SimSun", "STSong", serif;
+  fill: rgba(38, 22, 10, .84);
+  letter-spacing: .12em;
+  paint-order: stroke;
+  stroke: rgba(248, 240, 222, .92);
+  stroke-width: 3px;
+  stroke-linejoin: round;
+  pointer-events: none;
+  transition: fill .2s;
+}
+.cn-lab.is-on { fill: #a8321f; font-weight: 600; }
+
+/* 南海诸岛插图 */
+.cn-inset {
+  position: absolute;
+  right: 22px;
+  bottom: 20px;
+  padding: 6px 5px 3px;
+  border: 1px solid rgba(86, 60, 30, .32);
+  background: rgba(252, 246, 233, .95);
+  line-height: 0;
+}
+.cn-inset svg { display: block; width: 52px; height: auto; }
+.cn-inset path { fill: none; stroke: rgba(70, 48, 24, .6); stroke-width: 1.3; }
+.cn-inset i {
+  display: block;
+  margin-top: 2px;
+  font-size: 8px;
+  font-style: normal;
+  line-height: 1.6;
+  letter-spacing: .1em;
+  text-align: center;
+  color: rgba(70, 48, 24, .8);
+}
+
+/* 影系图例：一张小签贴在图纸左上角，竖着排。
+   纸质半透，压得住底下的省界又不至于挡死；不挡点击 */
+.cn-legend {
+  position: absolute;
+  left: 22px;
+  top: 20px;
+  z-index: 3;
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+  padding: 9px 12px 10px 10px;
+  font-size: 10.5px;
+  line-height: 1.35;
+  letter-spacing: .04em;
+  color: #6b5a44;
+  background: rgba(252, 246, 233, .96);
+  border: 1px solid rgba(86, 60, 30, .22);
+  border-radius: 2px;
+  box-shadow: 0 6px 16px rgba(60, 38, 16, .13);
+  pointer-events: none;
+}
+.cn-lg-t {
+  margin-bottom: 2px;
+  font-family: "Songti SC", "SimSun", "STSong", serif;
+  font-size: 10px;
+  font-weight: 600;
+  letter-spacing: .22em;
+  text-indent: .22em;
+  color: #8c4a2c;
+}
+.cn-lg { display: inline-flex; align-items: center; gap: 6px; }
+.cn-lg i {
+  width: 7px; height: 7px;
+  border-radius: 50%;
+  flex: none;
+}
+.map-note {
+  margin: 0;
+  padding-left: 2px;
+  font-size: 9.5px;
+  line-height: 1.5;
+  letter-spacing: .03em;
+  color: rgba(224, 203, 170, .36);
+}
+.cn-lg--other i { background: #ece0c6; box-shadow: inset 0 0 0 1px rgba(86, 60, 30, .38); }
+
+/* ---------- 05 的剪纸：墙面窗花 + 两张纸面的花边 ---------- */
+/* 墙色取自参考图量化主色（#8d161a 一档的红），纹样全部是自绘矢量，
+   不再用原图裁块——原图分辨率不够，铺开会糊成一团。 */
+.sec-map {
+  background: radial-gradient(120% 95% at 50% 40%, #901a1d 0%, #8a1519 48%, #6f1014 100%);
+}
+
+/* 中间一层菱形暗纹，只当纸的肌理，压到几乎看不见 */
+.sec-map::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background: url("../img/map/orn-lattice.svg?v=11342") center / 380px 380px repeat;
+  opacity: .11;
+}
+
+/* 两侧贴边的团花：一边三朵，串在一根细茎上，靠边缘铺满整屏高 */
+.sec-map::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background:
+    url("../img/map/orn-side-left.svg?v=11342") left center / auto 100% no-repeat,
+    url("../img/map/orn-side-right.svg?v=11342") right center / auto 100% no-repeat;
+  opacity: .42;
+}
+
+/* ---------- 右栏：纸片面板 ---------- */
+.map-panel {
+  position: relative;
+  min-height: 0;
+  padding: 21px 22px 19px;
+  /* 角花的细线若从字上穿过，用纸色光晕把它切断，字始终干净 */
+  text-shadow: 0 0 7px #f3ead7, 0 0 12px #f3ead7;
+  display: flex;
+  flex-direction: column;
+  background: #f3ead7;
+  background-image: radial-gradient(120% 90% at 50% 22%, #faf3e3 0%, #f2e8d2 64%, #e8dbc0 100%);
+  color: #3a3228;
+  border-radius: 2px;
+  box-shadow:
+    0 0 0 1px rgba(52, 30, 12, .5),
+    0 18px 40px rgba(14, 6, 2, .4),
+    inset 0 0 40px rgba(178, 148, 100, .18);
+}
+/* 右栏纸面同款角花，跟左图纸面配成一对，尺寸小一档 */
+.map-panel::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background-image:
+    url("../img/map/orn-corner-lt.svg?v=11353"),
+    url("../img/map/orn-corner-rt.svg?v=11353"),
+    url("../img/map/orn-corner-lb.svg?v=11353"),
+    url("../img/map/orn-corner-rb.svg?v=11353");
+  background-repeat: no-repeat;
+  /* 左上压着小标、左下压着提示，只留右侧上下两角 */
+  background-position: -400px -400px, right top, -400px -400px, right bottom;
+  background-size: 68px 68px;
+  pointer-events: none;
+}
+.mp-intro, .mp-detail {
+  display: flex;
+  flex-direction: column;
+  min-height: 0;
+  flex: 1 1 auto;
+}
+.mp-kick {
+  margin: 0 0 8px;
+  font-size: 10.5px;
+  letter-spacing: .34em;
+  text-indent: .34em;
+  color: #a8321f;
+}
+.mp-h {
+  margin: 0 0 9px;
+  font-family: "Songti SC", "SimSun", "STSong", "Noto Serif SC", serif;
+  font-size: clamp(17px, 1.32vw, 22px);
+  font-weight: 600;
+  line-height: 1.4;
+  letter-spacing: .04em;
+  color: #2b2318;
+}
+.mp-lead {
+  margin: 0 0 14px;
+  font-size: 12px;
+  line-height: 1.9;
+  letter-spacing: .01em;
+  text-align: justify;
+  color: #5b4c3a;
+}
+
+/* 七大影系清单 */
+.mp-syslist {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+  gap: 9px;
+  flex: 1 1 auto;
+  justify-content: space-between;
+  overflow: auto;
+}
+.mp-syslist li {
+  display: grid;
+  grid-template-columns: 7px auto;
+  column-gap: 8px;
+  row-gap: 2px;
+  padding-bottom: 9px;
+  border-bottom: 1px dashed rgba(90, 62, 32, .22);
+}
+.mp-syslist li:last-child { border-bottom: 0; padding-bottom: 0; }
+.mp-syslist i {
+  width: 7px; height: 7px;
+  border-radius: 50%;
+  margin-top: 5px;
+}
+.mp-syslist b {
+  font-family: "Songti SC", "SimSun", "STSong", serif;
+  font-size: 13.5px;
+  font-weight: 600;
+  letter-spacing: .06em;
+  color: #2b2318;
+}
+.mp-syslist span {
+  grid-column: 2;
+  font-size: 11px;
+  line-height: 1.6;
+  letter-spacing: .04em;
+  color: #7d6a52;
+}
+.mp-hint {
+  margin: 12px 0 0;
+  padding-top: 10px;
+  border-top: 1px solid rgba(90, 62, 32, .18);
+  font-size: 10.5px;
+  letter-spacing: .08em;
+  color: #8b7659;
+}
+
+/* 详情 */
+.mp-top {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  margin-bottom: 9px;
+}
+.mp-sys {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 10.5px;
+  letter-spacing: .12em;
+  color: #5b4c3a;
+}
+.mp-sys::before {
+  content: '';
+  width: 7px; height: 7px;
+  border-radius: 50%;
+  background: var(--c, #a8321f);
+}
+.mp-close {
+  appearance: none;
+  border: 0;
+  background: none;
+  padding: 0;
+  font: inherit;
+  font-size: 10.5px;
+  letter-spacing: .06em;
+  color: #8b7659;
+  cursor: pointer;
+  border-bottom: 1px solid rgba(139, 118, 89, .5);
+}
+.mp-close:hover { color: #a8321f; border-color: #a8321f; }
+.mp-area {
+  margin: -4px 0 10px;
+  font-size: 11px;
+  letter-spacing: .04em;
+  color: #8b7659;
+}
+.mp-quote {
+  margin: 0 0 12px;
+  padding-left: 10px;
+  border-left: 2px solid rgba(168, 50, 31, .55);
+  font-family: "Songti SC", "SimSun", "STSong", serif;
+  font-size: 13px;
+  line-height: 1.75;
+  color: #4a3b28;
+}
+.mp-meta {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 7px 14px;
+  margin: 0 0 12px;
+  padding: 10px 0;
+  border-top: 1px solid rgba(90, 62, 32, .16);
+  border-bottom: 1px solid rgba(90, 62, 32, .16);
+}
+.mp-meta div { display: flex; flex-direction: column; gap: 2px; min-width: 0; }
+.mp-meta dt {
+  font-size: 9.5px;
+  letter-spacing: .14em;
+  color: #9c876a;
+}
+.mp-meta dd {
+  margin: 0;
+  font-size: 11.5px;
+  line-height: 1.5;
+  color: #3f3527;
+}
+.mp-scroll {
+  flex: 1 1 auto;
+  min-height: 0;
+  overflow-y: auto;
+  padding-right: 8px;
+  scrollbar-width: thin;
+  scrollbar-color: rgba(120, 92, 58, .35) transparent;
+}
+.mp-scroll.is-more {
+  -webkit-mask-image: linear-gradient(180deg, #000 0, #000 calc(100% - 30px), transparent 100%);
+  mask-image: linear-gradient(180deg, #000 0, #000 calc(100% - 30px), transparent 100%);
+}
+.mp-scroll::-webkit-scrollbar { width: 4px; }
+.mp-scroll::-webkit-scrollbar-thumb { background: rgba(120, 92, 58, .3); border-radius: 2px; }
+.mp-scroll h4 {
+  margin: 0 0 5px;
+  font-family: "Songti SC", "SimSun", "STSong", serif;
+  font-size: 12px;
+  font-weight: 600;
+  letter-spacing: .16em;
+  color: #a8321f;
+}
+.mp-scroll p {
+  margin: 0 0 12px;
+  font-size: 12px;
+  line-height: 1.9;
+  letter-spacing: .01em;
+  text-align: justify;
+  color: #4a4034;
+}
+.mp-fact {
+  padding-top: 9px;
+  border-top: 1px dashed rgba(90, 62, 32, .22);
+  font-size: 11px !important;
+  line-height: 1.8 !important;
+  color: #6f5c44 !important;
+}
+.mp-fact b {
+  margin-right: 6px;
+  font-weight: 600;
+  letter-spacing: .12em;
+  color: #a8321f;
+}
+.mp-foot {
+  flex: none;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  margin-top: 10px;
+  padding-top: 10px;
+  border-top: 1px solid rgba(90, 62, 32, .18);
+}
+.mp-arrow {
+  appearance: none;
+  width: 26px; height: 24px;
+  border: 1px solid rgba(90, 62, 32, .28);
+  background: rgba(255, 255, 255, .5);
+  color: #4a3b28;
+  font-size: 13px;
+  line-height: 1;
+  cursor: pointer;
+  border-radius: 1px;
+  transition: background-color .2s, border-color .2s, color .2s;
+}
+.mp-arrow:hover { background: #a8321f; border-color: #a8321f; color: #fbf5e7; }
+.mp-count {
+  font-size: 10.5px;
+  letter-spacing: .1em;
+  color: #8b7659;
+  font-variant-numeric: tabular-nums;
+}
+
+/* 窄一点的桌面：地图和纸片都得收一档，七条影系才排得下 */
+@media (max-width: 1200px) {
+  .map-wrap { grid-template-columns: 1fr 316px; gap: 26px; top: 20.4%; }
+  .map-sub { font-size: 10.5px; }
+  .map-panel { padding: 20px 21px 16px; }
+  .mp-kick { margin-bottom: 6px; font-size: 9.5px; }
+  .mp-h { font-size: 16px; margin-bottom: 7px; }
+  .mp-lead { font-size: 11px; line-height: 1.8; margin-bottom: 11px; }
+  .mp-syslist { gap: 5px; }
+  .mp-syslist li { padding-bottom: 6px; }
+  .mp-syslist b { font-size: 12.5px; }
+  .mp-syslist span { font-size: 10.5px; }
+  .mp-hint { margin-top: 9px; padding-top: 8px; font-size: 9.5px; }
+  .mp-quote { font-size: 12px; margin-bottom: 10px; }
+  .mp-meta { gap: 6px 12px; padding: 8px 0; margin-bottom: 10px; }
+  .mp-meta dd { font-size: 11px; }
+  .mp-scroll p { font-size: 11.5px; line-height: 1.85; margin-bottom: 10px; }
+  .cn-legend { left: 9px; top: 9px; gap: 4px; padding: 7px 9px 8px 8px; font-size: 9.5px; }
+  .cn-lg-t { font-size: 9px; }
+}
+
+/* ---------- 06 传承 ---------- */
+/* 底色还是左深右纸（`.sec-tone-5`），裁剪交给 .sec 的 overflow:hidden：
+   左块从屏外滑进来、右块从下往上顶，两者都在本屏 is-in 时触发 */
+
+/* 团花：12 瓣 + 内圈 8 瓣 + 外圈 12 点，白色填充当 mask 用 */
+.sec-split, .sec-map { --rosette: url("data:image/svg+xml;charset=utf-8,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%20200%20200%22%3E%3Cg%20fill%3D%22%23fff%22%3E%3Cpath%20transform%3D%22rotate%280%20100%20100%29%22%20d%3D%22M100%206C117%2034%20118%2058%20100%2076%2082%2058%2083%2034%20100%206Z%22%2F%3E%3Cpath%20transform%3D%22rotate%2830%20100%20100%29%22%20d%3D%22M100%206C117%2034%20118%2058%20100%2076%2082%2058%2083%2034%20100%206Z%22%2F%3E%3Cpath%20transform%3D%22rotate%2860%20100%20100%29%22%20d%3D%22M100%206C117%2034%20118%2058%20100%2076%2082%2058%2083%2034%20100%206Z%22%2F%3E%3Cpath%20transform%3D%22rotate%2890%20100%20100%29%22%20d%3D%22M100%206C117%2034%20118%2058%20100%2076%2082%2058%2083%2034%20100%206Z%22%2F%3E%3Cpath%20transform%3D%22rotate%28120%20100%20100%29%22%20d%3D%22M100%206C117%2034%20118%2058%20100%2076%2082%2058%2083%2034%20100%206Z%22%2F%3E%3Cpath%20transform%3D%22rotate%28150%20100%20100%29%22%20d%3D%22M100%206C117%2034%20118%2058%20100%2076%2082%2058%2083%2034%20100%206Z%22%2F%3E%3Cpath%20transform%3D%22rotate%28180%20100%20100%29%22%20d%3D%22M100%206C117%2034%20118%2058%20100%2076%2082%2058%2083%2034%20100%206Z%22%2F%3E%3Cpath%20transform%3D%22rotate%28210%20100%20100%29%22%20d%3D%22M100%206C117%2034%20118%2058%20100%2076%2082%2058%2083%2034%20100%206Z%22%2F%3E%3Cpath%20transform%3D%22rotate%28240%20100%20100%29%22%20d%3D%22M100%206C117%2034%20118%2058%20100%2076%2082%2058%2083%2034%20100%206Z%22%2F%3E%3Cpath%20transform%3D%22rotate%28270%20100%20100%29%22%20d%3D%22M100%206C117%2034%20118%2058%20100%2076%2082%2058%2083%2034%20100%206Z%22%2F%3E%3Cpath%20transform%3D%22rotate%28300%20100%20100%29%22%20d%3D%22M100%206C117%2034%20118%2058%20100%2076%2082%2058%2083%2034%20100%206Z%22%2F%3E%3Cpath%20transform%3D%22rotate%28330%20100%20100%29%22%20d%3D%22M100%206C117%2034%20118%2058%20100%2076%2082%2058%2083%2034%20100%206Z%22%2F%3E%3Cpath%20transform%3D%22rotate%2822.5%20100%20100%29%22%20d%3D%22M100%2040C110%2056%20110%2070%20100%2080%2090%2070%2090%2056%20100%2040Z%22%2F%3E%3Cpath%20transform%3D%22rotate%2867.5%20100%20100%29%22%20d%3D%22M100%2040C110%2056%20110%2070%20100%2080%2090%2070%2090%2056%20100%2040Z%22%2F%3E%3Cpath%20transform%3D%22rotate%28112.5%20100%20100%29%22%20d%3D%22M100%2040C110%2056%20110%2070%20100%2080%2090%2070%2090%2056%20100%2040Z%22%2F%3E%3Cpath%20transform%3D%22rotate%28157.5%20100%20100%29%22%20d%3D%22M100%2040C110%2056%20110%2070%20100%2080%2090%2070%2090%2056%20100%2040Z%22%2F%3E%3Cpath%20transform%3D%22rotate%28202.5%20100%20100%29%22%20d%3D%22M100%2040C110%2056%20110%2070%20100%2080%2090%2070%2090%2056%20100%2040Z%22%2F%3E%3Cpath%20transform%3D%22rotate%28247.5%20100%20100%29%22%20d%3D%22M100%2040C110%2056%20110%2070%20100%2080%2090%2070%2090%2056%20100%2040Z%22%2F%3E%3Cpath%20transform%3D%22rotate%28292.5%20100%20100%29%22%20d%3D%22M100%2040C110%2056%20110%2070%20100%2080%2090%2070%2090%2056%20100%2040Z%22%2F%3E%3Cpath%20transform%3D%22rotate%28337.5%20100%20100%29%22%20d%3D%22M100%2040C110%2056%20110%2070%20100%2080%2090%2070%2090%2056%20100%2040Z%22%2F%3E%3Ccircle%20cx%3D%22192.0%22%20cy%3D%22100.0%22%20r%3D%224.2%22%2F%3E%3Ccircle%20cx%3D%22179.7%22%20cy%3D%22146.0%22%20r%3D%224.2%22%2F%3E%3Ccircle%20cx%3D%22146.0%22%20cy%3D%22179.7%22%20r%3D%224.2%22%2F%3E%3Ccircle%20cx%3D%22100.0%22%20cy%3D%22192.0%22%20r%3D%224.2%22%2F%3E%3Ccircle%20cx%3D%2254.0%22%20cy%3D%22179.7%22%20r%3D%224.2%22%2F%3E%3Ccircle%20cx%3D%2220.3%22%20cy%3D%22146.0%22%20r%3D%224.2%22%2F%3E%3Ccircle%20cx%3D%228.0%22%20cy%3D%22100.0%22%20r%3D%224.2%22%2F%3E%3Ccircle%20cx%3D%2220.3%22%20cy%3D%2254.0%22%20r%3D%224.2%22%2F%3E%3Ccircle%20cx%3D%2254.0%22%20cy%3D%2220.3%22%20r%3D%224.2%22%2F%3E%3Ccircle%20cx%3D%22100.0%22%20cy%3D%228.0%22%20r%3D%224.2%22%2F%3E%3Ccircle%20cx%3D%22146.0%22%20cy%3D%2220.3%22%20r%3D%224.2%22%2F%3E%3Ccircle%20cx%3D%22179.7%22%20cy%3D%2254.0%22%20r%3D%224.2%22%2F%3E%3Cpath%20fill-rule%3D%22evenodd%22%20d%3D%22M100%2074a26%2026%200%201%200%20.1%200ZM100%2089a11%2011%200%201%201%20-.1%200Z%22%2F%3E%3C%2Fg%3E%3C%2Fsvg%3E"); }
+
+
+/* 先铺一层皮影剪纸：团花用 SVG 当 mask（换色只改 background-color），
+   影人是散件 PNG，`brightness(0) invert(1)` 压成剪影 */
+.inh-deco { position: absolute; inset: 0; overflow: hidden; pointer-events: none; }
+
+.deco {
+  position: absolute;
+  -webkit-mask: var(--rosette) center / contain no-repeat;
+  mask: var(--rosette) center / contain no-repeat;
+  background-color: #f2e2c4;
+  opacity: 0;
+  transition: opacity 1.8s linear .12s;
+}
+.sec.is-in .deco { opacity: var(--o, .1); }
+
+/* 四朵：左块后两朵米色（贴着照片板块的边），右块后两朵褐色（纸面上当暗纹） */
+.deco--f1 { left: -86px; top: -104px; width: clamp(230px, 23vw, 330px); height: clamp(230px, 23vw, 330px); --o: .1; }
+.deco--f2 { left: 37%; bottom: -96px; width: 250px; height: 250px; --o: .05; }
+.deco--f3 { right: -78px; bottom: -92px; width: 300px; height: 300px; --o: .07; background-color: #8a6a45; }
+.deco--f4 { right: -46px; top: -54px; width: 180px; height: 180px; --o: .04; background-color: #8a6a45; }
+
+.deco-pup {
+  position: absolute;
+  height: 74%;
+  width: auto;
+  pointer-events: none;
+  filter: brightness(0) invert(1);
+  opacity: 0;
+  transition: opacity 1.9s linear .2s;
+}
+.sec.is-in .deco-pup { opacity: .05; }
+.deco-pup--a { left: -46px; bottom: -8%; transform: rotate(-7deg); }
+
+/* 左半屏：圆形人物 + 人名短语 + 图注，整块从左边推入 */
+.split-left {
+  position: absolute;
+  left: 0; top: 0; bottom: 0;
+  width: 48%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  transform: translateX(-42%);
+  opacity: 0;
+  transition: transform 1.18s cubic-bezier(.19, .88, .22, 1), opacity .9s linear .04s;
+}
+.sec.is-in .split-left { transform: none; opacity: 1; }
+
+.inh-idx {
+  margin-bottom: clamp(34px, 4.2vh, 46px);
+  font-size: 10px;
+  letter-spacing: .26em;
+  color: rgba(240, 228, 208, .55);
+  font-variant-numeric: tabular-nums;
+  opacity: 0;
+  transform: translateY(8px);
+  transition: opacity .8s linear .5s, transform .9s var(--ease-out) .5s;
+}
+.sec.is-in .inh-idx { opacity: 1; transform: none; }
+
+/* 圆盘：照片裁成圆形，外面两层细圈——整块像一枚挂在墙上的影窗 */
+.inh-photo {
+  position: relative;
+  width: min(33vw, 50vh);
+  max-width: 470px;
+  min-width: 210px;
+  aspect-ratio: 1;
+  margin: 0;
+  border-radius: 50%;
+  box-shadow:
+    0 0 0 1px rgba(240, 228, 208, .26),
+    0 30px 70px rgba(0, 0, 0, .5);
+}
+.inh-glow {
+  position: absolute;
+  inset: -30%;
+  border-radius: 50%;
+  pointer-events: none;
+  background: radial-gradient(circle, rgba(255, 206, 140, .18) 0%, rgba(255, 206, 140, .05) 44%, transparent 66%);
+}
+.inh-mask {
+  position: absolute;
+  inset: 0;
+  border-radius: 50%;
+  overflow: hidden;
+  background: #1b201d;
+}
+.inh-photo img {
+  position: absolute;
+  inset: 0;
+  display: block;
+  width: 100%; height: 100%;
+  object-fit: cover;
+  object-position: center 38%;
+  /* 每人可单独给一点取景缩放/下移：圆形裁得比方图狠，头容易顶到圆弧上 */
+  transform: scale(var(--fz, 1)) translate(var(--fx, 0%), var(--fy, 0%));
+}
+
+/* 换人：新图自下而上擦入（is-turn 由 inherit.js 加/摘，可重复触发） */
+.inh-photo.is-turn .inh-cur { animation: inhWipe .74s cubic-bezier(.22, 1, .36, 1) both; }
+@keyframes inhWipe {
+  from { clip-path: inset(0 0 100% 0); }
+  to { clip-path: inset(0 0 0 0); }
+}
+
+.inh-ring, .inh-ring2 {
+  position: absolute;
+  border-radius: 50%;
+  pointer-events: none;
+}
+.inh-ring { inset: -13px; border: 1px solid rgba(240, 228, 208, .22); }
+.inh-ring2 { inset: -25px; border: 1px dashed rgba(240, 228, 208, .15); }
+
+/* 圆盘下沿：人名 + 一道短线 + 短语 */
+.inh-sign {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  margin-top: clamp(30px, 3.9vh, 42px);
+  opacity: 0;
+  transform: translateY(10px);
+  transition: opacity .85s linear .55s, transform 1s var(--ease-out) .55s;
+}
+.sec.is-in .inh-sign { opacity: 1; transform: none; }
+.inh-name {
+  font-family: "Songti SC", "SimSun", "STSong", serif;
+  font-size: clamp(23px, 2.05vw, 33px);
+  letter-spacing: .16em;
+  color: #f6ecda;
+  text-shadow: 0 2px 18px rgba(0, 0, 0, .6);
+}
+.inh-sep { width: 1px; height: 18px; background: rgba(246, 236, 218, .42); }
+.inh-word {
+  font-family: "Songti SC", "SimSun", "STSong", serif;
+  font-size: clamp(11.5px, .98vw, 14.5px);
+  letter-spacing: .3em;
+  color: #e8c489;
+}
+.inh-cap {
+  margin: 8px 0 0;
+  max-width: 82%;
+  text-align: center;
+  font-size: 10px;
+  line-height: 1.6;
+  letter-spacing: .05em;
+  color: rgba(238, 226, 206, .52);
+  opacity: 0;
+  transition: opacity .9s linear .68s;
+}
+.sec.is-in .inh-cap { opacity: 1; }
+
+/* 右半屏：纸面文字，整块从下往上顶 */
+.split-right {
+  position: absolute;
+  right: 0; top: 0; bottom: 0;
+  width: 52%;
+  display: flex;
+  align-items: center;
+  padding: 0 5.2% 0 5.6%;
+  transform: translateY(84px);
+  opacity: 0;
+  transition: transform 1.06s cubic-bezier(.19, .88, .22, 1) .1s, opacity .9s linear .1s;
+}
+.sec.is-in .split-right { transform: none; opacity: 1; }
+.inh-body { width: 100%; max-width: 700px; margin: 0 auto; }
+
+.inh-kick {
+  margin: 0 0 9px;
+  font-size: 10.5px;
+  letter-spacing: .3em;
+  color: var(--tick);
+}
+.inh-h {
+  margin: 0 0 12px;
+  font-family: "Songti SC", "SimSun", "STSong", "Noto Serif SC", serif;
+  font-size: clamp(26px, 2.4vw, 44px);
+  font-weight: 600;
+  letter-spacing: .16em;
+  color: #241f19;
+}
+.inh-lede {
+  margin: 0 0 16px;
+  max-width: 35em;
+  font-family: "Songti SC", "SimSun", "STSong", serif;
+  font-size: clamp(12px, 1.02vw, 17px);
+  line-height: 1.95;
+  letter-spacing: .01em;
+  text-align: justify;
+  color: #4d4437;
+}
+
+/* 一条竖线，五个名字挂在上面——指到谁，左边就换谁 */
+.inh-thread { position: relative; margin: 0 0 12px; }
+.inh-thread::before {
+  content: '';
+  position: absolute;
+  left: 11px;
+  top: var(--lt, 22px);
+  bottom: var(--lb, 22px);
+  width: 1px;
+  background: linear-gradient(180deg,
+    rgba(107, 69, 41, .04) 0%,
+    rgba(107, 69, 41, .3) 14%,
+    rgba(107, 69, 41, .3) 86%,
+    rgba(107, 69, 41, .04) 100%);
+}
+/* 走线：从线头一直染到当前那个点 */
+.inh-rail {
+  position: absolute;
+  left: 11px; top: 12px;
+  width: 1px;
+  height: 0;
+  background: linear-gradient(180deg, rgba(168, 50, 31, .18) 0%, var(--tick) 100%);
+  transition: height .5s var(--ease-out);
+}
+.inh-rail::after {
+  content: '';
+  position: absolute;
+  left: -2px; bottom: -2px;
+  width: 5px; height: 5px;
+  border-radius: 50%;
+  background: var(--tick);
+  box-shadow: 0 0 9px rgba(168, 50, 31, .7);
+}
+
+.inh-node {
+  position: relative;
+  display: grid;
+  grid-template-columns: 24px minmax(0, 1fr) auto;
+  align-items: center;
+  column-gap: clamp(10px, .9vw, 16px);
+  width: 100%;
+  padding: 9px 0;
+  border: 0;
+  background: none;
+  text-align: left;
+  color: inherit;
+  font: inherit;
+  cursor: pointer;
+}
+.inh-node:focus-visible { outline: 1px solid var(--tick); outline-offset: 4px; }
+
+.in-dot {
+  grid-column: 1;
+  justify-self: start;
+  position: relative;
+  left: 7px;
+  width: 9px; height: 9px;
+  border-radius: 50%;
+  background: #f8f4ea;
+  box-shadow: inset 0 0 0 1px rgba(107, 69, 41, .5);
+  transition: transform .32s var(--ease-back), background-color .3s, box-shadow .3s;
+}
+.in-txt { display: flex; flex-direction: column; min-width: 0; }
+.in-name {
+  font-family: "Songti SC", "SimSun", "STSong", serif;
+  font-size: clamp(23px, 2.12vw, 34px);
+  line-height: 1.14;
+  letter-spacing: .08em;
+  color: #2b241a;
+  transition: color .25s, transform .4s var(--ease-out);
+}
+.in-word {
+  margin-top: 3px;
+  font-size: clamp(11px, .86vw, 13px);
+  letter-spacing: .2em;
+  color: #9c876a;
+  transition: color .25s;
+}
+.in-place {
+  font-size: 10px;
+  letter-spacing: .05em;
+  white-space: nowrap;
+  color: #9c876a;
+  transition: color .25s;
+}
+
+.inh-node:hover .in-dot,
+.inh-node:focus-visible .in-dot {
+  transform: scale(1.4);
+  background: var(--tick);
+  box-shadow: inset 0 0 0 1px var(--tick);
+}
+.inh-node:hover .in-name,
+.inh-node:focus-visible .in-name { color: var(--tick-2); transform: translateX(4px); }
+.inh-node:hover .in-place { color: #6f5c44; }
+
+.inh-node.is-on .in-dot {
+  background: var(--tick);
+  box-shadow: inset 0 0 0 1px var(--tick), 0 0 0 5px rgba(168, 50, 31, .13);
+  transform: scale(1.08);
+}
+.inh-node.is-on .in-name { color: var(--tick); }
+.inh-node.is-on .in-word { color: #8d5c36; }
+
+/* 名单与生平叠在同一块地方：点名字，介绍盖住名单；点返回，名单再回来 */
+.inh-stage { position: relative; margin: 0 0 12px; }
+
+.inh-thread {
+  position: relative;
+  margin: 0;
+  transition: opacity .26s ease, visibility .26s;
+}
+/* 盖住之后名单就不再接收鼠标和 Tab，免得点到看不见的按钮 */
+.inh-stage.is-reading .inh-thread {
+  opacity: 0;
+  visibility: hidden;
+  pointer-events: none;
+}
+
+.inh-detail {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  padding: 10px 14px 11px;
+  border: 1px solid rgba(107, 69, 41, .22);
+  background: none;
+  opacity: 0;
+  visibility: hidden;
+  transform: translateY(7px);
+  transition: opacity .34s ease, transform .42s var(--ease-out), visibility .34s;
+}
+.inh-stage.is-reading .inh-detail {
+  opacity: 1;
+  visibility: visible;
+  transform: none;
+}
+
+.ind-head {
+  flex: none;
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 14px;
+  margin-bottom: 8px;
+  padding-bottom: 7px;
+  border-bottom: 1px solid rgba(107, 69, 41, .14);
+}
+.ind-life {
+  margin: 0;
+  font-size: 10.5px;
+  letter-spacing: .05em;
+  color: var(--tick);
+  font-variant-numeric: tabular-nums;
+}
+.ind-back {
+  flex: none;
+  padding: 1px 0;
+  border: 0;
+  border-bottom: 1px solid rgba(140, 123, 99, .5);
+  background: none;
+  font: inherit;
+  font-size: 10.5px;
+  letter-spacing: .08em;
+  color: #8c7b63;
+  cursor: pointer;
+  transition: color .28s ease, border-color .28s ease;
+}
+.ind-back:hover,
+.ind-back:focus-visible {
+  color: var(--tick-2);
+  border-bottom-color: var(--tick-2);
+  outline: none;
+}
+
+.ind-body {
+  flex: 1 1 auto;
+  min-height: 0;
+  overflow-y: auto;
+  padding-right: 3px;
+  scrollbar-width: thin;
+  scrollbar-color: rgba(107, 69, 41, .3) transparent;
+}
+.ind-body::-webkit-scrollbar { width: 6px; }
+.ind-body::-webkit-scrollbar-track { background: transparent; }
+.ind-body::-webkit-scrollbar-thumb {
+  background: rgba(107, 69, 41, .22);
+  border-radius: 6px;
+  border: 2px solid transparent;
+  background-clip: content-box;
+}
+.ind-body.is-long {
+  -webkit-mask-image: linear-gradient(to bottom, #000 calc(100% - 20px), rgba(0, 0, 0, .1) 100%);
+  mask-image: linear-gradient(to bottom, #000 calc(100% - 20px), rgba(0, 0, 0, .1) 100%);
+}
+
+.ind-text p {
+  margin: 0 0 8px;
+  font-size: clamp(11.4px, .9vw, 13.2px);
+  line-height: 1.9;
+  letter-spacing: .012em;
+  text-align: justify;
+  color: #4d4437;
+}
+.ind-text p:last-child { margin-bottom: 0; }
+/* 换人时正文轻推一下，不做花哨的进出 */
+.inh-detail.is-swap .ind-text { animation: indIn .44s var(--ease-out) both; }
+@keyframes indIn {
+  from { opacity: 0; transform: translateY(6px); }
+  to   { opacity: 1; transform: none; }
+}
+
+.inh-src {
+  margin: 0;
+  padding-top: 10px;
+  border-top: 1px solid rgba(107, 69, 41, .18);
+  font-size: 10px;
+  letter-spacing: .04em;
+  color: #9c876a;
+}
+
+/* ---------- 07 经典剧目 ---------- */
+.play-wrap {
+  position: absolute;
+  left: 5.2%; right: 5.2%;
+  top: 11.5%; bottom: 9%;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) clamp(252px, 25vw, 372px);
+  gap: clamp(20px, 2.6vw, 44px);
+  min-height: 0;
+}
+
+/* 戏单：一张贴在暗墙上的纸 */
+.play-sheet {
+  position: relative;
+  min-height: 0;
+  display: flex;
+  flex-direction: column;
+  padding: clamp(18px, 1.9vw, 30px) clamp(20px, 2.1vw, 34px) clamp(14px, 1.5vw, 22px);
+  background: #f3ead7;
+  background-image: radial-gradient(120% 90% at 50% 22%, #faf3e3 0%, #f2e8d2 62%, #e7dabd 100%);
+  border-radius: 2px;
+  box-shadow:
+    0 0 0 1px rgba(52, 30, 12, .55),
+    0 22px 46px rgba(10, 4, 1, .46);
+  color: #3a3228;
+}
+.play-sheet::after {
+  content: '';
+  position: absolute;
+  inset: 7px;
+  border: 1px solid rgba(90, 62, 32, .18);
+  pointer-events: none;
+}
+
+.ps-kick {
+  margin: 0 0 6px;
+  font-size: 10px;
+  letter-spacing: .3em;
+  color: var(--tick);
+}
+.ps-h {
+  margin: 0 0 6px;
+  font-family: "Songti SC", "SimSun", "STSong", "Noto Serif SC", serif;
+  font-size: clamp(21px, 1.85vw, 29px);
+  font-weight: 600;
+  letter-spacing: .16em;
+  color: #2b2318;
+}
+.ps-sub {
+  margin: 0 0 clamp(8px, 1.4vh, 18px);
+  font-size: clamp(10.5px, .86vw, 12.5px);
+  letter-spacing: .02em;
+  color: #7d6a52;
+}
+
+.ps-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  flex: 1 1 auto;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  min-height: 0;
+}
+.ps-row {
+  position: relative;
+  display: grid;
+  grid-template-columns: 34px minmax(0, 1fr) auto;
+  column-gap: clamp(10px, 1vw, 16px);
+  padding: clamp(10px, 2vh, 26px) 0 clamp(10px, 2vh, 26px) 10px;
+  border-top: 1px dashed rgba(90, 62, 32, .24);
+  cursor: pointer;
+  transition: background-color .25s var(--ease-out);
+}
+.ps-row:first-child { border-top: 0; }
+.ps-row::before {
+  content: '';
+  position: absolute;
+  left: 0; top: 12%;
+  width: 2px; height: 0;
+  background: var(--tick);
+  transition: height .3s var(--ease-out);
+}
+.ps-row.is-on { background: linear-gradient(90deg, rgba(168, 50, 31, .08), rgba(168, 50, 31, 0) 72%); }
+.ps-row.is-on::before { height: 76%; }
+
+.ps-no {
+  font-family: "Songti SC", "SimSun", "STSong", serif;
+  font-size: clamp(14px, 1.1vw, 17px);
+  line-height: 1.4;
+  color: var(--tick);
+  font-variant-numeric: tabular-nums;
+}
+.ps-row h3 {
+  margin: 0 0 3px;
+  font-family: "Songti SC", "SimSun", "STSong", "Noto Serif SC", serif;
+  font-size: clamp(15px, 1.28vw, 22px);
+  font-weight: 600;
+  letter-spacing: .1em;
+  color: #2b2318;
+}
+.ps-row p {
+  margin: 0 0 5px;
+  font-size: clamp(10.4px, .87vw, 13.6px);
+  line-height: 1.72;
+  letter-spacing: .01em;
+  color: #5f5347;
+}
+.ps-tags span {
+  display: inline-block;
+  margin-right: 5px;
+  padding: 1px 6px;
+  font-size: 9.6px;
+  letter-spacing: .06em;
+  color: #7d6a52;
+  border: 1px solid rgba(107, 69, 41, .3);
+  border-radius: 1px;
+}
+.ps-min {
+  font-family: "Songti SC", "SimSun", "STSong", serif;
+  font-size: clamp(13px, 1.05vw, 16px);
+  line-height: 1.1;
+  text-align: right;
+  color: #8b7659;
+  font-variant-numeric: tabular-nums;
+}
+.ps-min b {
+  display: block;
+  margin-top: 2px;
+  font-size: 9.5px;
+  font-weight: 400;
+  letter-spacing: .1em;
+  color: #a08a6c;
+}
+.ps-note {
+  margin: clamp(6px, 1vh, 12px) 0 0;
+  font-size: 9.5px;
+  letter-spacing: .02em;
+  color: #9c876a;
+}
+
+/* 右栏唱词：一小块深色幕布 */
+.play-lyric {
+  position: relative;
+  min-height: 0;
+  display: flex;
+  flex-direction: column;
+  padding: clamp(16px, 1.6vw, 22px) clamp(14px, 1.5vw, 22px);
+  background: rgba(16, 23, 27, .72);
+  border: 1px solid rgba(226, 205, 172, .16);
+  box-shadow:
+    inset 0 0 70px rgba(0, 0, 0, .4),
+    0 20px 44px rgba(0, 0, 0, .36);
+  color: #e5d8c0;
+}
+.ly-head {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 10px;
+  padding-bottom: 10px;
+  border-bottom: 1px solid rgba(226, 205, 172, .18);
+}
+.ly-head b {
+  font-family: "Songti SC", "SimSun", "STSong", serif;
+  font-size: clamp(12px, 1vw, 15px);
+  font-weight: 600;
+  letter-spacing: .3em;
+  text-indent: .3em;
+  color: #e9d3a8;
+}
+.ly-show {
+  font-family: "Songti SC", "SimSun", "STSong", serif;
+  font-size: clamp(14px, 1.24vw, 19px);
+  letter-spacing: .12em;
+  color: #f0dcb6;
+}
+
+.ly-lines {
+  flex: 1 1 auto;
+  min-height: 0;
+  display: flex;
+  flex-direction: row-reverse;
+  align-items: center;
+  justify-content: center;
+  gap: clamp(10px, 1.35vw, 24px);
+  padding: 18px 0 12px;
+}
+.ly-line {
+  margin: 0;
+  writing-mode: vertical-rl;
+  text-orientation: upright;
+  font-family: "Songti SC", "SimSun", "STSong", "Noto Serif SC", serif;
+  font-size: clamp(18px, 1.82vw, 32px);
+  line-height: 1.62;
+  letter-spacing: .15em;
+  color: rgba(232, 213, 180, .4);
+  transition: color .35s var(--ease-out), text-shadow .35s;
+}
+.ly-line.is-on {
+  color: #f7e4bd;
+  text-shadow: 0 0 22px rgba(217, 154, 91, .5);
+}
+
+.ly-foot {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  padding-top: 11px;
+  border-top: 1px solid rgba(226, 205, 172, .18);
+}
+.ly-acts {
+  font-size: 10.5px;
+  line-height: 1.5;
+  letter-spacing: .04em;
+  color: rgba(232, 213, 180, .55);
+}
+.ly-play {
+  appearance: none;
+  flex: none;
+  padding: 6px 12px;
+  border: 1px solid rgba(217, 154, 91, .48);
+  border-radius: 1px;
+  background: transparent;
+  color: #e9d3a8;
+  font: inherit;
+  font-size: 10.5px;
+  letter-spacing: .14em;
+  cursor: pointer;
+  transition: background-color .25s, border-color .25s, color .25s;
+}
+.ly-play:hover { background: rgba(217, 154, 91, .16); border-color: rgba(217, 154, 91, .8); }
+
+/* 一行试听：播放键 + 进度条 + 秒数 */
+.ly-audio {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding-top: 11px;
+  border-top: 1px solid rgba(226, 205, 172, .18);
+}
+.ly-play {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+}
+.ly-ico {
+  width: 0; height: 0;
+  border-style: solid;
+  border-width: 5px 0 5px 8px;
+  border-color: transparent transparent transparent #e9d3a8;
+  transition: border-color .25s;
+}
+.ly-play.is-on .ly-ico {
+  width: 8px; height: 8px;
+  border: 0;
+  background: #e9d3a8;
+}
+.ly-play:hover .ly-ico { border-left-color: #ffd8a6; }
+.ly-play:hover.is-on .ly-ico { background: #ffd8a6; }
+.ly-play[disabled] { opacity: .42; cursor: default; }
+.ly-track {
+  position: relative;
+  flex: 1 1 auto;
+  height: 2px;
+  background: rgba(226, 205, 172, .2);
+  overflow: hidden;
+}
+.ly-track i {
+  position: absolute;
+  left: 0; top: 0; bottom: 0;
+  width: 0;
+  background: #d99a5b;
+}
+.ly-time {
+  flex: none;
+  font-size: 9.5px;
+  letter-spacing: .02em;
+  color: rgba(232, 213, 180, .58);
+  font-variant-numeric: tabular-nums;
+}
+.ly-min {
+  font-size: 9.5px;
+  letter-spacing: .06em;
+  color: rgba(232, 213, 180, .42);
+}
+.ly-src {
+  margin: 8px 0 0;
+  font-size: 9px;
+  line-height: 1.55;
+  letter-spacing: .02em;
+  color: rgba(232, 213, 180, .36);
+}
+
+/* 窄一点的桌面：纸面字号与栏宽都收一档 */
+/* 中等宽度：名单在上、纸卡在下，纸卡拿整幅宽度，比挤在右边好读 */
+@media (max-width: 1440px) {
+  .inh-detail { padding: 9px 12px 10px; }
+}
+
+/* 矮一点的屏（1366×768、1280×800 这类）：纵向各收一档，别顶到上下边 */
+@media (max-height: 820px) {
+  .inh-node { padding: 7px 0; }
+  .inh-lede { margin-bottom: 12px; }
+}
+
+@media (max-width: 1200px) {
+  .split-right { padding: 0 4% 0 4.4%; }
+  .inh-lede { margin-bottom: 12px; }
+  .inh-node { grid-template-columns: 20px minmax(0, 1fr) auto; padding: 6px 0; }
+  .in-place { font-size: 9px; letter-spacing: 0; }
+  .play-wrap { left: 4%; right: 4%; grid-template-columns: minmax(0, 1fr) 244px; gap: 18px; }
+  .ps-row { grid-template-columns: 30px minmax(0, 1fr) auto; }
+}
+
+
+/* ---------- 07 的国风纹样：墙面回纹 + 纸面云纹 + 唱词框曲水 ---------- */
+.sec-plays {
+  --pat-hui: url("data:image/svg+xml;charset=utf-8,%3Csvg xmlns='http://www.w3.org/2000/svg' width='56' height='56' viewBox='0 0 56 56'%3E%3Cg fill='none' stroke='%23cfe0ea' stroke-opacity='.05' stroke-width='1.4'%3E%3Cpath d='M5 51V5h46v46H19V19h18v18'/%3E%3C/g%3E%3C/svg%3E");
+  --pat-cloud: url("data:image/svg+xml;charset=utf-8,%3Csvg xmlns='http://www.w3.org/2000/svg' width='300' height='176' viewBox='0 0 300 176'%3E%3Cg fill='none' stroke='%236b4529' stroke-opacity='.095' stroke-width='1.2' stroke-linecap='round'%3E%3Cg transform='translate%284,4%29'%3E%3Cpath d='M38 58c-8 0-14-6-14-13 0-6 4-11 10-12-1-2-1-3-1-5 0-8 6-14 14-14 6 0 11 3 13 7 2-6 8-10 15-10 9 0 17 7 18 16 0 2 0 4-1 6 7 2 12 7 12 14 0 7-6 12-13 12z'/%3E%3Cpath d='M58 44c0-4 3-7 7-7s7 3 7 7-3 7-7 7'/%3E%3Cpath d='M44 50c0-3 2-5 5-5'/%3E%3C/g%3E%3Cg transform='translate%28154,90%29'%3E%3Cpath d='M38 58c-8 0-14-6-14-13 0-6 4-11 10-12-1-2-1-3-1-5 0-8 6-14 14-14 6 0 11 3 13 7 2-6 8-10 15-10 9 0 17 7 18 16 0 2 0 4-1 6 7 2 12 7 12 14 0 7-6 12-13 12z'/%3E%3Cpath d='M58 44c0-4 3-7 7-7s7 3 7 7-3 7-7 7'/%3E%3Cpath d='M44 50c0-3 2-5 5-5'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E");
+  --pat-wave: url("data:image/svg+xml;charset=utf-8,%3Csvg xmlns='http://www.w3.org/2000/svg' width='176' height='88' viewBox='0 0 176 88'%3E%3Cg fill='none' stroke='%23e9d3a8' stroke-opacity='.075' stroke-width='1.2' stroke-linecap='round'%3E%3Cpath d='M0 44c28-33 60-33 88 0s60 33 88 0'/%3E%3Cpath d='M0 44c28 33 60 33 88 0s60-33 88 0'/%3E%3C/g%3E%3C/svg%3E");
+  --pat-hui-h: url("data:image/svg+xml;charset=utf-8,%3Csvg xmlns='http://www.w3.org/2000/svg' width='14' height='7' viewBox='0 0 14 7'%3E%3Cpath d='M0 6.5h2.2V1.5h3.4v5h3.4V1.5h3.4v5H14' fill='none' stroke='%236b4529' stroke-opacity='.38' stroke-width='.9'/%3E%3C/svg%3E");
+  --pat-hui-v: url("data:image/svg+xml;charset=utf-8,%3Csvg xmlns='http://www.w3.org/2000/svg' width='7' height='14' viewBox='0 0 7 14'%3E%3Cpath d='M6.5 0v2.2h-5v3.4h5v3.4h-5v3.4h5V14' fill='none' stroke='%236b4529' stroke-opacity='.38' stroke-width='.9'/%3E%3C/svg%3E");
+  --pat-fu: url("data:image/svg+xml;charset=utf-8,%3Csvg xmlns='http://www.w3.org/2000/svg' width='9' height='9' viewBox='0 0 9 9'%3E%3Cpath d='M4.5 0 9 4.5 4.5 9 0 4.5Z' fill='%236b4529' fill-opacity='.55'/%3E%3Cpath d='M4.5 2.4 6.6 4.5 4.5 6.6 2.4 4.5Z' fill='%23f6efe3' fill-opacity='.8'/%3E%3C/svg%3E");
+}
+
+/* 墙面：满铺回纹，右下角再压一朵放大的云头——只做底纹，不抢戏 */
+.sec-plays::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background-image: var(--pat-hui);
+  background-repeat: repeat;
+  background-size: 56px 56px;
+  opacity: 1;
+}
+
+/* 戏单纸面：云纹铺满（压得很淡），内框再用回纹带与四角方胜收边 */
+.play-sheet::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background-image: var(--pat-cloud);
+  background-repeat: repeat;
+  background-size: 300px 176px;
+  background-position: 0 0;
+}
+
+.play-sheet::after {
+  background-image:
+    var(--pat-hui-h), var(--pat-hui-h), var(--pat-hui-v), var(--pat-hui-v),
+    var(--pat-fu), var(--pat-fu), var(--pat-fu), var(--pat-fu);
+  background-repeat: repeat-x, repeat-x, repeat-y, repeat-y, no-repeat, no-repeat, no-repeat, no-repeat;
+  background-position: left top, right bottom, left bottom, right top, left top, right top, left bottom, right bottom;
+  background-size: 18px 9px, 18px 9px, 9px 18px, 9px 18px, 9px 9px, 9px 9px, 9px 9px, 9px 9px;
+}
+
+/* 唱词框：曲水纹，颜色跟唱词同一支（#e9d3a8），压在字底下 */
+.play-lyric::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background-image: var(--pat-wave);
+  background-repeat: repeat;
+  background-size: 176px 88px;
+  background-position: 0 0;
+}
+
+/* ---------- 08 六列 ---------- */
+.six-wrap {
+  position: absolute;
+  inset: 0;
+  /* 用 flex 而不是 grid：悬停时能只把撑开量和收缩量给小/大各一份，
+     其余列共用一个 flex-grow，宽度自然保持一致 */
+  display: flex;
+  gap: 3px;
+  padding: 0 3px;
+
+  --six-base: 1;        /* 没有列被激活：六等分 */
+  --six-other: .8;      /* 有列激活：其余各列收到的 grow */
+  --six-open: 2;        /* 被激活那一列的 grow */
+}
+.six-col {
+  position: relative;
+  height: 100%;
+  flex: var(--six-base) 1 0;      /* basis 0 + 相同 grow = 严格等宽 */
+  min-width: 0;
+  padding: 0;
+  overflow: hidden;
+  background: rgba(255, 255, 255, .04);
+}
+/* 奇数列亮一档的节奏保留下来，只是改成压在照片上面的一层薄光 */
+.six-col::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background: rgba(255, 255, 255, .03);
+  transition: background .38s var(--ease-out);
+}
+.six-col:nth-child(odd)::after { background: rgba(255, 255, 255, .07); }
+.six-col:nth-child(odd) { background: rgba(255, 255, 255, .07); }
+/* 序号：底下压一道短线，悬停时这道线会抽长、转成朱砂 */
+.six-no {
+  position: absolute;
+  top: clamp(24px, 3.6vh, 44px);
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 2;
+  padding-bottom: 12px;
+  font-family: "Songti SC", "SimSun", "STSong", serif;
+  font-size: 11px;
+  letter-spacing: .18em;
+  text-indent: .18em;
+  color: rgba(246, 230, 200, .72);
+  text-shadow: 0 1px 10px rgba(0, 0, 0, .6);
+  font-variant-numeric: tabular-nums;
+}
+.six-no::after {
+  content: '';
+  position: absolute;
+  left: 50%;
+  bottom: 0;
+  width: 18px;
+  height: 1px;
+  background: rgba(246, 230, 200, .5);
+  transform: translateX(-50%);
+  transition: width .5s var(--ease-out), background .3s;
+}
+
+/* 工序图铺满整列；上下各压一道暗，序号与工序名才浮得起来 */
+.six-fig {
+  position: absolute;
+  inset: 0;
+  margin: 0;
+  overflow: hidden;
+}
+.six-fig img {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: center 44%;
+  filter: saturate(.9) contrast(1.03) brightness(.96);
+  transition: transform .95s var(--ease-out), filter .5s var(--ease-out);
+}
+.six-fig::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background: linear-gradient(180deg,
+    rgba(8, 10, 12, .62) 0%,
+    rgba(8, 10, 12, .16) 14%,
+    rgba(8, 10, 12, .02) 34%,
+    rgba(8, 10, 12, .52) 60%,
+    rgba(8, 10, 12, .96) 100%);
+}
+
+/* 工序名 + 一句说明：竖排并列，名在右、说明在左，照竖排的读法走 */
+.six-cap {
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: clamp(26px, 4vh, 52px);
+  z-index: 2;
+  display: flex;
+  flex-direction: row-reverse;
+  align-items: flex-start;
+  justify-content: center;
+  gap: clamp(8px, .8vw, 13px);
+}
+.six-txt {
+  margin: 0;
+  flex: none;
+  writing-mode: vertical-rl;
+  text-orientation: upright;
+  font-family: "Songti SC", "SimSun", "STSong", serif;
+  font-size: clamp(23px, 2vw, 33px);
+  font-weight: 500;
+  line-height: 1;
+  letter-spacing: .18em;
+  color: #f6e3bd;
+  text-shadow: 0 2px 14px rgba(0, 0, 0, .8), 0 0 2px rgba(0, 0, 0, .6);
+}
+/* 说明固定三列宽，列宽变化时不会来回重排 */
+.six-more {
+  margin: 0;
+  width: 78px;
+  max-height: 30vh;
+  overflow: hidden;
+  writing-mode: vertical-rl;
+  text-orientation: upright;
+  font-size: clamp(10.5px, .86vw, 13px);
+  line-height: 1.95;
+  letter-spacing: .1em;
+  color: rgba(238, 222, 194, .62);
+  text-shadow: 0 1px 8px rgba(0, 0, 0, .75);
+}
+
+/* ---------- 09 关于（页脚） ---------- */
+/* 独立的一屏，但不再铺满：内容收成普通网站底部那种细字条
+   （链接行 + 参赛/主办 + 版权 + 建设 + 著录 + 浏览器建议）。
+   高度跟着内容走，所以这一屏比一屏矮一截；deck 的末屏按 offsetHeight 贴底，
+   翻过来时视口上半还留着传承屏那半张，下面是这条页脚——两页分开，但接着。
+   传承屏本身不受影响，仍是满屏居中。 */
+.sec-foot {
+  height: auto;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 50px 5% 36px;
+  background: #f4efe3;
+  border-top: 1px solid rgba(157, 44, 28, .16);
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, .68),
+    0 -14px 34px rgba(24, 16, 8, .10);
+  color: rgba(62, 46, 30, .58);
+  font-size: 12px;
+  letter-spacing: .02em;
+}
+.ft-in {
+  width: 100%;
+  max-width: 1160px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 5px;
+  text-align: center;
+}
+.ft-nav {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  align-items: center;
+  gap: 11px;
+  margin-bottom: 5px;
+}
+.ft-nav a {
+  color: rgba(46, 32, 20, .88);
+  font-size: 13px;
+  letter-spacing: .08em;
+  text-decoration: none;
+  transition: color .22s;
+}
+.ft-nav a:hover { color: var(--red); }
+.ft-nav i {
+  font-style: normal;
+  font-size: 10px;
+  color: rgba(62, 46, 30, .34);
+}
+.ft-row {
+  margin: 0;
+  line-height: 1.8;
+  color: rgba(62, 46, 30, .58);
+}
+.ft-row b { font-weight: 400; color: rgba(40, 28, 18, .84); }
+.ft-row a {
+  color: rgba(62, 46, 30, .58);
+  text-decoration: none;
+  border-bottom: 1px solid rgba(62, 46, 30, .2);
+}
+.ft-row a:hover { color: var(--red); border-bottom-color: rgba(157, 44, 28, .42); }
+.ft-dim { color: rgba(62, 46, 30, .40); font-size: 11.5px; }
+
+/* 低矮的桌面屏（1366×650 这类）：只把页脚自己收窄，
+   第八屏满屏居中，别去动它的排版 */
+@media (max-height: 800px) and (min-width: 901px) {
+  .sec-foot { padding: 26px 5% 22px; font-size: 11px; }
+  .ft-in { gap: 3px; }
+  .ft-nav { margin-bottom: 2px; }
+  .ft-nav a { font-size: 12px; }
+  .ft-row { line-height: 1.6; }
+  .ft-dim { font-size: 10.5px; }
+}
+@media (max-width: 1180px) {
+  .ft-row, .ft-dim { font-size: 11.5px; }
+}
+/* 窄屏走原生滚动、每屏高度自适应：页脚回到文档流，
+   但 .sec 在这里被设成 min-height:86vh + 大内边距，页脚不该跟着撑满，
+   所以选择器加到两级把它盖住 */
+@media (max-width: 900px) {
+  /* 第八屏是一列堆叠，左右分色没意义：左半边深底会把深色正文吞掉 */
+  .sec-tone-5 { background: #efece4; }
+  .sec.sec-foot { min-height: 0; padding: 30px 20px 40px; }
+  .ft-in { gap: 7px; }
+  .ft-row, .ft-dim { font-size: 11.5px; line-height: 1.9; }
+}
+@media (max-width: 560px) {
+  /* 小屏折行后竖线会孤零零挂在行首，干脆收掉，靠间距分组 */
+  .ft-nav { gap: 7px 16px; }
+  .ft-nav a { font-size: 12px; }
+  .ft-nav i { display: none; }
+  .ft-row, .ft-dim { font-size: 11px; }
+}
+
+/* ---------- 窄屏：退化为普通滚动 ---------- */
+@media (max-width: 900px) {
+  /* 窄屏不劫持滚轮，改成原生滚动：加吸附，滑一下也停在整屏位置 */
+  html, body { overflow: auto; }
+  html { scroll-snap-type: y proximity; scroll-behavior: smooth; }
+  .deck { transform: none !important; transition: none; }
+  .sec { scroll-snap-align: start; scroll-snap-stop: normal; }
+  .sec { height: auto; min-height: 86vh; padding: calc(var(--hd-h) + 24px) 20px 90px; }
+  /* 过了首屏导航收起，顶部就不用再给导航留那 92px */
+  body.past-first .sec { padding-top: 40px; }
+  .sec-ask { min-height: 92vh; padding: 0 22px; }
+  .ask-box { height: 62px; padding: 0 8px 0 20px; }
+  .ask-input { font-size: 15px; }
+  .ask-go { width: 44px; height: 44px; }
+  .ask-chips button { padding: 8px 14px; font-size: 12px; }
+  .ask-note { display: none; }
+  .col3 { position: static; grid-template-columns: 1fr; gap: 34px; }
+  .map-wrap { position: static; grid-template-columns: 1fr; }
+  .map-canvas { height: 42vh; }
+  .split-left, .split-right { position: static; width: auto; opacity: 1; transform: none; }
+  .split-left { height: 40vh; position: relative; }
+  .sec-split { padding: 0; }
+  .split-right { padding: 40px 20px 18px; }
+  .play-wrap { position: static; grid-template-columns: 1fr; gap: 22px; }
+  .play-sheet { padding: 20px 18px 16px; }
+  .ps-list { gap: 4px; }
+  .ly-lines { padding: 10px 0 6px; }
+  .six-wrap { position: static; display: grid; grid-template-columns: repeat(3, 1fr); }
+  .six-col { padding: 40px 0 32px; }
+  .six-col { min-height: 42vh; }
+  .dot-nav, .side-rail { display: none; }
+}
+
+/* ---------- 「查看更多」：影藏那张右下角的同款，另外五屏复用 ---------- */
+/* 影藏是深底、这一条白字；纸面上的（影讯、传承）另给 --ink 一版 */
+.more {
+  position: absolute;
+  z-index: 6;
+  display: inline-flex;
+  align-items: center;
+  gap: 11px;
+  padding: 8px 0;
+  font-family: "Songti SC", "SimSun", "STSong", "Noto Serif SC", serif;
+  font-size: clamp(13px, .95vw, 15px);
+  letter-spacing: .22em;
+  text-decoration: none;
+  color: rgba(252, 246, 234, .9);
+  text-shadow: 0 1px 14px rgba(16, 36, 34, .62);
+  transition: color .4s var(--ease-out);
+}
+.more::before {
+  content: '';
+  width: 24px;
+  height: 1px;
+  background: currentColor;
+  opacity: .6;
+  transition: width .5s var(--ease-out), opacity .4s ease;
+}
+.more::after {
+  content: '→';
+  margin-left: -3px;              /* 抵掉字距在末字后留的那点空 */
+  font-size: 12.5px;
+  letter-spacing: 0;
+  opacity: .78;
+  transition: transform .45s var(--ease-out), opacity .4s ease;
+}
+.more:hover,
+.more:focus-visible { color: #fdf7ea; outline: none; }
+.more:hover::before,
+.more:focus-visible::before { width: 32px; opacity: .92; }
+.more:hover::after,
+.more:focus-visible::after { transform: translateX(3px); opacity: 1; }
+
+/* 纸面版：朱墨色，不要那层阴影 */
+.more--ink {
+  color: rgba(74, 52, 30, .78);
+  text-shadow: none;
+}
+.more--ink:hover,
+.more--ink:focus-visible { color: #9d2c1c; }
+
+/* 各处落点：避开角花、正文与页码条 */
+.more--eras  { right: max(96px, 6.4%); bottom: calc(48% + 20px); }
+.more--map   { right: 6.2%; bottom: clamp(18px, 3.2vh, 40px); }
+.more--plays { right: 6.2%; bottom: clamp(16px, 3vh, 38px); }
+.more--news  { right: 6.2%; top: 8%; bottom: auto; }
+.more--inh   { right: 6.2%; bottom: clamp(48px, 7vh, 88px); }
+
+.more--six {
+  left: 50%;
+  bottom: clamp(20px, 3.4vh, 40px);
+  transform: translateX(-50%);
+}
+.more--six:hover { transform: translateX(-50%); }
+
+@media (max-width: 900px) {
+  /* 窄屏不做整屏翻页，链接改回文档流，跟着内容走 */
+  .more { position: static; margin: 22px 0 4px; }
+  .more--six { transform: none; }
+  .more--six:hover { transform: none; }
+  .more--inh { margin-left: 20px; }
+}
+
+/* ==========================================================================
+   首页「首页」下拉：六个扩展栏目（鼠标滑上「首页」即竖着展开）
+   ========================================================================== */
+.nav-drop {
+  position: relative;
+  /* 撑满整条顶栏，菜单 top:100% 才会正好落在匾下沿，而不是卡在「首页」两个字中间 */
+  height: var(--hd-h);
+  display: flex;
+  align-items: center;
+}
+.nav-drop > a { display: inline-flex; align-items: center; gap: 8px; }
+.nav-caret {
+  width: 0; height: 0;
+  border-left: 5px solid transparent;
+  border-right: 5px solid transparent;
+  border-top: 6px solid rgba(255, 236, 203, .85);
+  transition: transform .28s var(--ease-out), border-top-color .2s;
+}
+.nav-drop:hover .nav-caret,
+.nav-drop.open .nav-caret { transform: rotate(180deg); border-top-color: #fff7e6; }
+
+.nav-drop-menu {
+  position: absolute;
+  top: calc(100% + 8px);
+  left: -16px;
+  min-width: 246px;
+  padding: 9px;
+  background: linear-gradient(180deg, #fcf5e6 0%, #f6ecd6 100%);
+  border: 1px solid rgba(120, 70, 30, .24);
+  border-radius: 7px;
+  box-shadow:
+    0 20px 46px rgba(42, 18, 8, .34),
+    inset 0 0 0 1px rgba(255, 252, 244, .65);
+  opacity: 0;
+  visibility: hidden;
+  transform: translateY(-9px);
+  transition: opacity .24s var(--ease-out), transform .24s var(--ease-out), visibility .24s;
+  z-index: 80;
+}
+/* 顶部一枚小三角，既指向「首页」，又当悬停桥（别让菜单在间隙里抖掉） */
+.nav-drop-menu::before {
+  content: '';
+  position: absolute;
+  top: -6px; left: 34px;
+  width: 11px; height: 11px;
+  background: #fcf5e6;
+  border-left: 1px solid rgba(120, 70, 30, .24);
+  border-top: 1px solid rgba(120, 70, 30, .24);
+  transform: rotate(45deg);
+}
+.nav-drop:hover .nav-drop-menu,
+.nav-drop:focus-within .nav-drop-menu,
+.nav-drop.open .nav-drop-menu { opacity: 1; visibility: visible; transform: translateY(0); }
+
+/* 菜单项：一级导航的毛笔大字、金线下划线在这里全部归零，换正文样式 */
+.head-nav .nav-drop-menu a {
+  display: flex;
+  align-items: baseline;
+  gap: 12px;
+  padding: 9px 13px;
+  font-family: "Songti SC", "SimSun", serif;
+  font-size: 12px;
+  letter-spacing: .02em;
+  color: #5a2a18;
+  border-radius: 4px;
+  transition: background .16s;
+}
+.head-nav .nav-drop-menu a::after { display: none; }
+.head-nav .nav-drop-menu a:hover { color: #5a2a18; background: rgba(157, 44, 28, .07); }
+.nav-drop-menu a b {
+  font-family: "MSZ", "STKaiti", "KaiTi", serif;
+  font-weight: 400;
+  font-size: 19px;
+  letter-spacing: .08em;
+  color: #5a2a18;
+  white-space: nowrap;
+  transition: color .16s;
+}
+.nav-drop-menu a span {
+  font-size: 11px;
+  letter-spacing: .04em;
+  color: rgba(90, 62, 32, .58);
+  white-space: nowrap;
+}
+.nav-drop-menu a:hover b { color: #9d2c1c; }
+
+/* 窄屏：导航自己横滑（overflow-x:auto），下拉会被裁掉，干脆收起 */
+@media (max-width: 560px) {
+  .nav-caret { display: none; }
+  .nav-drop-menu { display: none; }
+}
+
+/* ---------- 影讯：矮屏收一收 ---------- */
+/* 三栏字号都是 vw 单位，跟视口高度没关系；1366×768、1440×800、1280×720
+   这类笔记本屏上，内容比 .col3 高 30~40px，底下正文会被 .sec 的
+   overflow:hidden 切掉半行（看着像错版）——这里按高度分两档收紧。 */
+@media (max-height: 870px) and (min-width: 901px) {
+  .col3 .col { gap: 9px; }
+  .col3 > .col:nth-child(2) .row-list { gap: 12px; }
+  .col3 > .col:nth-child(2) .row-block { padding: 10px 0 0; }
+  /* 选择器只落到影讯这一屏：nw-* 那几个类在影讯详情层里也用，
+     别把弹层的排版一起改瘦了 */
+  #page4 .nw-title { line-height: 1.4; }
+  #page4 .nw-text, #page4 .nw-sum { line-height: 1.76; }
+}
+@media (max-height: 760px) and (min-width: 901px) {
+  /* 底边再让一点（顶边不能动：「查看更多」钉在 8%，让多了会撞上） */
+  .col3 { bottom: 7%; }
+  #page4 .nw-title { font-size: clamp(16px, 1.42vw, 22px); }
+  #page4 .nw-title--sm { font-size: clamp(14px, 1.08vw, 18px); }
+  #page4 .nw-text, #page4 .nw-sum { font-size: 12px; line-height: 1.6; }
+  #page4 .nw-kicker { font-size: 10px; }
+  .col3 > .col:first-child .nw-fig img { max-height: 130px; }
+}

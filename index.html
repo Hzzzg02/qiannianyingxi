@@ -1,0 +1,653 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<link rel="icon" href="favicon.ico" sizes="any">
+<link rel="icon" type="image/png" sizes="32x32" href="assets/img/logo/favicon-32.png">
+<link rel="apple-touch-icon" href="assets/img/logo/apple-touch-icon.png">
+<title>千年影戏 · 一盏灯，两千年的影｜皮影数字馆</title>
+<meta name="description" content="千年影戏·皮影数字馆：一盏灯、一张牛皮、两千年的影。九屏纵向影像志，从影史、流派、戏库到工序、影箱，附 AI 说戏人与线上影展。">
+<meta name="author" content="千年影戏 · 三人小组">
+<meta name="theme-color" content="#2a1b14">
+<meta property="og:type" content="website">
+<meta property="og:title" content="千年影戏 · 一盏灯，两千年的影">
+<meta property="og:description" content="九屏影像志：影史、流派地图、经典剧目、影讯、七道工序、传承名册与影箱六器，附 AI 说戏人。">
+<meta property="og:image" content="assets/img/logo/logo-512.png">
+<meta name="twitter:card" content="summary_large_image">
+<link rel="stylesheet" href="assets/css/font.css?v=11405">
+<link rel="stylesheet" href="assets/css/brush.css?v=11405">
+<link rel="stylesheet" href="assets/css/token.css?v=11405">
+<link rel="stylesheet" href="assets/css/layout.css?v=11693">
+<link rel="stylesheet" href="assets/css/anim.css?v=11405">
+<link rel="stylesheet" href="assets/css/hover.css?v=11405">
+<link rel="stylesheet" href="assets/css/site.css?v=11405">
+<link rel="stylesheet" href="assets/css/eras.css?v=11405">
+<link rel="stylesheet" href="assets/css/news-open.css?v=11405">
+</head>
+<body class="is-viewing-0">
+
+<!-- ================= 顶部固定导航：朱红横匾 ================= -->
+<header class="site-head">
+  <div class="head-inner">
+    <a class="brand" href="index.html">
+      <span class="brand-seal"><img src="assets/img/logo/logo-128.png" alt="千年影戏" width="40" height="40"></span>
+      <span class="brand-txt"><b>千年影戏</b><i>皮影数字馆</i></span>
+    </a>
+    <nav class="head-nav">
+      <div class="nav-drop">
+        <a href="index.html" class="is-on" aria-haspopup="true">首页<i class="nav-caret"></i></a>
+        <div class="nav-drop-menu" role="menu" aria-label="扩展栏目">
+          <a href="eras.html" role="menuitem"><b>影史</b><span>一盏灯，两千年</span></a>
+          <a href="atlas.html" role="menuitem"><b>流派地图</b><span>十四地 · 七大影系</span></a>
+          <a href="repertoire.html" role="menuitem"><b>经典剧目</b><span>台上四出 · 戏库</span></a>
+          <a href="dispatch.html" role="menuitem"><b>影讯</b><span>政策 · 最新报道</span></a>
+          <a href="process.html" role="menuitem"><b>工艺</b><span>七道工序 · 走刀</span></a>
+          <a href="lineage.html" role="menuitem"><b>传承</b><span>四代传灯 · 名册</span></a>
+        </div>
+      </div>
+      <a href="craft.html">影偶制作</a>
+      <a href="community.html">戏影社区</a>
+      <a href="vault.html">影藏</a>
+      <a href="profile.html">个人中心</a>
+    </nav>
+    <div class="head-user">
+      <a class="hu" href="profile.html">
+        <span class="hu-av" data-user-av>影</span>
+        <span class="hu-tx" data-user-name>登录</span>
+      </a>
+    </div>
+  </div>
+</header>
+
+<!-- ================= 左侧悬浮栏（首屏隐藏） ================= -->
+<aside class="side-rail" aria-label="悬浮入口">
+  <a class="rail-item" href="#page1"><span class="rail-ico"></span><span class="rail-txt"></span></a>
+  <a class="rail-item" href="#page2"><span class="rail-ico"></span><span class="rail-txt"></span></a>
+  <a class="rail-item" href="#page4"><span class="rail-ico"></span><span class="rail-txt"></span></a>
+  <a class="rail-item" href="#page6"><span class="rail-ico"></span><span class="rail-txt"></span></a>
+  <a class="rail-item" href="#page8"><span class="rail-ico"></span><span class="rail-txt"></span></a>
+</aside>
+
+<!-- ================= 右侧圆点导航 ================= -->
+<nav class="dot-nav" aria-label="分屏导航">
+  <button type="button" data-go="0"><i></i><span class="dot-tip"><b>皮影工厂</b></span></button>
+  <button type="button" data-go="1"><i></i><span class="dot-tip"><b>影藏</b></span></button>
+  <button type="button" data-go="2"><i></i><span class="dot-tip"><b>影史</b></span></button>
+  <button type="button" data-go="3"><i></i><span class="dot-tip"><b>流派地图</b></span></button>
+  <button type="button" data-go="4"><i></i><span class="dot-tip"><b>经典剧目</b></span></button>
+  <button type="button" data-go="5"><i></i><span class="dot-tip"><b>影讯</b></span></button>
+  <button type="button" data-go="6"><i></i><span class="dot-tip"><b>工序</b></span></button>
+  <button type="button" data-go="7"><i></i><span class="dot-tip"><b>传承</b></span></button>
+  <button type="button" data-go="8"><i></i><span class="dot-tip"><b>关于</b></span></button>
+</nav>
+
+<!-- ================= 分屏容器 ================= -->
+<main id="deck" class="deck">
+  <!-- ---------- 01 AI 问答：一个大输入框，发出去就进对话页 ---------- -->
+  <section class="sec sec-ask" id="page1" data-anchor="page1">
+    <!-- 首屏背景：六张实拍轮换，图在 assets/img/hero/，由 hero.js 换页 -->
+    <div class="hero-bg" aria-hidden="true">
+      <div class="hero-slide" style="background-image:url('assets/img/hero/06.jpg')"></div>
+      <div class="hero-slide" style="background-image:url('assets/img/hero/02.jpg')"></div>
+      <div class="hero-slide" style="background-image:url('assets/img/hero/05.jpg')"></div>
+      <div class="hero-slide is-bright" style="background-image:url('assets/img/hero/01.jpg')"></div>
+      <div class="hero-slide" style="background-image:url('assets/img/hero/04.jpg')"></div>
+      <div class="hero-slide" style="background-image:url('assets/img/hero/03.jpg')"></div>
+    </div>
+    <div class="ask-veil" aria-hidden="true"></div>
+
+    <div class="ask-wrap">
+      <p class="ask-kicker">AI × 皮影工厂</p>
+      <h1 class="ask-title">问一句，<em>灯就亮</em></h1>
+      <p class="ask-lede">皮子怎么选、刀怎么走、哪一路唱什么腔，都问这座影窗里的说戏人。问明白了，还能让它照着你的话画一只。</p>
+
+      <form class="ask-box" id="askForm" action="chat.html" method="get">
+        <svg class="ask-ico" viewBox="0 0 24 24" aria-hidden="true" fill="none"
+             stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M21 11.5a8.4 8.4 0 0 1-9 8.4 9.9 9.9 0 0 1-3.3-.6L3 21l1.7-4.6A8.2 8.2 0 0 1 3.6 11 8.4 8.4 0 0 1 12 2.6a8.4 8.4 0 0 1 9 8.9z"/>
+        </svg>
+        <input class="ask-input" id="askQ" name="q" type="text" maxlength="120"
+               autocomplete="off" spellcheck="false"
+               aria-label="向说戏人提问"
+               placeholder="举个例子：皮影的皮子是怎么选的？">
+        <button class="ask-go" type="submit" aria-label="开始对话">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+               stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+            <path d="M5 12h13M12 5l7 7-7 7"/>
+          </svg>
+        </button>
+      </form>
+
+      <!-- 就地作答：点发送后答案摊在这里，不跳页 -->
+      <div class="ask-live" id="askLive" hidden aria-live="polite">
+        <div class="ask-live-head"><i></i><span>问：</span><b id="askLiveQ"></b></div>
+        <div class="ask-live-body" id="askLiveA"></div>
+        <div class="ask-live-foot">
+          <a class="ask-live-more" id="askLiveMore" href="chat.html">接着说，进影窗问答<span aria-hidden="true">→</span></a>
+          <button class="ask-live-close" id="askLiveClose" type="button">收起</button>
+        </div>
+      </div>
+
+      <div class="ask-chips">
+        <button type="button" data-q="皮影制作有几道工序？">皮影制作有几道工序？</button>
+        <button type="button" data-q="影偶为什么能动？">影偶为什么能动？</button>
+        <button type="button" data-q="各地影人差在哪？">各地影人差在哪？</button>
+      </div>
+    </div>
+
+    <p class="ask-note">影窗里的说戏人 · 大模型驱动</p>
+  </section>
+
+  <!-- ---------- 02 彩色竖条墙 + 挂幅卡片 ---------- -->
+  <section class="sec sec-panels sec-tone-1" id="page2" data-anchor="page2">
+    <!-- 六块彩色底：一块一色，奇数块往上滑、偶数块往下滑 -->
+    <div class="panels" aria-hidden="true">
+      <i style="--pc:#ab3d2c"></i>
+      <i style="--pc:#c08f3e"></i>
+      <i style="--pc:#4a7a52"></i>
+      <i style="--pc:#3a6484"></i>
+      <i style="--pc:#6d476a"></i>
+      <i style="--pc:#2f6b6b"></i>
+    </div>
+
+    <!-- 六件影箱家当：1/3/5 落在靠下那条水平线上、名字摆在卡片上方；
+         2/4/6 落在靠上那条、名字摆在卡片下方，一上一下错开。
+         点卡片 → 卡片连同名字滑走，宣纸方块载着著录从另一头滑上来 -->
+    <div class="pcards pcards--six">
+      <div class="pcell" style="--y:45%">
+        <figure class="pcard" style="--r:-1.2deg; --c:#efc8bd; --d:0s">
+          <span class="pcard-name">头茬</span>
+          <img src="assets/img/parts/toucha.png" alt="皮影头茬：韦陀，清代，牛皮，河北邯郸肥乡旧店" width="675" height="900">
+        </figure>
+        <div class="pintro">
+          <h3 class="pintro-title">头茬</h3>
+          <p class="pintro-txt">一颗头定行当。这具韦陀专用头茬，刻纹盘绕、眉眼压得极低，眼与口都刻空——隔着亮子看，只剩一道黑影。头饰分冠、帽、盔、巾四类，看帽上的名色，就知这是将、是官，还是神。</p>
+        </div>
+      </div>
+      <div class="pcell" style="--y:23.5%">
+        <figure class="pcard" style="--r:1.4deg; --c:#f2dcae; --d:.15s">
+          <span class="pcard-name">砌末</span>
+          <img src="assets/img/parts/qiemo.png" alt="皮影砌末：椅子，清代，牛皮，河南安阳滑县" width="675" height="900">
+        </figure>
+        <div class="pintro">
+          <h3 class="pintro-title">砌末</h3>
+          <p class="pintro-txt">桌椅、案几、山石，一场戏的场面靠这几件拼。这把带扶手的椅子椅腿已残，关节上的绑绳还在。砌末全靠简约的符号点题——富贵人家添几笔雕刻，穷人家连裙围也不加。</p>
+        </div>
+      </div>
+      <div class="pcell" style="--y:45%">
+        <figure class="pcard" style="--r:1deg; --c:#c6ddca; --d:.3s">
+          <span class="pcard-name">衬景</span>
+          <img src="assets/img/parts/chenjing.png" alt="皮影衬景：莲花台，清代，牛皮，河北邯郸肥乡旧店" width="900" height="675">
+        </figure>
+        <div class="pintro">
+          <h3 class="pintro-title">衬景</h3>
+          <p class="pintro-txt">摆上莲花台，就知道这场戏在仙界。台上四个力士撑着莲座，一层花瓣一层云气，边角再挂两朵未开的莲。衬景只管交代「这是什么地方」，整幅铺满亮子，一米多高、两米多宽。</p>
+        </div>
+      </div>
+      <div class="pcell" style="--y:23.5%">
+        <figure class="pcard" style="--r:-1.4deg; --c:#bed6e9; --d:.45s">
+          <span class="pcard-name">坐骑</span>
+          <img src="assets/img/parts/zuoqi.png" alt="皮影坐骑：龙首驹，牛皮，河北唐山" width="900" height="675">
+        </figure>
+        <div class="pintro">
+          <h3 class="pintro-title">坐骑</h3>
+          <p class="pintro-txt">只在武戏和神怪戏里出场。龙首、马身，通体鳞甲，鬃毛一根根刻出，鞍鞯压在背上。件数最少，雕工反而最放得开——怎么密怎么刻。马腿的关节也留出皮线，跑起来才不僵。</p>
+        </div>
+      </div>
+      <div class="pcell" style="--y:45%">
+        <figure class="pcard" style="--r:-1deg; --c:#ddc3e0; --d:.6s">
+          <span class="pcard-name">身段</span>
+          <img src="assets/img/parts/liantou.png" alt="皮影身段：孙悟空整身，清代，牛皮，河北邯郸肥乡旧店" width="675" height="900">
+        </figure>
+        <div class="pintro">
+          <h3 class="pintro-title">身段</h3>
+          <p class="pintro-txt">不拆的一整件，头与身连在同一块皮上。这具悟空执棒而立，红裤、虎皮裙，脚下接一根签子直通上身。多数影人头身分开：身段叫「桩子」，胸臀四肢连手共十件，以皮线连缀。</p>
+        </div>
+      </div>
+      <div class="pcell" style="--y:23.5%">
+        <figure class="pcard" style="--r:1.2deg; --c:#bcdcd9; --d:.75s">
+          <span class="pcard-name">戳子</span>
+          <img src="assets/img/parts/chuozi.png" alt="皮影戳子：团花衫，清代，牛皮，甘肃天水" width="675" height="900">
+        </figure>
+        <div class="pintro">
+          <h3 class="pintro-title">戳子</h3>
+          <p class="pintro-txt">一件团花衫上要刻满团花，刀口留筋，透光才不糊。戏班看手艺，先看戳子的线密不密、留筋匀不匀。一套影箱头茬能有几百上千件，戳子只备几十件——换戏换的是头，身子还是那一件。</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- 右下角：进「影藏」整页看六器与三百帧藏品 -->
+    <a class="p-more" href="vault.html" aria-label="查看更多影藏藏品">
+      <span class="p-more-txt">查看更多</span>
+    </a>
+  </section>
+
+  <!-- ---------- 03 竖条上半 + 居中说明 ---------- -->
+  <section class="sec sec-slots-half sec-tone-2" id="page3" data-anchor="page3">
+    <!-- 整屏的剪纸花纹：六朝各一张，四角布局，中间空出来给字 -->
+    <div class="era-figs" id="eraFigs" aria-hidden="true">
+      <img src="assets/img/eras/pat/han.webp?v=11405" alt="">
+      <img src="assets/img/eras/pat/tang.webp?v=11405" alt="">
+      <img src="assets/img/eras/pat/song.webp?v=11405" alt="">
+      <img src="assets/img/eras/pat/yuan.webp?v=11405" alt="">
+      <img src="assets/img/eras/pat/ming.webp?v=11405" alt="">
+      <img src="assets/img/eras/pat/modern.webp?v=11405" alt="">
+    </div>
+
+    <!-- 上半：一条流动的曲线，六朝钉在线上，随曲线一起走 -->
+    <div class="era-band">
+      <p class="era-kicker">影戏两千年</p>
+      <p class="era-hint">点朝代，看这一朝的来路</p>
+
+      <svg class="era-curve" id="eraCurve" preserveAspectRatio="none" aria-hidden="true">
+        <path class="era-glow" id="eraGlow" d=""></path>
+        <path class="era-line" id="eraLine" d=""></path>
+      </svg>
+      <div class="era-nodes" id="eraNodes"></div>
+    </div>
+
+    <!-- 下半：没选朝代时是总述，选中就换成那一朝 -->
+    <div class="era-copy">
+      <!-- 两枚角花挂在外层，切朝代时不参与重绘，所以不会闪 -->
+      <i class="ec-corner ec-corner--tl" aria-hidden="true"></i>
+      <i class="ec-corner ec-corner--br" aria-hidden="true"></i>
+      <div class="ec" id="eraCopy"></div>
+    </div>
+
+    <a class="more more--eras" href="eras.html" aria-label="查看更多影史">查看更多</a>
+  </section>
+
+  <!-- ---------- 04 流派地图 + 地区介绍 ---------- -->
+  <section class="sec sec-map sec-tone-4" id="page5" data-anchor="page5">
+    <div class="sec-title">
+      <i class="orn"></i>
+      <h2 class="map-h">流派地图</h2>
+      <i class="orn"></i>
+    </div>
+    <p class="map-sub">十四个地区 · 七大影系　—　点红点或省份，地图推近到那一处，右栏一并换掉</p>
+
+    <div class="map-wrap">
+      <div class="map-canvas">
+        <div class="map-plate" data-rv>
+          <svg class="cn-map" id="cnMap" viewBox="0 0 768.6 648.3" role="img"
+               aria-label="中国皮影流派分布示意地图">
+            <g id="cnProv"></g>
+            <!-- 聚焦层：选中那一省的轮廓，一道浅蓝的线沿边流走 -->
+            <g id="cnFocus" class="cn-focus" aria-hidden="true"></g>
+            <g id="cnPins"></g>
+          </svg>
+          <div class="cn-inset" id="cnInset" aria-hidden="true"></div>
+
+          <!-- 图例挂在图纸左上角，竖排 -->
+          <div class="cn-legend" id="cnLegend" data-rv>
+            <b class="cn-lg-t">七大影系</b>
+          </div>
+        </div>
+        <p class="map-note">底图为流派分布示意图，不作行政区划依据；流派文字取自中国美术学院「皮影数字博物馆」</p>
+      </div>
+
+      <aside class="map-panel" id="mapPanel" aria-live="polite" data-rv></aside>
+    </div>
+
+    <a class="more more--map" href="atlas.html" aria-label="查看更多流派">查看更多</a>
+  </section>
+
+  <!-- ---------- 05 经典剧目：一张戏单 + 一栏唱词 ---------- -->
+  <section class="sec sec-plays sec-tone-6" id="page7" data-anchor="page7">
+    <div class="play-wrap">
+      <div class="play-sheet">
+        <header class="ps-head">
+          <p class="ps-kick">07 · 经典剧目</p>
+          <h2 class="ps-h">台上四出</h2>
+          <p class="ps-sub">戏单上盖着「全本」的印　—　点一出，右栏换它的折子与唱词</p>
+        </header>
+        <ul class="ps-list" id="psList"></ul>
+        <p class="ps-note">戏目、折子与唱词取自「千年影戏」角色剧目页，唱词为演出本片段</p>
+      </div>
+
+      <aside class="play-lyric" aria-live="polite">
+        <div class="ly-head">
+          <b>唱词</b>
+          <span class="ly-show" id="lyShow">五峰会</span>
+        </div>
+        <div class="ly-lines" id="lyLines"></div>
+
+        <div class="ly-audio">
+          <button class="ly-play" id="lyPlay" type="button">
+            <span class="ly-ico" aria-hidden="true"></span><span id="lyPlayTxt">听一段</span>
+          </button>
+          <span class="ly-track" aria-hidden="true"><i id="lyFill"></i></span>
+          <span class="ly-time" id="lyTime">0:00</span>
+        </div>
+
+        <div class="ly-foot">
+          <span class="ly-acts" id="lyActs"></span>
+          <span class="ly-min" id="lyMin"></span>
+        </div>
+
+        <p class="ly-src" id="lySrc"></p>
+        <audio id="lyAudio" preload="none"></audio>
+      </aside>
+    </div>
+
+    <a class="more more--plays" href="repertoire.html" aria-label="查看更多剧目">查看更多</a>
+  </section>
+
+  <!-- ---------- 06 影讯：头图 / 速览 / 现场 ---------- -->
+  <section class="sec sec-col3 sec-tone-3" id="page4" data-anchor="page4">
+    <div class="col3">
+
+      <!-- 左：一条带图的头条 -->
+      <article class="col" data-news="n2">
+        <div class="col-head"><i class="orn"></i><h2 class="col-title">头条</h2><i class="orn"></i></div>
+
+        <figure class="nw-fig">
+          <img src="assets/img/news/n2-ai.jpg" alt="皮影戏片《水漫金山》：龙首将官、执镜武将、宝塔与乘云影偶，陕西藏品" width="1000" height="601">
+          <figcaption>图｜《水漫金山》戏片 · 陕西　中国美术学院皮影数字博物馆</figcaption>
+        </figure>
+
+        <p class="nw-kicker"><b>数字化</b><i></i><span>光明网</span><i></i><span>2025-10-20</span></p>
+        <h3 class="nw-title">AI 皮影资料库开放：输入草图，十秒生成一件数字皮影</h3>
+        <p class="nw-text">在北京汪氏皮影艺术馆，清华美院姚智皓演示了与汪氏皮影共同研发的 AI 皮影资料库：高清拍摄、逐件标注建成数据集，输入草图和关键词，十秒就能生成数字皮影。</p>
+        <p class="nw-text">第五代传承人党飞华说，过去学艺要拜师多年，如今门槛降到会画草图。他给自己定了三年目标——让全球一百万人成为皮影创作者。</p>
+      </article>
+
+      <!-- 中：从其余资讯里挑三条，各作一段概述 -->
+      <div class="col">
+        <div class="col-head"><i class="orn"></i><h2 class="col-title">速览</h2><i class="orn"></i></div>
+
+        <div class="row-list row-list-lg">
+          <article class="row-block" data-news="n4">
+            <p class="nw-kicker"><b>演出</b><i></i><span>央视网</span><i></i><span>2025-02-12</span></p>
+            <h3 class="nw-title nw-title--sm">龙江皮影登上亚冬会舞台</h3>
+            <p class="nw-sum">运动员村一楼展厅，舞台以冰雪大世界为背景，影人在幕后演绎冬季花样冰舞，向亚洲 34 个国家和地区的健儿道一声欢迎。</p>
+          </article>
+
+          <article class="row-block" data-news="n5">
+            <p class="nw-kicker"><b>抢救记录</b><i></i><span>新华社</span><i></i><span>2023-06-11</span></p>
+            <h3 class="nw-title nw-title--sm">八十三岁，还在窑洞里撑幕布</h3>
+            <p class="nw-sum">甘肃环县陈旗塬村的一孔窑洞，83 岁的敬廷佑端坐幕布中央，《竹林会》开戏。敬家班 1903 年成班，如今撑幕布的，还是那对八十多岁的兄弟。</p>
+          </article>
+
+          <article class="row-block" data-news="n1">
+            <p class="nw-kicker"><b>名录</b><i></i><span>新华社</span><i></i><span>2011-11-27</span></p>
+            <h3 class="nw-title nw-title--sm">中国皮影戏列入人类非遗代表作名录</h3>
+            <p class="nw-sum">巴黎，保护非物质文化遗产政府间委员会第 6 届会议决定，把中国皮影戏列入名录。一人操数偶、即兴演唱、兼奏数器的本事，由此进入世界级保护视野。</p>
+          </article>
+        </div>
+      </div>
+
+      <!-- 右：一条带图的现场，图压在栏底 -->
+      <article class="col" data-news="n9">
+        <div class="col-head"><i class="orn"></i><h2 class="col-title">现场</h2><i class="orn"></i></div>
+
+        <p class="nw-kicker"><b>演出</b><i></i><span>新华网甘肃频道</span><i></i><span>2025-11-26</span></p>
+        <h3 class="nw-title nw-title--sm">高铁把环县道情皮影带出了圈</h3>
+        <p class="nw-text">国庆黄金周，庆阳一中的学生一早就坐上高铁，从西峰直奔环县，只为在环州故城看一场道情皮影、上手刻一刀。</p>
+        <p class="nw-text">皮影馆里，传承人张志文俯身雕的是一件高铁造型的影偶，流线车身刻得一丝不苟。他说，高铁给了环县机遇，他要拿这门老手艺把它记下来。</p>
+
+        <figure class="nw-fig nw-fig--bottom">
+          <img src="assets/img/news/n9-rail.jpg" alt="皮影戏片《沙家浜》：持枪兵士、草房、茶桌与花盆，河北唐山藏品" width="1000" height="645">
+          <figcaption>图｜《沙家浜》戏片 · 河北唐山　中国美术学院皮影数字博物馆</figcaption>
+        </figure>
+      </article>
+
+    </div>
+
+    <a class="more more--ink more--news" href="dispatch.html" aria-label="查看更多影讯">查看更多</a>
+  </section>
+
+  <!-- ---------- 07 六列竖卡：从一张皮到一只能上台的影偶 ---------- -->
+  <section class="sec sec-six sec-tone-7" id="page8" data-anchor="page8">
+    <div class="six-wrap">
+      <div class="six-col" data-rv data-dir="up">
+        <span class="six-no">01</span>
+        <figure class="six-fig">
+          <img src="assets/img/craft/step1.jpg" alt="选皮工序：刮制好的皮绷在竹木架上阴干，皮面净亮透明" width="560" height="748">
+        </figure>
+        <div class="six-cap">
+          <h3 class="six-txt">选皮</h3>
+          <p class="six-more">一张驴皮万刻刀。薄皮留头胸腹，厚皮留腿脚，影偶才上轻下重。</p>
+        </div>
+      </div>
+      <div class="six-col" data-rv data-dir="down">
+        <span class="six-no">02</span>
+        <figure class="six-fig">
+          <img src="assets/img/craft/step2.jpg" alt="描样工序：在纸样上起稿勾线，画出人物轮廓与纹样" width="560" height="748">
+        </figure>
+        <div class="six-cap">
+          <h3 class="six-txt">描样</h3>
+          <p class="six-more">皮要推平再下针。侧影起稿，关节先留余地。</p>
+        </div>
+      </div>
+      <div class="six-col" data-rv data-dir="up">
+        <span class="six-no">03</span>
+        <figure class="six-fig">
+          <img src="assets/img/craft/step3.jpg" alt="雕刻工序：顺丝走刀，在皮上镂刻出细密纹样" width="560" height="748">
+        </figure>
+        <div class="six-cap">
+          <h3 class="six-txt">雕刻</h3>
+          <p class="six-more">顺丝走刀，阳刻为主。关节留筋，一断整件废。</p>
+        </div>
+      </div>
+      <div class="six-col" data-rv data-dir="down">
+        <span class="six-no">04</span>
+        <figure class="six-fig">
+          <img src="assets/img/craft/step4.jpg" alt="上色工序：细笔敷彩，矿物颜料先浅后深" width="560" height="748">
+        </figure>
+        <div class="six-cap">
+          <h3 class="six-txt">上色</h3>
+          <p class="six-more">矿物色趁热敷，先浅后深，双面罩两三遍。</p>
+        </div>
+      </div>
+      <div class="six-col" data-rv data-dir="up">
+        <span class="six-no">05</span>
+        <figure class="six-fig">
+          <img src="assets/img/craft/step5.jpg" alt="缀结工序：装签子、连关节，把各部件缀成整身" width="560" height="748">
+        </figure>
+        <div class="six-cap">
+          <h3 class="six-txt">缀结</h3>
+          <p class="six-more">三根签子定乾坤：胸一、手二，武场挪后肩。</p>
+        </div>
+      </div>
+      <div class="six-col" data-rv data-dir="down">
+        <span class="six-no">06</span>
+        <figure class="six-fig">
+          <img src="assets/img/craft/step6.jpg" alt="整平工序：敷彩完成的部件平铺展平，进入发汗压制定型" width="560" height="748">
+        </figure>
+        <div class="six-cap">
+          <h3 class="six-txt">整平</h3>
+          <p class="six-more">发汗压平，低温多次；高温起泡，前功尽弃。</p>
+        </div>
+      </div>
+    </div>
+
+    <a class="more more--six" href="process.html" aria-label="查看更多工艺">查看更多</a>
+  </section>
+
+  <!-- ---------- 08 传承：左图右纸，三个人换着看 ---------- -->
+  <section class="sec sec-split sec-tone-5" id="page6" data-anchor="page6">
+    <div class="inh-deco" aria-hidden="true">
+      <span class="deco deco--f1"></span>
+      <span class="deco deco--f2"></span>
+      <span class="deco deco--f3"></span>
+      <span class="deco deco--f4"></span>
+      <img class="deco-pup deco-pup--a" src="assets/img/parts/liantou.png" alt="">
+    </div>
+
+    <div class="split-left">
+      <span class="inh-idx" id="inhIdx">01 / 05</span>
+
+      <figure class="inh-photo">
+        <span class="inh-glow" aria-hidden="true"></span>
+        <div class="inh-mask">
+          <img class="inh-prev" id="inhPrev" alt="" aria-hidden="true">
+          <img class="inh-cur" id="inhImg" src="assets/img/people/fan.jpg"
+               alt="范正安在泰山皮影剧场演出，一人操偶兼踩打乐器" width="640" height="426">
+        </div>
+        <span class="inh-ring" aria-hidden="true"></span>
+        <span class="inh-ring2" aria-hidden="true"></span>
+      </figure>
+
+      <div class="inh-sign">
+        <span class="inh-name" id="inhName">范正安</span>
+        <i class="inh-sep" aria-hidden="true"></i>
+        <span class="inh-word" id="inhWord">十不闲</span>
+      </div>
+
+      <p class="inh-cap" id="inhCap">山东泰安 · 泰山皮影戏　摄影 朱峥 / 新华社</p>
+    </div>
+
+    <div class="split-right">
+      <div class="inh-body">
+        <p class="inh-kick">06 · 传承推广</p>
+        <h2 class="inh-h">传灯有径</h2>
+        <p class="inh-lede">名录确立了，传承人认定了，接下来是「有人学、有人教」。五位国家级代表性传承人，各守一门险些断掉的活——名字都串在这条线上，指到谁，左边就换谁。</p>
+
+        <div class="inh-stage" id="inhStage">
+          <div class="inh-thread" id="inhThread" role="tablist" aria-label="国家级代表性传承人">
+              <span class="inh-rail" aria-hidden="true"></span>
+
+            <button class="inh-node is-on" type="button" role="tab" aria-selected="true" data-i="0">
+              <span class="in-dot" aria-hidden="true"></span>
+              <span class="in-txt"><span class="in-name">范正安</span><span class="in-word">十不闲</span></span>
+              <span class="in-place">山东泰安 · 泰山皮影戏</span>
+            </button>
+
+            <button class="inh-node" type="button" role="tab" aria-selected="false" data-i="1">
+              <span class="in-dot" aria-hidden="true"></span>
+              <span class="in-txt"><span class="in-name">张坤荣</span><span class="in-word">唱做一身</span></span>
+              <span class="in-place">浙江海宁 · 海宁皮影戏</span>
+            </button>
+
+            <button class="inh-node" type="button" role="tab" aria-selected="false" data-i="2">
+              <span class="in-dot" aria-hidden="true"></span>
+              <span class="in-txt"><span class="in-name">宋国超</span><span class="in-word">一人成班</span></span>
+              <span class="in-place">辽宁瓦房店 · 复州皮影戏</span>
+            </button>
+
+            <button class="inh-node" type="button" role="tab" aria-selected="false" data-i="3">
+              <span class="in-dot" aria-hidden="true"></span>
+              <span class="in-txt"><span class="in-name">魏金全</span><span class="in-word">单人开台</span></span>
+              <span class="in-place">陕西渭南 · 华县皮影戏</span>
+            </button>
+
+            <button class="inh-node" type="button" role="tab" aria-selected="false" data-i="4">
+              <span class="in-dot" aria-hidden="true"></span>
+              <span class="in-txt"><span class="in-name">汪天稳</span><span class="in-word">推皮走刀</span></span>
+              <span class="in-place">陕西渭南 · 华县影偶雕刻</span>
+            </button>
+          </div>
+
+          <div class="inh-detail" id="inhDetail" aria-live="polite">
+            <div class="ind-head">
+              <p class="ind-life" id="indLife"></p>
+              <button class="ind-back" id="indBack" type="button">查看其他传承人</button>
+            </div>
+            <div class="ind-body" id="indBody">
+              <div class="ind-text" id="indText"></div>
+            </div>
+          </div>
+        </div>
+
+        <p class="inh-src" id="inhSrc">出处：中国非遗网 · 光明网</p>
+
+        <a class="more more--ink more--inh" href="lineage.html" aria-label="查看更多传承">查看更多</a>
+      </div>
+    </div>
+  </section>
+
+  <!-- ---------- 09 关于（页脚） ---------- -->
+  <footer class="sec sec-foot" id="page9" data-anchor="page9" aria-label="关于本站">
+      <div class="ft-in">
+        <nav class="ft-nav" aria-label="站内导航">
+          <a href="vault.html">影藏库</a><i>|</i>
+          <a href="atlas.html">流派地图</a><i>|</i>
+          <a href="repertoire.html">经典剧目</a><i>|</i>
+          <a href="craft.html">影偶制作</a><i>|</i>
+          <a href="lineage.html">传承人</a><i>|</i>
+          <a href="chat.html">说戏人</a><i>|</i>
+          <a href="community.html">戏台社区</a>
+        </nav>
+        <p class="ft-row">参赛 · <b>2026 第九届传智杯全国大学生数智创新与 AI 应用大赛</b>　赛道 · <b>AI WEB 网页开发挑战赛</b>　主办 · <b>全国高等院校计算机基础教育研究会</b></p>
+        <p class="ft-row">Copyright © 2026 <b>千年影戏 · 皮影数字馆</b>　All Rights Reserved　本站为三人小组参赛作品，非商业用途</p>
+        <p class="ft-row">网站建设 · 队员一 / 队员二 / 队员三　指导老师 · 待填　在线演示 · <a href="http://121.41.66.240">121.41.66.240</a></p>
+        <p class="ft-row ft-dim">馆藏著录 · 中国美术学院民艺博物馆「皮影数字博物馆」　影像与报道 · 中国非遗网、光明网　AI 生成图仅作演示</p>
+        <p class="ft-row ft-dim">建议使用 Chrome / Edge / Firefox 浏览器，最佳分辨率 1440 × 900 以上</p>
+      </div>
+  </footer>
+</main>
+
+<script src="assets/js/deck.js?v=11686"></script>
+<script src="assets/js/hero.js?v=11405"></script>
+<script src="assets/js/reveal.js?v=11683"></script>
+<script src="assets/js/slots.js?v=11405"></script>
+<script src="assets/js/eras-data.js?v=11405"></script>
+<script src="assets/js/eras.js?v=11405"></script>
+<script src="assets/js/ask.js?v=11644"></script>
+<script src="assets/js/cn-map.js?v=11405"></script>
+<script src="assets/js/schools-data.js?v=11405"></script>
+<script src="assets/js/map.js?v=11405"></script>
+<script src="assets/js/parts.js?v=11405"></script>
+<script src="assets/js/inherit.js?v=11405"></script>
+<script src="assets/js/plays.js?v=11405"></script>
+<script src="assets/js/site.js?v=11405"></script>
+<script src="assets/js/news-data.js?v=11405"></script>
+<script src="assets/js/news-open.js?v=11405"></script>
+<script>
+/* 调试用：?still 关掉所有过渡，直接呈现"动画结束态"，便于截图核对版式 */
+if (location.search.indexOf('still') > -1) {
+  var st = document.createElement('style');
+  st.textContent = '*,*::before,*::after{transition:none!important;animation:none!important}';
+  document.head.appendChild(st);
+}
+/* 调试用：?flat 关掉整屏位移，改成普通滚动，方便逐屏截图校验 */
+if (location.search.indexOf('flat') > -1) {
+  document.documentElement.style.overflow = 'auto';
+  document.body.style.overflow = 'auto';
+  document.addEventListener('DOMContentLoaded', function () {
+    var d = document.getElementById('deck');
+    if (d) { d.style.transform = 'none'; d.style.transition = 'none'; }
+  });
+}
+/* 调试用：?hover 把若干卡片强制点亮成悬停态，便于截图核对 */
+if (location.search.indexOf('hover') > -1) {
+  setTimeout(function () {
+    ['.card-img', '.row', '.sp-cell', '.vtab', '.vmore', '.six-col', '.map-point', '.rail-item'].forEach(function (sel) {
+      var el = document.querySelector(sel);
+      if (el) el.classList.add('is-hover');
+    });
+    var sw = document.querySelector('.six-wrap');
+    if (sw) sw.classList.add('is-hovered');
+    var rail = document.querySelector('.side-rail');
+    if (rail) rail.classList.add('is-open');
+  }, 600);
+}
+/* 调试用：?tip=N —— 让第 N 个圆点的页码条保持拉出，便于截图核对 */
+if (/[?&]tip=\d/.test(location.search)) {
+  var ti = parseInt(/[?&]tip=(\d)/.exec(location.search)[1], 10);
+  setTimeout(function () {
+    var b = document.querySelectorAll('.dot-nav button')[ti];
+    if (b) b.classList.add('is-peek');
+  }, 1500);
+}
+/* 调试用：?debug —— 把版面关键尺寸写进 title，配 --dump-dom 就能读出来 */
+if (location.search.indexOf('debug') > -1) {
+  setTimeout(function(){
+    var d=document.getElementById('deck');
+    var f=document.querySelector('.sec-foot');
+    var bar=document.querySelector('.ft-in');
+    var r=function(el){ var b=el.getBoundingClientRect();
+      return [Math.round(b.top),Math.round(b.bottom),Math.round(b.height)]; };
+    document.title = JSON.stringify({
+      vh: window.innerHeight, vw: window.innerWidth,
+      deckH: d.offsetHeight, tr: getComputedStyle(d).transform,
+      foot: r(f), bar: r(bar),
+      body: document.body.className
+    });
+  }, 1500);
+}
+</script>
+</body>
+</html>

@@ -1,0 +1,438 @@
+/* ==========================================================
+   news-open.css —— 影讯详情：整屏摊开的一页纸
+   · 遮罩压暗、纸面带细朱线框与两枚金色卷草角花（沿用第 3 屏的角花）
+   · 正文区自己滚，滚动不外溢到整屏翻页
+   ========================================================== */
+
+/* ---------- 卡片变成可点的样子 ---------- */
+.nw-open {
+  cursor: pointer;
+  -webkit-tap-highlight-color: transparent;
+}
+.nw-open .nw-fig img {
+  transition: transform .7s var(--ease-out), filter .5s ease;
+}
+.nw-open:hover .nw-fig img,
+.nw-open:focus-visible .nw-fig img {
+  transform: scale(1.025);
+  filter: saturate(1.05);
+}
+.nw-open .nw-title {
+  transition: color .3s ease;
+}
+.nw-open:hover .nw-title,
+.nw-open:focus-visible .nw-title {
+  color: var(--tick-2);
+}
+.nw-open:focus-visible {
+  outline: 1px solid rgba(168, 50, 31, .55);
+  outline-offset: 8px;
+}
+/* 读全文：一条短横线，悬停时横线伸长 */
+.nw-readmore {
+  display: inline-flex;
+  align-self: flex-start;
+  align-items: center;
+  gap: 8px;
+  margin-top: 2px;
+  font-size: 11.5px;
+  letter-spacing: .16em;
+  color: var(--tick);
+  transition: color .3s ease;
+}
+.nw-readmore::before {
+  content: '';
+  width: 16px;
+  height: 1px;
+  background: currentColor;
+  opacity: .6;
+  transition: width .45s var(--ease-out);
+}
+.nw-open:hover .nw-readmore::before { width: 30px; }
+
+/* ---------- 遮罩 ---------- */
+.nw-modal {
+  position: fixed;
+  inset: 0;
+  z-index: 120;
+  display: grid;
+  place-items: center;
+  padding: clamp(14px, 3.2vh, 44px) clamp(14px, 3vw, 48px);
+  background: rgba(24, 15, 9, .62);
+  -webkit-backdrop-filter: blur(3px) saturate(.9);
+  backdrop-filter: blur(3px) saturate(.9);
+  opacity: 0;
+  visibility: hidden;
+  transition: opacity .38s ease, visibility .38s;
+}
+.nw-modal.is-on {
+  opacity: 1;
+  visibility: visible;
+}
+
+/* ---------- 纸 ---------- */
+.nw-sheet {
+  position: relative;
+  width: min(1020px, 100%);
+  height: 100%;
+  max-height: 100%;
+  min-height: 0;
+  display: flex;
+  flex-direction: column;
+  background:
+    radial-gradient(120% 90% at 50% -10%, rgba(255, 253, 246, .96), rgba(248, 243, 233, 0) 62%),
+    linear-gradient(180deg, #faf6ec 0%, #f4eddd 100%);
+  box-shadow:
+    0 0 0 1px rgba(107, 69, 41, .28),
+    0 30px 70px rgba(16, 9, 4, .45),
+    0 2px 0 rgba(255, 255, 255, .5) inset;
+  transform: translateY(18px) scale(.985);
+  opacity: 0;
+  transition: transform .5s var(--ease-out), opacity .42s ease;
+}
+.nw-modal.is-on .nw-sheet {
+  transform: none;
+  opacity: 1;
+}
+/* 纸上的细朱线框 */
+.nw-sheet::before {
+  content: '';
+  position: absolute;
+  inset: 13px;
+  border: 1px solid rgba(168, 50, 31, .18);
+  pointer-events: none;
+  z-index: 2;
+}
+/* 两枚金色卷草角花，贴着框的左上、右下 */
+.nw-sheet::after {
+  content: '';
+  position: absolute;
+  left: 15px;
+  top: 15px;
+  width: 62px;
+  height: 62px;
+  background: url("../img/eras/frame-tl.svg") left top / contain no-repeat;
+  opacity: .72;
+  pointer-events: none;
+  z-index: 3;
+}
+.nw-deco-br {
+  position: absolute;
+  right: 15px;
+  bottom: 15px;
+  width: 62px;
+  height: 62px;
+  background: url("../img/eras/frame-br.svg") right bottom / contain no-repeat;
+  opacity: .72;
+  pointer-events: none;
+  z-index: 3;
+}
+
+/* ---------- 顶栏 ---------- */
+.nw-top {
+  flex: none;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  padding: 20px clamp(26px, 4.4vw, 58px) 14px clamp(84px, 6vw, 96px);
+  border-bottom: 1px solid rgba(107, 69, 41, .16);
+}
+.nw-top-t {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  min-width: 0;
+  font-size: 11.5px;
+  letter-spacing: .22em;
+  color: #8c7b63;
+  text-indent: .22em;
+}
+.nw-top-t b {
+  font-weight: 600;
+  letter-spacing: .18em;
+  color: var(--tick);
+}
+.nw-top-t span {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.nw-x {
+  flex: none;
+  width: 34px;
+  height: 34px;
+  display: grid;
+  place-items: center;
+  border: 1px solid rgba(107, 69, 41, .28);
+  border-radius: 50%;
+  background: rgba(255, 255, 255, .35);
+  color: #6b4529;
+  font-size: 19px;
+  line-height: 1;
+  cursor: pointer;
+  transition: background .3s ease, color .3s ease, border-color .3s ease,
+              transform .5s var(--ease-back);
+}
+.nw-x:hover {
+  background: var(--tick);
+  border-color: var(--tick);
+  color: #fdf8ee;
+  transform: rotate(90deg);
+}
+.nw-x:focus-visible { outline: 2px solid rgba(168, 50, 31, .6); outline-offset: 3px; }
+
+/* ---------- 正文滚动区 ---------- */
+.nw-scroll:focus { outline: none; }
+.nw-scroll {
+  flex: 1 1 auto;
+  min-height: 0;
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  padding: clamp(24px, 4vh, 44px) clamp(26px, 5.2vw, 76px) clamp(30px, 5vh, 54px);
+  scrollbar-width: thin;
+  scrollbar-color: rgba(107, 69, 41, .34) transparent;
+}
+.nw-scroll::-webkit-scrollbar { width: 8px; }
+.nw-scroll::-webkit-scrollbar-track { background: transparent; }
+.nw-scroll::-webkit-scrollbar-thumb {
+  background: rgba(107, 69, 41, .28);
+  border-radius: 8px;
+  border: 2px solid transparent;
+  background-clip: content-box;
+}
+.nw-scroll::-webkit-scrollbar-thumb:hover { background: rgba(107, 69, 41, .48); background-clip: content-box; }
+
+/* 正文保持一个舒服的行宽 */
+.nw-art {
+  max-width: 43em;
+  margin: 0 auto;
+}
+
+/* ---------- 文章头 ---------- */
+.nw-kick {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin: 0 0 14px;
+  font-size: 11px;
+  letter-spacing: .08em;
+  color: #8c7b63;
+  font-variant-numeric: tabular-nums;
+}
+.nw-kick b {
+  font-weight: 600;
+  letter-spacing: .18em;
+  color: var(--tick);
+}
+.nw-kick i {
+  width: 1px;
+  height: 9px;
+  background: rgba(107, 69, 41, .26);
+}
+
+.nw-h {
+  margin: 0;
+  font-family: "Songti SC", "SimSun", "STSong", "Noto Serif SC", serif;
+  font-size: clamp(23px, 2.5vw, 37px);
+  font-weight: 600;
+  line-height: 1.42;
+  letter-spacing: .01em;
+  color: #221d17;
+  text-wrap: balance;
+}
+
+.nw-lead {
+  position: relative;
+  margin: 18px 0 0;
+  padding-left: 16px;
+  font-size: clamp(14px, 1.15vw, 17.5px);
+  line-height: 1.95;
+  text-align: justify;
+  color: #5c4f42;
+}
+.nw-lead::before {
+  content: '';
+  position: absolute;
+  left: 0;
+  top: .55em;
+  bottom: .55em;
+  width: 2px;
+  background: linear-gradient(180deg, rgba(168, 50, 31, .62), rgba(168, 50, 31, .16));
+}
+
+/* ---------- 图 ---------- */
+.nw-pic {
+  width: -webkit-fit-content;
+  width: fit-content;
+  max-width: 100%;
+  margin: 26px auto 0;
+  padding: 9px 9px 0;
+  background: var(--paper);
+  box-shadow: 0 0 0 1px rgba(107, 69, 41, .3), 0 14px 30px rgba(28, 14, 6, .14);
+}
+/* 戏片有横有竖，一律按同一高度排：不裁、不压扁，像贴上去的藏品照 */
+.nw-pic img {
+  display: block;
+  margin: 0 auto;
+  width: auto;
+  max-width: 100%;
+  height: clamp(200px, 34vh, 350px);
+  object-fit: contain;
+  object-position: center;
+}
+.nw-pic figcaption {
+  margin: 0 -9px;
+  padding: 8px 9px 9px;
+  font-size: 11.5px;
+  line-height: 1.6;
+  letter-spacing: .01em;
+  color: #8c7b63;
+  background: rgba(255, 255, 255, .48);
+}
+
+/* ---------- 正文 ---------- */
+.nw-body { margin-top: 26px; }
+.nw-body h4 {
+  position: relative;
+  margin: 30px 0 12px;
+  padding-left: 14px;
+  font-family: "Songti SC", "SimSun", "STSong", "Noto Serif SC", serif;
+  font-size: clamp(15px, 1.2vw, 18.5px);
+  font-weight: 600;
+  letter-spacing: .06em;
+  color: #3a2a1c;
+}
+.nw-body h4::before {
+  content: '';
+  position: absolute;
+  left: 0;
+  top: .42em;
+  width: 5px;
+  height: 5px;
+  background: var(--tick);
+  transform: rotate(45deg);
+}
+.nw-body h4:first-child { margin-top: 0; }
+.nw-body p {
+  margin: 0 0 14px;
+  font-size: clamp(14px, 1.08vw, 17px);
+  line-height: 2.02;
+  letter-spacing: .012em;
+  text-align: justify;
+  color: #443a31;
+}
+.nw-body p:last-child { margin-bottom: 0; }
+
+/* ---------- 文末来源 ---------- */
+.nw-src {
+  margin: 30px 0 0;
+  padding-top: 15px;
+  border-top: 1px solid rgba(107, 69, 41, .18);
+  font-size: 12px;
+  line-height: 1.9;
+  letter-spacing: .02em;
+  color: #8c7b63;
+}
+.nw-src a {
+  color: var(--tick-2);
+  text-decoration: none;
+  border-bottom: 1px solid rgba(168, 50, 31, .35);
+  padding-bottom: 1px;
+  transition: border-color .3s ease, color .3s ease;
+}
+.nw-src a:hover { color: var(--tick); border-bottom-color: var(--tick); }
+
+/* ---------- 其他影讯 ---------- */
+.nw-more {
+  margin: 34px 0 0;
+  padding-top: 4px;
+}
+.nw-more-t {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin: 0 0 6px;
+  font-family: "Songti SC", "SimSun", "STSong", "Noto Serif SC", serif;
+  font-size: 12px;
+  font-weight: 600;
+  letter-spacing: .3em;
+  text-indent: .3em;
+  color: #6b4529;
+}
+.nw-more-t::after {
+  content: '';
+  flex: 1 1 auto;
+  height: 1px;
+  background: rgba(107, 69, 41, .26);
+}
+.nw-more-list {
+  display: grid;
+  grid-template-columns: 1fr;
+}
+.nw-more-item {
+  display: flex;
+  align-items: baseline;
+  gap: 10px;
+  width: 100%;
+  padding: 12px 2px;
+  border: 0;
+  border-bottom: 1px solid rgba(107, 69, 41, .12);
+  background: none;
+  text-align: left;
+  cursor: pointer;
+  color: #3f362d;
+  transition: color .3s ease;
+}
+.nw-more-item:hover { color: var(--tick-2); }
+.nw-more-item:focus-visible { outline: 1px solid rgba(168, 50, 31, .5); outline-offset: 3px; }
+.nw-more-item i {
+  flex: none;
+  font-style: normal;
+  font-size: 10px;
+  letter-spacing: .12em;
+  color: var(--tick);
+  opacity: .85;
+}
+.nw-more-item span {
+  flex: 1 1 auto;
+  min-width: 0;
+  font-size: 14px;
+  line-height: 1.7;
+}
+.nw-more-item em {
+  flex: none;
+  font-style: normal;
+  font-size: 11px;
+  letter-spacing: .02em;
+  color: #9a8b74;
+  font-variant-numeric: tabular-nums;
+}
+
+/* ---------- 窄屏 ---------- */
+@media (max-width: 900px) {
+  .nw-modal { padding: 0; }
+  .nw-sheet {
+    width: 100%;
+    height: 100%;
+    max-height: 100%;
+    box-shadow: none;
+  }
+  .nw-sheet::before { inset: 9px; }
+  .nw-sheet::after,
+  .nw-deco-br { display: none; }
+  .nw-top { padding: 14px 18px 12px; }
+  .nw-scroll { padding: 20px 18px 32px; }
+  .nw-more-list { grid-template-columns: 1fr; }
+  .nw-pic img { height: clamp(220px, 38vh, 360px); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .nw-modal,
+  .nw-sheet,
+  .nw-x,
+  .nw-open .nw-fig img,
+  .nw-open .nw-readmore::before {
+    transition: none !important;
+  }
+}

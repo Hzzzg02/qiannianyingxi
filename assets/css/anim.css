@@ -1,0 +1,171 @@
+/* ==========================================================
+   进场动效
+   同一种节奏复刻"上下交替 + 弹性回弹 + 错位延迟"的手法，
+   数值自己调，不引用原站任何缓动库。
+   ========================================================== */
+
+/* 通用入场：默认从下方 40px 淡入，data-dir="down" 改为从上方 */
+[data-rv] {
+  opacity: 0;
+  transform: translate3d(0, var(--rv-y, 40px), 0);
+  transition:
+    opacity .8s var(--ease-out),
+    transform 1.05s var(--ease-back);
+  transition-delay: var(--rv-d, 0s);
+  will-change: transform, opacity;
+}
+[data-rv][data-dir="down"] { --rv-y: -40px; }
+
+/* 六列那种整块位移，用百分比更有"抽拉"感 */
+.sec-six [data-rv] { --rv-y: 42%; }
+.sec-six [data-rv][data-dir="down"] { --rv-y: -42%; }
+
+/* 进入本屏 → 复位 */
+.sec.is-in [data-rv] {
+  opacity: 1;
+  transform: translate3d(0, 0, 0);
+}
+
+/* 竖标签：从上下两个方向错位进入 */
+.sec-split .vtab { --rv-y: 46px; }
+.sec-split .vtab[data-dir="down"] { --rv-y: -46px; }
+
+/* 三栏内容轻微上浮，避免整屏"死"着 */
+.sec-col3 .col {
+  opacity: 0;
+  transform: translateY(28px);
+  transition: opacity .9s var(--ease-out), transform 1s var(--ease-out);
+}
+.sec-col3.is-in .col:nth-child(1) { opacity: 1; transform: none; transition-delay: .05s; }
+.sec-col3.is-in .col:nth-child(2) { opacity: 1; transform: none; transition-delay: .16s; }
+.sec-col3.is-in .col:nth-child(3) { opacity: 1; transform: none; transition-delay: .27s; }
+
+/* 地图与统计面板：面板从右侧滑入，数字块逐格亮起 */
+.sec-map .stat-panel {
+  opacity: 0;
+  transform: translateX(40px);
+  transition: opacity .9s var(--ease-out), transform 1s var(--ease-back);
+}
+.sec-map.is-in .stat-panel { opacity: 1; transform: none; transition-delay: .15s; }
+
+.sec-map .sp-cell {
+  opacity: 0;
+  transform: translateY(14px);
+  transition: opacity .6s var(--ease-out), transform .7s var(--ease-back);
+}
+.sec-map.is-in .sp-cell { opacity: 1; transform: none; }
+.sec-map.is-in .sp-cell:nth-child(1) { transition-delay: .32s; }
+.sec-map.is-in .sp-cell:nth-child(2) { transition-delay: .38s; }
+.sec-map.is-in .sp-cell:nth-child(3) { transition-delay: .44s; }
+.sec-map.is-in .sp-cell:nth-child(4) { transition-delay: .50s; }
+.sec-map.is-in .sp-cell:nth-child(5) { transition-delay: .56s; }
+.sec-map.is-in .sp-cell:nth-child(6) { transition-delay: .62s; }
+.sec-map.is-in .sp-cell:nth-child(7) { transition-delay: .68s; }
+.sec-map.is-in .sp-cell:nth-child(8) { transition-delay: .74s; }
+
+/* 双块：左下与右上分别从两侧拉入 */
+.sec-duo .duo-a {
+  opacity: 0;
+  transform: translate3d(-40px, 24px, 0);
+  transition: opacity .9s var(--ease-out), transform 1.1s var(--ease-back);
+}
+.sec-duo .duo-b {
+  opacity: 0;
+  transform: translate3d(40px, -24px, 0);
+  transition: opacity .9s var(--ease-out), transform 1.1s var(--ease-back);
+}
+.sec-duo.is-in .duo-a { opacity: 1; transform: none; transition-delay: .08s; }
+.sec-duo.is-in .duo-b { opacity: 1; transform: none; transition-delay: .24s; }
+
+/* ----------------------------------------------------------
+   07 经典剧目：戏单从左侧抽出来，幕布自下往上顶起来
+   左块给"纸"的位移与一点回正（rotate 从 -1.8deg 归零），
+   右块给"幕"的升起（下移 + 轻微放大收束）；
+   块到位后，戏单四行由左往右逐条推出，唱词四列由右向左逐列落下。
+   用 animation 而不是 transition：唱词是 JS 重建的，
+   新元素一插进来就会自己跑一次动画，换戏时正好重演一遍。
+   ---------------------------------------------------------- */
+/* 注意：这里不写 `opacity: 0` 的初始态。
+   reveal.js 是在翻页那一帧就先把 is-in 从所有屏摘掉的，
+   如果初始态靠基础样式藏起来，正在滑走的那一屏会当场变空白。
+   所以"藏"只由动画的 0% 帧负责（animation … both），
+   is-in 一摘，动画停止，元素自然回到可见——离场时画面是完整的。 */
+.sec-plays.is-in .play-sheet {
+  animation: plSheetIn 1.06s cubic-bezier(.16, .86, .2, 1) both;
+  transform-origin: 10% 50%;
+}
+.sec-plays.is-in .play-lyric {
+  animation: plPanelUp 1s cubic-bezier(.16, .86, .2, 1) .1s both;
+  transform-origin: 50% 100%;
+}
+.sec-plays.is-in .ps-head  { animation: plFade .6s var(--ease-out) .14s both; }
+.sec-plays.is-in .ly-head  { animation: plFade .6s var(--ease-out) .42s both; }
+.sec-plays.is-in .ps-note  { animation: plFade .6s var(--ease-out) .58s both; }
+
+/* 四条戏目：一条接一条从左边推出来，像在翻戏单 */
+.sec-plays.is-in .ps-row:nth-child(1) { animation: plRowIn .72s cubic-bezier(.16, .86, .2, 1) .22s both; }
+.sec-plays.is-in .ps-row:nth-child(2) { animation: plRowIn .72s cubic-bezier(.16, .86, .2, 1) .30s both; }
+.sec-plays.is-in .ps-row:nth-child(3) { animation: plRowIn .72s cubic-bezier(.16, .86, .2, 1) .38s both; }
+.sec-plays.is-in .ps-row:nth-child(4) { animation: plRowIn .72s cubic-bezier(.16, .86, .2, 1) .46s both; }
+
+/* 唱词四列：右起第一列先落，一列一列往左铺开 */
+.sec-plays.is-in .ly-line:nth-child(1) { animation: plDrop .66s cubic-bezier(.16, .86, .2, 1) .56s both; }
+.sec-plays.is-in .ly-line:nth-child(2) { animation: plDrop .66s cubic-bezier(.16, .86, .2, 1) .64s both; }
+.sec-plays.is-in .ly-line:nth-child(3) { animation: plDrop .66s cubic-bezier(.16, .86, .2, 1) .72s both; }
+.sec-plays.is-in .ly-line:nth-child(4) { animation: plDrop .66s cubic-bezier(.16, .86, .2, 1) .80s both; }
+
+.sec-plays.is-in .ly-audio { animation: plFade .6s var(--ease-out) .86s both; }
+.sec-plays.is-in .ly-foot  { animation: plFade .6s var(--ease-out) .92s both; }
+.sec-plays.is-in .ly-src   { animation: plFade .6s var(--ease-out) .98s both; }
+
+@keyframes plSheetIn {
+  0%   { opacity: 0; transform: translate3d(-46%, 0, 0) rotate(-1.8deg); }
+  55%  { opacity: 1; }
+  100% { opacity: 1; transform: none; }
+}
+@keyframes plPanelUp {
+  0%   { opacity: 0; transform: translate3d(0, 88px, 0) scale(.972); }
+  100% { opacity: 1; transform: none; }
+}
+@keyframes plRowIn {
+  0%   { opacity: 0; transform: translate3d(-30px, 0, 0); }
+  100% { opacity: 1; transform: none; }
+}
+@keyframes plDrop {
+  0%   { opacity: 0; transform: translate3d(0, -20px, 0); }
+  100% { opacity: 1; transform: none; }
+}
+@keyframes plFade {
+  0%   { opacity: 0; transform: translate3d(0, 12px, 0); }
+  100% { opacity: 1; transform: none; }
+}
+
+/* 窄屏是原生滚动、不走 deck 的翻页回调，is-in 不会来，直接给终态 */
+@media (max-width: 900px) {
+  .sec-plays .play-sheet,
+  .sec-plays .play-lyric,
+  .sec-plays .ps-head,
+  .sec-plays .ly-head,
+  .sec-plays .ps-row,
+  .sec-plays .ps-note,
+  .sec-plays .ly-line,
+  .sec-plays .ly-audio,
+  .sec-plays .ly-foot,
+  .sec-plays .ly-src { opacity: 1; animation: none; transform: none; }
+}
+
+/* 尊重系统的"减少动态"偏好 */
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after { transition-duration: .01ms !important; animation-duration: .01ms !important; }
+}
+
+
+/* ---------- 首屏背景：极缓的推拉，像镜头在灯前呼吸 ---------- */
+@keyframes heroDrift {
+  0%   { transform: scale(1.02) translate3d(0, 1.1%, 0); }
+  100% { transform: scale(1.1) translate3d(-1.2%, -1.3%, 0); }
+}
+@media (prefers-reduced-motion: reduce) {
+  .hero-slide { animation: none; }
+  .hero-slide { transform: scale(1.04); }
+}
