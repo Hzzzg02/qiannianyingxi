@@ -162,9 +162,10 @@ body.login-page .lg-card {
   box-shadow: var(--pb-shadow);
 }
 
-/* ---------------- 4. 板块内的浅色小卡：在白纸上要能分出来 ---------------- */
-body.inner .psec .chip,
-body.inner .tp-sec .chip {
+/* ---------------- 4. 板块内的浅色小卡：在白纸上要能分出来 ----------------
+   :not(.on) 是必须的——否则这条会把筛选签的选中态（红底）一起刷成白色 */
+body.inner .psec .chip:not(.on),
+body.inner .tp-sec .chip:not(.on) {
   background: #fff;
 }
 

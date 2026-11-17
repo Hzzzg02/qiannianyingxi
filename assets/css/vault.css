@@ -369,9 +369,10 @@
 .chip.on {
   background: var(--red);
   border-color: var(--red);
-  color: var(--cream);
+  /* 朱红块上压金属金：比米白更"金"，远看仍是深色块面里的一点亮 */
+  color: #e8c98c;
 }
-.chip.on i { color: rgba(248, 238, 218, .7); }
+.chip.on i { color: rgba(232, 201, 140, .72); }
 .chip.sm { padding: 5px 12px; font-size: 12.5px; }
 
 .lib-prov,
