@@ -21,6 +21,14 @@ const SESSION_DAYS = 30;
 const MAX_PUPPETS = 200;
 const MAX_BODY = 32 * 1024;
 
+/* 配置文件查找顺序：项目内 config/ 优先，找不到再落到系统的 /etc/qnyx/
+   生产环境的密钥都放在 /etc/qnyx/，以前这里只认项目目录，导致线上读不到 Key */
+function cfgPath(name) {
+  const local = path.join(__dirname, 'config', name);
+  if (fs.existsSync(local)) return local;
+  return path.join('/etc/qnyx', name);
+}
+
 /* 论坛 */
 const MAX_POSTS = 100;          /* 单账号帖子上限 */
 const MAX_PAGE = 10;            /* 列表每页条数 */
@@ -504,7 +512,7 @@ function seedForum() {
    ========================================================================== */
 function mailConfig() {
   if (process.env.QN_MAIL_MODE === 'log') return { mode: 'log' };
-  const f = process.env.QN_MAIL_CONFIG || path.join(__dirname, 'config', 'mail.json');
+  const f = process.env.QN_MAIL_CONFIG || cfgPath('mail.json');
   try {
     if (!fs.existsSync(f)) return null;
     const c = JSON.parse(fs.readFileSync(f, 'utf8'));
@@ -585,7 +593,7 @@ function castParse(raw) {
 function llmConfig() {
   if (process.env.QN_DEEPSEEK_MODE === 'mock') return { mode: 'mock' };
   let c = null;
-  const f = process.env.QN_DEEPSEEK_CONFIG || path.join(__dirname, 'config', 'deepseek.json');
+  const f = process.env.QN_DEEPSEEK_CONFIG || cfgPath('deepseek.json');
   try {
     if (fs.existsSync(f)) c = JSON.parse(fs.readFileSync(f, 'utf8'));
   } catch (e) {
@@ -723,7 +731,7 @@ function puppetSpec(c) {
 function zgConfig() {
   if (process.env.QN_ZHIPU_MODE === 'mock') return { mode: 'mock' };
   let c = null;
-  const f = process.env.QN_ZHIPU_CONFIG || path.join(__dirname, 'config', 'zhipu.json');
+  const f = process.env.QN_ZHIPU_CONFIG || cfgPath('zhipu.json');
   try {
     if (fs.existsSync(f)) c = JSON.parse(fs.readFileSync(f, 'utf8'));
   } catch (e) {
