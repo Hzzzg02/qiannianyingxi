@@ -2517,7 +2517,7 @@ body[data-dir="up"] .panels i:nth-child(even) { --sh: -9%; }
 }
 .ind-life {
   margin: 0;
-  font-size: 10.5px;
+  font-size: 12.5px;
   letter-spacing: .05em;
   color: var(--tick);
   font-variant-numeric: tabular-nums;
@@ -2529,7 +2529,7 @@ body[data-dir="up"] .panels i:nth-child(even) { --sh: -9%; }
   border-bottom: 1px solid rgba(140, 123, 99, .5);
   background: none;
   font: inherit;
-  font-size: 10.5px;
+  font-size: 12.5px;
   letter-spacing: .08em;
   color: #8c7b63;
   cursor: pointer;
@@ -2565,8 +2565,8 @@ body[data-dir="up"] .panels i:nth-child(even) { --sh: -9%; }
 
 .ind-text p {
   margin: 0 0 8px;
-  font-size: clamp(11.4px, .9vw, 13.2px);
-  line-height: 1.9;
+  font-size: clamp(15px, 1.2vw, 17.5px);
+  line-height: 1.85;
   letter-spacing: .012em;
   text-align: justify;
   color: #4d4437;
@@ -2583,7 +2583,7 @@ body[data-dir="up"] .panels i:nth-child(even) { --sh: -9%; }
   margin: 0;
   padding-top: 10px;
   border-top: 1px solid rgba(107, 69, 41, .18);
-  font-size: 10px;
+  font-size: 11.5px;
   letter-spacing: .04em;
   color: #9c876a;
 }
