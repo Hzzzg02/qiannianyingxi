@@ -114,6 +114,35 @@
     return null;
   }
 
+  /* ---------------- 删除：都要点两下 ----------------
+     第一下只把按钮换成「再点一下」，四秒内不点就退回原样。
+     删除是不可逆的（本机存储没有回收站），所以不弹系统 confirm，
+     而是把确认做在按钮上，看得见自己点的是哪一条。 */
+  function armed(btn, backLabel, armedLabel) {
+    if (!btn) return true;
+    if (btn.dataset.armed) return true;
+    btn.dataset.armed = '1';
+    btn.classList.add('is-armed');
+    btn.textContent = armedLabel || '再点一下，删了就找不回来';
+    setTimeout(function () {
+      if (!btn.isConnected) return;
+      delete btn.dataset.armed;
+      btn.classList.remove('is-armed');
+      btn.textContent = backLabel;
+    }, 4000);
+    return false;
+  }
+
+  function dropPost(c, tid) {
+    if (!c) return;
+    c.posts = (c.posts || []).filter(function (x) { return x.id !== tid; });
+    /* 连同这一帖的点赞记录一起清掉，不然下次发到同一个 id 会带着旧赞 */
+    Object.keys(liked).forEach(function (k) {
+      if (k.indexOf(c.id + ':' + tid + ':') === 0) delete liked[k];
+    });
+    save();
+  }
+
   /* ---------------- 由楼层算出来的数 ---------------- */
   function stat(c) {
     var ps = c.posts || [], replies = 0, last = 0;
@@ -261,6 +290,19 @@
     $('#bhLvTx').textContent = u.days
       ? '已连签 ' + u.days + ' 天' + (done ? '' : '，今天还没签')
       : '还没签过到，签一天算一天';
+
+    /* 只有吧主看得到删吧入口 */
+    var del = $('#bhDel');
+    if (del) {
+      var me = myName();
+      var canDel = !!(me && me === c.owner);
+      del.hidden = !canDel;
+      if (canDel) {
+        delete del.dataset.armed;
+        del.classList.remove('is-armed');
+        del.textContent = '删掉这个吧';
+      }
+    }
   }
 
   function renderBarCats(c) {
@@ -284,21 +326,25 @@
       ? '<span class="br-tags">' + t.tags.map(function (x) { return '<span>' + esc(x) + '</span>'; }).join('') + '</span>'
       : '';
     var lastF = t.floors[t.floors.length - 1];
-    return '<a class="brow' + (t.author === myName() ? ' is-mine' : '') + '" href="#/t/' + t.id + '">' +
-      '<div class="br-count"><b>' + st.reply + '</b><i>回复</i>' +
-        (st.like ? '<u>' + st.like + '</u><i>赞</i>' : '') + '</div>' +
-      '<div class="br-main">' +
-        '<h3 class="br-title"><span class="br-cat">【' + esc(TN[t.cat] || '其他') + '】</span>' + esc(t.title) + '</h3>' +
-        '<p class="br-ex">' + esc(ex) + '</p>' +
-        '<div class="br-meta">' +
-          '<span class="br-av">' + esc(t.author.slice(0, 1)) + '</span>' +
-          '<span>' + esc(t.author) + '</span>' +
-          '<span>' + agoTs(t.floors[0].at) + '</span>' + tags +
+    var mine = t.author === myName();
+    return '<div class="brow-wrap' + (mine ? ' is-own' : '') + '">' +
+      '<a class="brow' + (mine ? ' is-mine' : '') + '" href="#/t/' + t.id + '">' +
+        '<div class="br-count"><b>' + st.reply + '</b><i>回复</i>' +
+          (st.like ? '<u>' + st.like + '</u><i>赞</i>' : '') + '</div>' +
+        '<div class="br-main">' +
+          '<h3 class="br-title"><span class="br-cat">【' + esc(TN[t.cat] || '其他') + '】</span>' + esc(t.title) + '</h3>' +
+          '<p class="br-ex">' + esc(ex) + '</p>' +
+          '<div class="br-meta">' +
+            '<span class="br-av">' + esc(t.author.slice(0, 1)) + '</span>' +
+            '<span>' + esc(t.author) + '</span>' +
+            '<span>' + agoTs(t.floors[0].at) + '</span>' + tags +
+          '</div>' +
         '</div>' +
-      '</div>' +
-      '<div class="br-last"><b><i>' + esc(lastF.u.slice(0, 1)) + '</i>' + esc(lastF.u) + '</b>' +
-        '<span>' + agoTs(lastF.at) + '</span></div>' +
-    '</a>';
+        '<div class="br-last"><b><i>' + esc(lastF.u.slice(0, 1)) + '</i>' + esc(lastF.u) + '</b>' +
+          '<span>' + agoTs(lastF.at) + '</span></div>' +
+      '</a>' +
+      (mine ? '<button class="br-del" type="button" data-delpost="' + t.id + '" title="删掉这帖">删</button>' : '') +
+    '</div>';
   }
 
   function renderBarList(c) {
@@ -465,6 +511,10 @@
         '<span>' + (st.like ? '赞 ' + st.like : '') + '</span>' +
         '<span>标签：' + esc((t.tags || []).join(' · ') || '无') + '</span>' +
         (st.reply ? '<button class="tw-onlyop' + (onlyOp ? ' on' : '') + '" id="twOnlyOp" type="button">只看楼主</button>' : '') +
+        /* 帖主本人和吧主都能删；放进 tw-sub 是因为这里所有人在同一行，删与不删一眼能分辨 */
+        (me && (me === t.author || me === c.owner)
+          ? '<button class="tw-del" id="twDel" type="button" data-delpost="' + t.id + '">删掉这帖</button>'
+          : '') +
       '</div>' +
       t.floors.map(function (f, i) { return { f: f, i: i }; })
         .filter(function (x) { return !onlyOp || x.i === 0; })
@@ -649,25 +699,24 @@
     });
 
     $('#barlist').addEventListener('click', function (e) {
-      if (e.target.closest('[data-newpost]')) { e.preventDefault(); openModal(); }
+      if (e.target.closest('[data-newpost]')) { e.preventDefault(); openModal(); return; }
+
+      var d = e.target.closest('[data-delpost]');
+      if (d && curC) {
+        e.preventDefault();
+        if (!armed(d, '删', '再点一下')) return;
+        var tid = d.getAttribute('data-delpost');
+        var tt = (curC.posts || []).filter(function (x) { return x.id === tid; })[0];
+        dropPost(curC, tid);
+        repaintBar();
+        toast(tt ? '「' + tt.title + '」已经删掉' : '帖子已经删掉');
+      }
     });
 
     /* 删吧：点第一次只是问一句，点第二次才真删，免得手滑 */
-    $('#barAside').addEventListener('click', function (e) {
-      var b = e.target.closest('[data-del]');
-      if (!b || !curC) return;
-      if (!b.dataset.armed) {
-        b.dataset.armed = '1';
-        b.classList.add('is-armed');
-        b.textContent = '再点一下：吧和里面的帖子一起删';
-        setTimeout(function () {
-          if (!b.isConnected) return;
-          delete b.dataset.armed;
-          b.classList.remove('is-armed');
-          b.textContent = '删掉这个吧';
-        }, 4000);
-        return;
-      }
+    function askDeleteBar(btn) {
+      if (!btn || !curC) return;
+      if (!armed(btn, '删掉这个吧', '再点一下：吧和帖子一起删')) return;
       var id = curC.id;
       DB.circles = DB.circles.filter(function (c) { return c.id !== id; });
       delete US[id];
@@ -677,7 +726,15 @@
       history.pushState(null, '', location.pathname + location.search);
       showSquare();
       toast('吧已经删掉了');
+    }
+
+    $('#barAside').addEventListener('click', function (e) {
+      var b = e.target.closest('[data-del]');
+      if (b) askDeleteBar(b);
     });
+
+    var bhDel = $('#bhDel');
+    if (bhDel) bhDel.addEventListener('click', function () { askDeleteBar(bhDel); });
   }
 
   function bindThread() {
@@ -689,6 +746,19 @@
       if (e.target.closest('#twOnlyOp')) {
         onlyOp = !onlyOp;
         renderThread();
+        return;
+      }
+
+      var del = e.target.closest('[data-delpost]');
+      if (del) {
+        if (!armed(del, '删掉这帖', '再点一下删掉')) return;
+        var gone = t.title;
+        dropPost(c, del.getAttribute('data-delpost'));
+        curT = null;
+        onlyOp = false;
+        history.pushState(null, '', '#/c/' + c.id);
+        showBar(c);
+        toast('「' + gone + '」和它下面的回复一起删掉了');
         return;
       }
 

@@ -1522,3 +1522,84 @@ body.is-reading .comm-thread { display: block; }
   background: var(--red);
   border-color: var(--red-d);
 }
+
+/* ---------- 删帖 / 删吧 ----------
+   删是不可逆的，又不该弹系统 confirm 打断阅读，所以把确认做在按钮上：
+   第一次点把按钮换成红底「再点一下」，四秒内不再点就退回原样。
+   入口只对自己的内容开放——自己的帖、自己的吧。 */
+
+/* 列表里的帖子：包一层好放删除按钮 */
+/* 每一行都留出同一条右边距，否则只有自己的帖会短一截，两行右边缘参差 */
+.brow-wrap { position: relative; padding-right: 48px; }
+
+.br-del {
+  position: absolute;
+  right: 8px;
+  top: 50%;
+  transform: translateY(-50%);
+  min-width: 32px;
+  padding: 8px 6px;
+  font-family: var(--serif);
+  font-size: 12px;
+  letter-spacing: .12em;
+  color: #8b7a63;
+  background: transparent;
+  border: 1px solid rgba(107, 69, 41, .22);
+  cursor: pointer;
+  transition: color .2s, border-color .2s, background .2s;
+}
+.br-del:hover { color: var(--red); border-color: rgba(157, 44, 28, .44); }
+.br-del.is-armed {
+  min-width: 0;
+  padding: 8px 10px;
+  color: #fff;
+  background: var(--red);
+  border-color: var(--red);
+  white-space: nowrap;
+}
+
+/* 帖子详情页：跟「只看楼主」并排 */
+.tw-del {
+  margin-left: auto;
+  padding: 3px 10px;
+  font-family: var(--serif);
+  font-size: 10.5px;
+  letter-spacing: .1em;
+  color: #8b7a63;
+  background: rgba(255, 255, 255, .6);
+  border: 1px solid rgba(157, 44, 28, .26);
+  cursor: pointer;
+  transition: all .2s;
+}
+/* 前面已经有「只看楼主」在推右边，就别再各自居中 */
+.tw-onlyop + .tw-del { margin-left: 0; }
+.tw-del:hover { color: var(--red); border-color: rgba(157, 44, 28, .5); }
+.tw-del.is-armed {
+  color: #fff;
+  background: var(--red);
+  border-color: var(--red);
+}
+
+/* 吧头：吧主可见。占满一行靠右，做成次要按钮，不跟「关注」「签到」抢 */
+.bh-btn.bh-del {
+  grid-column: 1 / -1;
+  justify-self: end;
+  padding: 6px 14px;
+  font-size: 11.5px;
+  letter-spacing: .12em;
+  color: #8b7a63;
+  background: transparent;
+  border: 1px solid rgba(157, 44, 28, .28);
+}
+.bh-btn.bh-del:hover { color: var(--red); border-color: rgba(157, 44, 28, .52); }
+.bh-btn.bh-del.is-armed {
+  color: #fff;
+  background: var(--red);
+  border-color: var(--red);
+}
+
+/* 手机上把删除按钮收小一点，别让正文被挤成一条 */
+@media (max-width: 560px) {
+  .brow-wrap { padding-right: 38px; }
+  .br-del { right: 2px; min-width: 28px; padding: 7px 3px; font-size: 11px; }
+}
