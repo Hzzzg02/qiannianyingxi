@@ -12,7 +12,7 @@
 <link rel="stylesheet" href="assets/css/token.css?v=11870">
 <link rel="stylesheet" href="assets/css/layout.css?v=11870">
 <link rel="stylesheet" href="assets/css/site.css?v=11880">
-<link rel="stylesheet" href="assets/css/community.css?v=11860">
+<link rel="stylesheet" href="assets/css/community.css?v=11890">
 <link rel="stylesheet" href="assets/css/paper-bg.css?v=5">
 <link rel="stylesheet" href="assets/css/readability.css?v=1">
 </head>
@@ -78,8 +78,8 @@
       <div class="side-card">
         <h3>开吧三步</h3>
         <ol class="kstep">
-          <li><b>起名</b>两到十二个字。名字开出去就改不了了，想清楚。</li>
-          <li><b>定分区</b>归到制作、唱念、考据、晒件、问答或杂谈，别人按类翻得到。</li>
+          <li><b>起名</b>两到十二个字。开完还能改，不过名字一改，找惯了的吧友得重新认门。</li>
+          <li><b>定分区</b>归到制作、唱念、考据、晒件、问答或杂谈，别人按类翻得到。开完也能改。</li>
           <li><b>发第一帖</b>吧里空着没人进来。第一句话得你先说。</li>
         </ol>
       </div>
@@ -112,6 +112,7 @@
         <span class="lv-bar"><i id="bhLvBar" style="width:0"></i></span>
         <span id="bhLvTx"></span>
       </div>
+      <button class="bh-btn bh-edit" id="bhEdit" type="button" hidden>改吧的信息</button>
       <button class="bh-btn bh-del" id="bhDel" type="button" hidden>删掉这个吧</button>
     </div>
   </section>
@@ -159,7 +160,7 @@
 <footer class="foot">
   <div class="foot-in">
     <div class="foot-brand"><i>影</i>千年影戏</div>
-    <p class="foot-note">社区里的吧与帖子都由访问者自己开、自己发，内容记在本机浏览器中，本站不预置任何吧、帖子或人数。</p>
+    <p class="foot-note">社区里的吧与帖子都由访问者自己开、自己发，内容存在站点服务器上，本站不预置任何吧、帖子或人数。</p>
   </div>
 </footer>
 
@@ -169,7 +170,7 @@
   <div class="cmodal-card" role="dialog" aria-label="开个吧">
     <div class="cm-head">
       <h3>开个吧</h3>
-      <span>名字开出去就改不了</span>
+      <span>名字之后吧主还能改</span>
       <button class="cm-x" id="kmX" type="button" aria-label="关闭">×</button>
     </div>
     <div class="cm-body">
@@ -196,6 +197,42 @@
     <div class="cm-foot">
       <p id="kmWho">开吧要留个名。</p>
       <button class="cm-pub" id="kmPub" type="button">开 吧</button>
+    </div>
+  </div>
+</div>
+
+<!-- 改吧信息弹层（只有吧主能打开） -->
+<div class="cmodal" id="emodal" aria-hidden="true">
+  <div class="cmodal-bg" id="emBg"></div>
+  <div class="cmodal-card" role="dialog" aria-label="改吧的信息">
+    <div class="cm-head">
+      <h3>改吧的信息</h3>
+      <span>只有吧主能改</span>
+      <button class="cm-x" id="emX" type="button" aria-label="关闭">×</button>
+    </div>
+    <div class="cm-body">
+      <div class="cf cf-half">
+        <div>
+          <label for="efName">吧名</label>
+          <input type="text" id="efName" maxlength="12" placeholder="两到十二个字，别带「吧」字">
+        </div>
+        <div>
+          <label for="efSeal">印章上的字</label>
+          <input type="text" id="efSeal" maxlength="1" placeholder="影">
+        </div>
+      </div>
+      <div class="cf">
+        <label>归到哪个分区</label>
+        <div class="cf-cats" id="efZones"></div>
+      </div>
+      <div class="cf">
+        <label for="efDesc">一句话说清这儿收什么</label>
+        <input type="text" id="efDesc" maxlength="40" placeholder="比如：只谈刻皮，别的一概不聊">
+      </div>
+    </div>
+    <div class="cm-foot">
+      <p id="emWho">改完点保存，广场和吧里会一起变。</p>
+      <button class="cm-pub" id="emPub" type="button">保存修改</button>
     </div>
   </div>
 </div>
@@ -257,6 +294,6 @@
 
 <script src="assets/js/site.js?v=11481"></script>
 <script src="assets/js/community-data.js?v=11481"></script>
-<script src="assets/js/community.js?v=11860"></script>
+<script src="assets/js/community.js?v=11890"></script>
 </body>
 </html>

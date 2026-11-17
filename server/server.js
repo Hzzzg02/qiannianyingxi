@@ -1706,6 +1706,13 @@ const server = http.createServer(async (req, res) => {
        存 db.circles。前端 community.js 一次把整棵数拉走，写操作再单条提交，
        这样渲染逻辑不用改，换掉的只是数据从哪来。 */
 
+    /* 成员名单：吧主天然算一个成员，老数据没有 members 字段也不会算差 */
+    function circleMembers(c) {
+      const arr = Array.isArray(c.members) ? c.members.slice() : [];
+      if (c.ownerId && arr.indexOf(c.ownerId) < 0) arr.unshift(c.ownerId);
+      return arr;
+    }
+
     function commPick(uidNow) {
       return db.circles.map((c) => ({
         id: c.id,
@@ -1716,6 +1723,9 @@ const server = http.createServer(async (req, res) => {
         owner: c.owner,
         ownerId: c.ownerId || null,
         at: c.at,
+        members: circleMembers(c).length,
+        joined: uidNow ? circleMembers(c).indexOf(uidNow) >= 0 : false,
+        mine: uidNow ? c.ownerId === uidNow : false,
         posts: (c.posts || []).map((t) => ({
           id: t.id,
           title: t.title,
@@ -1780,6 +1790,7 @@ const server = http.createServer(async (req, res) => {
         owner: u.name,
         ownerId: u.id,
         at: Date.now(),
+        members: [u.id],
         posts: []
       };
       db.circles.push(c);
@@ -1798,6 +1809,59 @@ const server = http.createServer(async (req, res) => {
       db.circles = db.circles.filter((x) => x.id !== c.id);
       save();
       return ok(res, { id: c.id });
+    }
+
+    /* ---- 吧主改吧的信息：吧名 / 吧徽 / 分区 / 简介 ---- */
+    if (cmA && req.method === 'PATCH') {
+      const u = userOf(req);
+      if (!u) return fail(res, 401, '先登录');
+      const c = db.circles.find((x) => x.id === cmA[1]);
+      if (!c) return fail(res, 404, '这个吧已经不在了');
+      if (c.ownerId !== u.id) return fail(res, 403, '只有吧主能改这个吧的信息');
+
+      const b = await readBody(req);
+      const want = {};
+
+      if (typeof b.name === 'string') {
+        const name = cleanText(b.name, 14).replace(/吧$/, '');
+        if (name.length < 2) return fail(res, 400, '吧名至少两个字');
+        if (name.length > 12) return fail(res, 400, '吧名最多十二个字');
+        if (name !== c.name && db.circles.some((x) => x.id !== c.id && x.name === name)) {
+          return fail(res, 409, '「' + name + '吧」已经有人开了');
+        }
+        want.name = name;
+      }
+      if (typeof b.seal === 'string') {
+        const seal = cleanText(b.seal, 1);
+        want.seal = seal || String(want.name || c.name).slice(0, 1);
+      }
+      if (typeof b.zone === 'string') want.zone = String(b.zone).slice(0, 20);
+      if (typeof b.desc === 'string') want.desc = cleanText(b.desc, 40);
+
+      Object.keys(want).forEach((k) => { c[k] = want[k]; });
+      c.editedAt = Date.now();
+      save();
+      return ok(res, { id: c.id, name: c.name, seal: c.seal, zone: c.zone, desc: c.desc });
+    }
+
+    /* ---- 加入 / 退出一个吧：吧主不用加入，本来就是他开的 ---- */
+    let cmJ = p.match(/^\/api\/comm\/circles\/([A-Za-z0-9_-]+)\/join$/);
+    if (cmJ && req.method === 'POST') {
+      const u = userOf(req);
+      if (!u) return fail(res, 401, '先登录再加入吧');
+      const c = db.circles.find((x) => x.id === cmJ[1]);
+      if (!c) return fail(res, 404, '这个吧已经不在了');
+      if (c.ownerId === u.id) return fail(res, 400, '这个吧是你开的，你本来就是吧主');
+
+      if (!Array.isArray(c.members)) c.members = [];
+      const at = c.members.indexOf(u.id);
+      if (at >= 0) c.members.splice(at, 1);
+      else c.members.push(u.id);
+      save();
+      return ok(res, {
+        joined: at < 0,
+        members: circleMembers(c).length
+      });
     }
 
     /* ---- 在吧里发帖 ---- */

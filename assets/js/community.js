@@ -210,10 +210,13 @@
       '<span class="cc-seal">' + esc(c.seal) + '</span>' +
       '<div class="cc-body">' +
         '<div class="cc-top"><h3 class="cc-name">' + esc(c.name) + '吧</h3>' +
+          (c.mine ? '<span class="cc-role is-owner">吧主</span>'
+            : (c.joined ? '<span class="cc-role">成员</span>' : '')) +
           '<span class="cc-zone">' + esc(ZN[c.zone] || '未分区') + '</span></div>' +
         '<p class="cc-desc">' + esc(c.desc || '还没写简介') + '</p>' +
         '<div class="cc-meta">' +
           '<span>吧主 · ' + esc(c.owner) + '</span>' +
+          '<span>' + (c.members || 1) + ' 成员</span>' +
           (st.posts
             ? '<span>' + st.posts + ' 帖</span><span>' + st.replies + ' 回复</span><span>' +
               agoTs(st.last) + '有动静</span>'
@@ -261,9 +264,9 @@
       return true;
     });
 
-    /* 全部吧都关注了的时候（比如刚开完第一个），两张表会一模一样，
-       那就别把同一批卡片排两遍；等有一个没关注的，这一段才出来 */
-    var mine = sorted.filter(function (c) { return usOf(c.id).join; });
+    /* 全部吧都加入了的时候（比如刚开完第一个），两张表会一模一样，
+       那就别把同一批卡片排两遍；等有一个没加入的，这一段才出来 */
+    var mine = sorted.filter(function (c) { return c.joined || c.mine; });
     var mineSec = $('#secMine');
     if (mine.length && mine.length < sorted.length) {
       mineSec.hidden = false;
@@ -307,6 +310,8 @@
   function paintBarHead(c) {
     var u = usOf(c.id);
     var st = stat(c);
+    var me = myName();
+    var isOwner = c.mine != null ? !!c.mine : !!(me && me === c.owner);
 
     $('#bhSeal').textContent = c.seal;
     $('#barCrumb').textContent = c.name + '吧';
@@ -314,13 +319,16 @@
       ' · 吧主 ' + esc(c.owner) + '</small>';
     $('#bhSay').textContent = c.desc || '这个吧还没写简介。';
     $('#bhNums').innerHTML =
+      '<span><b>' + (c.members || 1) + '</b>成员</span>' +
       '<span><b>' + st.posts + '</b>帖子</span>' +
       '<span><b>' + st.replies + '</b>回复</span>' +
       '<span>建于 ' + fmtDay(c.at) + '</span>';
 
+    /* 吧主不用加入，成员才需要 */
     var f = $('#bhFollow');
-    f.classList.toggle('is-on', !!u.join);
-    f.textContent = u.join ? '已关注' : '+ 关注本吧';
+    f.classList.toggle('is-on', isOwner || !!c.joined);
+    f.textContent = isOwner ? '你是吧主' : (c.joined ? '已加入' : '+ 加入本吧');
+    f.disabled = isOwner;
 
     var done = u.check === today();
     var ck = $('#bhCheck');
@@ -334,13 +342,14 @@
       ? '已连签 ' + u.days + ' 天' + (done ? '' : '，今天还没签')
       : '还没签过到，签一天算一天';
 
-    /* 只有吧主看得到删吧入口 */
+    /* 吧主才有「改吧的信息」和「删吧」两个入口 */
+    var ed = $('#bhEdit');
+    if (ed) ed.hidden = !isOwner;
+
     var del = $('#bhDel');
     if (del) {
-      var me = myName();
-      var canDel = !!(me && me === c.owner);
-      del.hidden = !canDel;
-      if (canDel) {
+      del.hidden = !isOwner;
+      if (isOwner) {
         delete del.dataset.armed;
         del.classList.remove('is-armed');
         del.textContent = '删掉这个吧';
@@ -455,7 +464,8 @@
       '<div class="side-card"><h3>吧名片</h3>' +
         '<div class="folks barlord"><div class="folk"><i>' + esc(c.seal) + '</i>' +
           '<b>' + esc(c.name) + '吧</b><span>吧主 · ' + esc(c.owner) + '</span></div></div>' +
-        '<p class="sc-tight" style="margin-top:12px">建于 ' + fmtDay(c.at) + '，现有 ' + st.posts + ' 帖、' +
+        '<p class="sc-tight" style="margin-top:12px">建于 ' + fmtDay(c.at) + '，现有 ' +
+          (c.members || 1) + ' 位成员、' + st.posts + ' 帖、' +
           st.replies + ' 条回复。' + (me && me === c.owner ? '你是这个吧的吧主。' : '') + '</p>' +
         /* 吧是访客自己开的，开错了（名字打错、开重了）就得能收回去 */
         (me && me === c.owner
@@ -720,13 +730,24 @@
 
     $('#bhFollow').addEventListener('click', function () {
       if (!curC) return;
-      var u = usOf(curC.id);
-      u.join = !u.join;
-      saveU();
-      paintBarHead(curC);
-      renderBarAside(curC);
-      renderSquare();
-      toast(u.join ? '已关注「' + curC.name + '吧」，在广场的「我的圈子」里能找到' : '已取消关注，吧还留在广场');
+      if (!myName()) { toast('先登录再加入吧'); return; }
+      if (curC.mine) { toast('这个吧是你开的，你已经是吧主了'); return; }
+      var cid = curC.id;
+      api('POST', '/circles/' + cid + '/join')
+        .then(function (d) { return pull().then(function () { return d; }); })
+        .then(function (d) {
+          var c2 = findCircle(cid);
+          if (c2) {
+            curC = c2;
+            paintBarHead(c2);
+            renderBarAside(c2);
+          }
+          renderSquare();
+          toast(d.joined
+            ? '已加入「' + (c2 ? c2.name : '') + '吧」，在广场的「我的圈子」里能找到'
+            : '已退出这个吧，吧还留在广场');
+        })
+        .catch(function (e) { toast(e.message); });
     });
 
     $('#bhCheck').addEventListener('click', function () {
@@ -794,6 +815,9 @@
 
     var bhDel = $('#bhDel');
     if (bhDel) bhDel.addEventListener('click', function () { askDeleteBar(bhDel); });
+
+    var bhEdit = $('#bhEdit');
+    if (bhEdit) bhEdit.addEventListener('click', function () { openEModal(curC); });
   }
 
   function bindThread() {
@@ -946,6 +970,64 @@
       .catch(function (e) { toast(e.message); });
   }
 
+  /* ---------------- 吧主改吧的信息 ---------------- */
+  function openEModal(c) {
+    var me = myName();
+    if (!c) return;
+    var isOwner = c.mine != null ? !!c.mine : !!(me && me === c.owner);
+    if (!isOwner) { toast('只有吧主能改这个吧的信息'); return; }
+
+    $('#emWho').innerHTML = '以吧主「' + esc(me || c.owner) + '」的身份修改，保存后广场和吧里一起变。';
+
+    var zhtml = '';
+    ZONES.forEach(function (z) {
+      zhtml += '<button type="button" data-z="' + z.id + '" class="' +
+        (z.id === c.zone ? 'on' : '') + '">' + esc(z.n) + '</button>';
+    });
+    $('#efZones').innerHTML = zhtml;
+
+    $('#efName').value = c.name;
+    $('#efSeal').value = c.seal || '';
+    $('#efDesc').value = c.desc || '';
+
+    var m = $('#emodal');
+    m.classList.add('is-on');
+    m.setAttribute('aria-hidden', 'false');
+    document.body.style.overflow = 'hidden';
+    setTimeout(function () { $('#efName').focus(); }, 120);
+  }
+  function closeEModal() {
+    var m = $('#emodal');
+    if (!m) return;
+    m.classList.remove('is-on');
+    m.setAttribute('aria-hidden', 'true');
+    document.body.style.overflow = '';
+  }
+
+  function saveCircleInfo() {
+    if (!curC) return;
+    var name = ($('#efName').value || '').trim().replace(/吧$/, '');
+    var seal = ($('#efSeal').value || '').trim();
+    var desc = ($('#efDesc').value || '').trim();
+    var zb = $('#efZones').querySelector('button.on');
+    var zone = zb ? zb.getAttribute('data-z') : curC.zone;
+
+    if (name.length < 2) { toast('吧名至少两个字'); $('#efName').focus(); return; }
+    if (name.length > 12) { toast('吧名最多十二个字'); $('#efName').focus(); return; }
+
+    var cid = curC.id;
+    api('PATCH', '/circles/' + cid, { name: name, seal: seal, zone: zone, desc: desc })
+      .then(function () { return pull(); })
+      .then(function () {
+        closeEModal();
+        var c2 = findCircle(cid);
+        if (c2) showBar(c2);
+        renderSquare();
+        toast('「' + name + '吧」的信息改好了');
+      })
+      .catch(function (e) { toast(e.message); });
+  }
+
   function openModal() {
     var me = myName();
     $('#cmWho').innerHTML = me
@@ -1037,10 +1119,25 @@
     });
     $('#cmPub').addEventListener('click', publish);
 
+    /* 改吧信息弹层 */
+    $('#emX').addEventListener('click', closeEModal);
+    $('#emBg').addEventListener('click', closeEModal);
+    $('#emPub').addEventListener('click', saveCircleInfo);
+    $('#efZones').addEventListener('click', function (e) {
+      var b = e.target.closest('button[data-z]');
+      if (!b) return;
+      [].slice.call(this.children).forEach(function (x) { x.classList.toggle('on', x === b); });
+    });
+    $('#efName').addEventListener('input', function () {
+      var v = this.value.replace(/吧$/, '');
+      if (v !== this.value) this.value = v;
+    });
+
     document.addEventListener('keydown', function (e) {
       if (e.key !== 'Escape') return;
       if ($('#cmodal').classList.contains('is-on')) closeModal();
       if ($('#kmodal').classList.contains('is-on')) closeKModal();
+      if ($('#emodal') && $('#emodal').classList.contains('is-on')) closeEModal();
     });
   }
 

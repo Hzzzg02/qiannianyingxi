@@ -1273,6 +1273,21 @@ body.is-reading .comm-thread { display: block; }
   color: rgba(157, 44, 28, .9);
   border: 1px solid rgba(157, 44, 28, .22);
 }
+/* 卡片上的身份标：吧主 / 成员 */
+.cc-role {
+  padding: 1px 6px;
+  font-size: 9.5px;
+  line-height: 1.6;
+  letter-spacing: .1em;
+  color: #6b5a42;
+  background: rgba(214, 195, 160, .34);
+  border: 1px solid rgba(120, 96, 62, .22);
+}
+.cc-role.is-owner {
+  color: #fff;
+  background: var(--red);
+  border-color: var(--red-d);
+}
 .cc-desc {
   margin: 6px 0 0;
   font-size: 11.5px;
@@ -1596,6 +1611,27 @@ body.is-reading .comm-thread { display: block; }
   color: #fff;
   background: var(--red);
   border-color: var(--red);
+}
+
+/* 吧主专用：改吧的信息，和删吧同一列、排在它上面 */
+.bh-btn.bh-edit {
+  grid-column: 1 / -1;
+  justify-self: end;
+  padding: 6px 14px;
+  font-size: 11.5px;
+  letter-spacing: .12em;
+  color: var(--red);
+  background: rgba(255, 255, 255, .55);
+  border: 1px solid rgba(157, 44, 28, .34);
+}
+.bh-btn.bh-edit:hover {
+  background: #fff;
+  border-color: rgba(157, 44, 28, .55);
+}
+/* 吧主看到的是「你是吧主」，不是可点的按钮 */
+.bh-follow:disabled {
+  cursor: default;
+  filter: none;
 }
 
 /* 手机上把删除按钮收小一点，别让正文被挤成一条 */
