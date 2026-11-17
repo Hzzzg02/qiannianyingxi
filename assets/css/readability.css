@@ -1,0 +1,658 @@
+/* 阅读字号：除首页外的所有页面统一放大一号、笔画略加粗
+   本文件由 _tools/gen-readability.js 生成，改样式后重新生成即可。
+   只放大正文级字号（≤20px），标题保持原样，避免撑破版面。 */
+
+:root { --read-bump: 1.5px; }
+
+/* ---- assets/css/topic.css ---- */
+.tp-crumb { font-size: 13px; -webkit-text-stroke: .15px currentColor; }
+.tp-kick { font-size: 12.5px; -webkit-text-stroke: .15px currentColor; }
+.tp-hero-lede { font-size: 17.5px; -webkit-text-stroke: .2px currentColor; }
+.tp-stat span { font-size: 13px; -webkit-text-stroke: .15px currentColor; }
+.tp-nav a { font-size: 14px; -webkit-text-stroke: .2px currentColor; }
+.tp-sec-no { font-size: 13.5px; -webkit-text-stroke: .2px currentColor; }
+.tp-sec-h span { font-size: 12px; -webkit-text-stroke: .15px currentColor; }
+.tp-lede { font-size: 17px; -webkit-text-stroke: .2px currentColor; }
+.tp-note { font-size: 13px; -webkit-text-stroke: .15px currentColor; }
+.tp-src { font-size: 12.5px; -webkit-text-stroke: .15px currentColor; }
+.tp-card p { font-size: 15px; -webkit-text-stroke: .2px currentColor; }
+.tp-tag { font-size: 12px; -webkit-text-stroke: .15px currentColor; }
+.tp-fig figcaption { font-size: 12.5px; -webkit-text-stroke: .15px currentColor; }
+.tp-quote p { font-size: 18.5px; -webkit-text-stroke: .2px currentColor; }
+.tp-quote cite { font-size: 13px; -webkit-text-stroke: .15px currentColor; }
+.tp-tabs button { font-size: 14px; -webkit-text-stroke: .2px currentColor; }
+.tp-chip { font-size: 13.5px; -webkit-text-stroke: .2px currentColor; }
+.tp-chip i { font-size: 11.5px; -webkit-text-stroke: .15px currentColor; }
+.tp-door { font-size: 13px; -webkit-text-stroke: .15px currentColor; }
+.tp-foot-brand { font-size: 21.5px; -webkit-text-stroke: .2px currentColor; }
+.tp-foot-brand i { font-size: 19.5px; -webkit-text-stroke: .2px currentColor; }
+.tp-foot p { font-size: 13px; -webkit-text-stroke: .15px currentColor; }
+.tp-foot-next { font-size: 13px; -webkit-text-stroke: .15px currentColor; }
+.tp-foot-next a { font-size: 20.5px; -webkit-text-stroke: .2px currentColor; }
+@media (max-width: 720px) {
+  .tp-quote p { font-size: 17.5px; -webkit-text-stroke: .2px currentColor; }
+}
+.ex-dot { font-size: 14.5px; -webkit-text-stroke: .2px currentColor; }
+.ex-dot b { font-size: 15.5px; -webkit-text-stroke: .2px currentColor; }
+.ex-dot span { font-size: 11.5px; -webkit-text-stroke: .15px currentColor; }
+.ex-dot.on b { font-size: 16.5px; -webkit-text-stroke: .2px currentColor; }
+.ex-hint { font-size: 12px; -webkit-text-stroke: .15px currentColor; }
+.ex-years { font-size: 14px; -webkit-text-stroke: .2px currentColor; }
+.ex-short { font-size: 15.5px; -webkit-text-stroke: .2px currentColor; }
+.ex-keys span { font-size: 12px; -webkit-text-stroke: .15px currentColor; }
+.ex-imgs figcaption { font-size: 11px; -webkit-text-stroke: .15px currentColor; }
+.ex-block h3 { font-size: 12.5px; -webkit-text-stroke: .15px currentColor; }
+.ex-block p { font-size: 15.5px; -webkit-text-stroke: .2px currentColor; }
+.lamp-tabs button { font-size: 14.5px; -webkit-text-stroke: .2px currentColor; }
+.lamp-tabs button b { font-size: 12.5px; -webkit-text-stroke: .15px currentColor; }
+.lamp-tag { font-size: 12px; -webkit-text-stroke: .15px currentColor; }
+.lamp-copy { font-size: 15px; -webkit-text-stroke: .2px currentColor; }
+.ev-card p { font-size: 13.5px; -webkit-text-stroke: .2px currentColor; }
+.ev-card i { font-size: 12.5px; -webkit-text-stroke: .15px currentColor; }
+.ev-more-in q { font-size: 14.5px; -webkit-text-stroke: .2px currentColor; }
+.ev-more-in dl { font-size: 13px; -webkit-text-stroke: .15px currentColor; }
+.ex-size-row { font-size: 14px; -webkit-text-stroke: .2px currentColor; }
+.ex-size-val { font-size: 13.5px; -webkit-text-stroke: .2px currentColor; }
+.ex-size-axis { font-size: 11.5px; -webkit-text-stroke: .15px currentColor; }
+.ex-table { font-size: 14.5px; -webkit-text-stroke: .2px currentColor; }
+.ex-table th { font-size: 12px; -webkit-text-stroke: .15px currentColor; }
+.ax-count { font-size: 13px; -webkit-text-stroke: .15px currentColor; }
+.ax-count b { font-size: 16.5px; -webkit-text-stroke: .2px currentColor; }
+.ax-sys { font-size: 12px; -webkit-text-stroke: .15px currentColor; }
+.ax-card .ax-area { font-size: 12.5px; -webkit-text-stroke: .15px currentColor; }
+.ax-card .ax-tag { font-size: 14px; -webkit-text-stroke: .2px currentColor; }
+.ax-facts { font-size: 12px; -webkit-text-stroke: .15px currentColor; }
+.ax-detail-h span { font-size: 13px; -webkit-text-stroke: .15px currentColor; }
+.ax-detail-grid p { font-size: 15px; -webkit-text-stroke: .2px currentColor; }
+.ax-cmp-head > * { font-size: 14px; -webkit-text-stroke: .2px currentColor; }
+.ax-cmp-head button { font-size: 19.5px; -webkit-text-stroke: .2px currentColor; }
+.ax-cmp-row > * { font-size: 14px; -webkit-text-stroke: .2px currentColor; }
+.ax-cmp-row > .ax-k { font-size: 12.5px; -webkit-text-stroke: .15px currentColor; }
+.ax-cmp-note { font-size: 12.5px; -webkit-text-stroke: .15px currentColor; }
+.ax-ruler-name { font-size: 14px; -webkit-text-stroke: .2px currentColor; }
+.ax-ruler-val { font-size: 13px; -webkit-text-stroke: .15px currentColor; }
+.ax-ruler-scale { font-size: 11.5px; -webkit-text-stroke: .15px currentColor; }
+.ax-route-list b { font-size: 14.5px; -webkit-text-stroke: .2px currentColor; }
+.ax-route-list span { font-size: 12px; -webkit-text-stroke: .15px currentColor; }
+.ax-route-note { font-size: 12px; -webkit-text-stroke: .15px currentColor; }
+.ax-node text { font-size: 12.5px; -webkit-text-stroke: .15px currentColor; }
+.ax-track-t b { font-size: 20.5px; -webkit-text-stroke: .2px currentColor; }
+.ax-track-t span { font-size: 12.5px; -webkit-text-stroke: .15px currentColor; }
+.ax-track-m { font-size: 12.5px; -webkit-text-stroke: .15px currentColor; }
+.rx-search input { font-size: 14.5px; -webkit-text-stroke: .2px currentColor; }
+.rx-card .rx-lib { font-size: 12px; -webkit-text-stroke: .15px currentColor; }
+.rx-card .rx-acts { font-size: 12.5px; -webkit-text-stroke: .15px currentColor; }
+.rx-empty { font-size: 14.5px; -webkit-text-stroke: .2px currentColor; }
+.rx-drawer-h span { font-size: 13px; -webkit-text-stroke: .15px currentColor; }
+.rx-drawer p { font-size: 15px; -webkit-text-stroke: .2px currentColor; }
+.rx-folds a, .rx-folds span { font-size: 12.5px; -webkit-text-stroke: .15px currentColor; }
+.rx-story h5 { font-size: 16.5px; -webkit-text-stroke: .2px currentColor; }
+.rx-story p { font-size: 15px; -webkit-text-stroke: .2px currentColor; }
+.rx-stage-nav em { font-size: 12.5px; -webkit-text-stroke: .15px currentColor; }
+.rx-stage-nav b { font-size: 15.5px; -webkit-text-stroke: .2px currentColor; }
+.rx-stage-nav span { font-size: 12px; -webkit-text-stroke: .15px currentColor; }
+.rx-stage-kick { font-size: 12px; -webkit-text-stroke: .15px currentColor; }
+.rx-stage-grid h5 { font-size: 12px; -webkit-text-stroke: .15px currentColor; }
+.rx-stage-grid p { font-size: 14.5px; -webkit-text-stroke: .2px currentColor; }
+.rx-stage-lyric { font-size: 16px; -webkit-text-stroke: .2px currentColor; }
+.qz-meta { font-size: 12px; -webkit-text-stroke: .15px currentColor; }
+.qz-q { font-size: 16.5px; -webkit-text-stroke: .2px currentColor; }
+.qz-opt { font-size: 21.5px; -webkit-text-stroke: .2px currentColor; }
+.qz-fb { font-size: 14px; -webkit-text-stroke: .2px currentColor; }
+.qz-foot { font-size: 13px; -webkit-text-stroke: .15px currentColor; }
+.qz-score b { font-size: 18.5px; -webkit-text-stroke: .2px currentColor; }
+.rp-role span { font-size: 12px; -webkit-text-stroke: .15px currentColor; }
+.rp-role-detail { font-size: 14.5px; -webkit-text-stroke: .2px currentColor; }
+.dx-date { font-size: 14px; -webkit-text-stroke: .2px currentColor; }
+.dx-main p { font-size: 14px; -webkit-text-stroke: .2px currentColor; }
+.dx-go { font-size: 12.5px; -webkit-text-stroke: .15px currentColor; }
+.dx-pyear { font-size: 16.5px; -webkit-text-stroke: .2px currentColor; }
+.dx-pbody h4 { font-size: 21.5px; -webkit-text-stroke: .2px currentColor; }
+.dx-pmore p { font-size: 14px; -webkit-text-stroke: .2px currentColor; }
+.dx-pin text { font-size: 12px; -webkit-text-stroke: .15px currentColor; }
+.dx-map-list button { font-size: 13px; -webkit-text-stroke: .15px currentColor; }
+.dx-map-tip { font-size: 13px; -webkit-text-stroke: .15px currentColor; }
+.dx-num span { font-size: 12.5px; -webkit-text-stroke: .15px currentColor; }
+.px-step em { font-size: 12px; -webkit-text-stroke: .15px currentColor; }
+.px-step b { font-size: 21.5px; -webkit-text-stroke: .2px currentColor; }
+.px-step span { font-size: 11.5px; -webkit-text-stroke: .15px currentColor; }
+.px-detail figcaption { font-size: 12px; -webkit-text-stroke: .15px currentColor; }
+.px-detail-body p { font-size: 15px; -webkit-text-stroke: .2px currentColor; }
+.px-24 span { font-size: 12px; -webkit-text-stroke: .15px currentColor; }
+.px-warn { font-size: 13px; -webkit-text-stroke: .15px currentColor; }
+.cut-hint { font-size: 12px; -webkit-text-stroke: .15px currentColor; }
+.cut-side p { font-size: 14px; -webkit-text-stroke: .2px currentColor; }
+.cut-score { font-size: 12.5px; -webkit-text-stroke: .15px currentColor; }
+.cut-score b { font-size: 21.5px; -webkit-text-stroke: .2px currentColor; }
+.cut-verdict { font-size: 13.5px; -webkit-text-stroke: .2px currentColor; }
+.cut-reset { font-size: 13px; -webkit-text-stroke: .15px currentColor; }
+.jfig figcaption { font-size: 11.5px; -webkit-text-stroke: .15px currentColor; }
+.px-aside h5 { font-size: 13px; -webkit-text-stroke: .15px currentColor; }
+.joint-list li { font-size: 13.5px; -webkit-text-stroke: .2px currentColor; }
+.joint-note, .joint-extra { font-size: 13.5px; -webkit-text-stroke: .2px currentColor; }
+.color-heads figcaption { font-size: 11.5px; -webkit-text-stroke: .15px currentColor; }
+.color-photo figcaption { font-size: 11.5px; -webkit-text-stroke: .15px currentColor; }
+.color-extra { font-size: 13.5px; -webkit-text-stroke: .2px currentColor; }
+.color-list li { font-size: 13.5px; -webkit-text-stroke: .2px currentColor; }
+.px-mat figure figcaption { font-size: 11.5px; -webkit-text-stroke: .15px currentColor; }
+.px-mat h4 { font-size: 21.5px; -webkit-text-stroke: .2px currentColor; }
+.px-mat .u { font-size: 12px; -webkit-text-stroke: .15px currentColor; }
+.px-mat p { font-size: 13.5px; -webkit-text-stroke: .2px currentColor; }
+.px-mat span { font-size: 12px; -webkit-text-stroke: .15px currentColor; }
+.lx-dim-note { font-size: 12.5px; -webkit-text-stroke: .15px currentColor; }
+.lx-col-h h4 { font-size: 21.5px; -webkit-text-stroke: .2px currentColor; }
+.lx-col-h span { font-size: 13.5px; -webkit-text-stroke: .2px currentColor; }
+.lx-names span { font-size: 14px; -webkit-text-stroke: .2px currentColor; }
+.lx-names span i { font-size: 11.5px; -webkit-text-stroke: .15px currentColor; }
+.lx-gen-no { font-size: 21.5px; -webkit-text-stroke: .2px currentColor; }
+.lx-gen-body h4 { font-size: 15px; -webkit-text-stroke: .2px currentColor; }
+.lx-gen-body p { font-size: 13.5px; -webkit-text-stroke: .2px currentColor; }
+.lx-p text { font-size: 13.5px; -webkit-text-stroke: .2px currentColor; }
+.lx-p text.lx-p-sub { font-size: 10.5px; -webkit-text-stroke: .15px currentColor; }
+.lx-side .lx-side-meta { font-size: 12px; -webkit-text-stroke: .15px currentColor; }
+.lx-side p { font-size: 14px; -webkit-text-stroke: .2px currentColor; }
+.lx-chain { font-size: 13px; -webkit-text-stroke: .15px currentColor; }
+.lx-side-photos figcaption { font-size: 11.5px; -webkit-text-stroke: .15px currentColor; }
+.lx-way span { font-size: 11.5px; -webkit-text-stroke: .15px currentColor; }
+.lx-way p { font-size: 13px; -webkit-text-stroke: .15px currentColor; }
+.lx-person b { font-size: 15.5px; -webkit-text-stroke: .2px currentColor; }
+.lx-person span { font-size: 12px; -webkit-text-stroke: .15px currentColor; }
+.lx-person em { font-size: 11.5px; -webkit-text-stroke: .15px currentColor; }
+.lx-roster-legend { font-size: 12px; -webkit-text-stroke: .15px currentColor; }
+@media (max-width: 720px) {
+  .ax-cmp-head > *, .ax-cmp-row > * { font-size: 12.5px; -webkit-text-stroke: .15px currentColor; }
+  .ax-cmp-head button { font-size: 16.5px; -webkit-text-stroke: .2px currentColor; }
+  .ex-dot { font-size: 12.5px; -webkit-text-stroke: .15px currentColor; }
+}
+.ex-evi i { font-size: 11px; -webkit-text-stroke: .15px currentColor; }
+.ex-evi b { font-size: 14px; -webkit-text-stroke: .2px currentColor; }
+.ex-evi span { font-size: 12.5px; -webkit-text-stroke: .15px currentColor; }
+.ex-size-h { font-size: 12px; -webkit-text-stroke: .15px currentColor; }
+.ex-size-h em { font-size: 11.5px; -webkit-text-stroke: .15px currentColor; }
+.ax-chip { font-size: 13px; -webkit-text-stroke: .15px currentColor; }
+.ax-pick { font-size: 19.5px; -webkit-text-stroke: .2px currentColor; }
+.ax-thumb figcaption { font-size: 11px; -webkit-text-stroke: .15px currentColor; }
+.ax-detail-imgs figcaption { font-size: 11.5px; -webkit-text-stroke: .15px currentColor; }
+.ax-facts-list div { font-size: 13px; -webkit-text-stroke: .15px currentColor; }
+.ax-map-node text { font-size: 11.5px; -webkit-text-stroke: .15px currentColor; }
+.ax-detail-h .ax-close { font-size: 12.5px; -webkit-text-stroke: .15px currentColor; }
+.ax-map-node text { font-size: 12.5px; -webkit-text-stroke: .15px currentColor; }
+.dx-body-in h4 { font-size: 19.5px; -webkit-text-stroke: .2px currentColor; }
+.dx-body-in p { font-size: 14.5px; -webkit-text-stroke: .2px currentColor; }
+.dx-body-in figcaption { font-size: 12px; -webkit-text-stroke: .15px currentColor; }
+.dx-body-in .dx-src { font-size: 12.5px; -webkit-text-stroke: .15px currentColor; }
+.dx-chip-prov { font-size: 13px; -webkit-text-stroke: .15px currentColor; }
+.joint-modes button { font-size: 13px; -webkit-text-stroke: .15px currentColor; }
+@media (max-width: 720px) {
+  .ex-dot b { font-size: 12.5px; -webkit-text-stroke: .15px currentColor; }
+  .ex-dot.on b { font-size: 13.5px; -webkit-text-stroke: .2px currentColor; }
+  .ax-pick { font-size: 14.5px; -webkit-text-stroke: .2px currentColor; }
+  .qz-opt { font-size: 19.5px; -webkit-text-stroke: .2px currentColor; }
+  .qz-foot { font-size: 12.5px; -webkit-text-stroke: .15px currentColor; }
+  .dx-pyear { font-size: 14px; -webkit-text-stroke: .2px currentColor; }
+  .dx-pbody h4 { font-size: 18.5px; -webkit-text-stroke: .2px currentColor; }
+}
+@media (max-width: 1024px) {
+  .ex-dot b { font-size: 14px; -webkit-text-stroke: .2px currentColor; }
+}
+.dx-prow::after { font-size: 14.5px; -webkit-text-stroke: .2px currentColor; }
+.tp-foot-back { font-size: 18.5px; -webkit-text-stroke: .2px currentColor; }
+[data-page="process"] .tp-hero-lede { font-size: 19px; -webkit-text-stroke: .2px currentColor; }
+[data-page="process"] .tp-lede { font-size: 18.5px; -webkit-text-stroke: .2px currentColor; }
+[data-page="process"] .tp-note { font-size: 14.5px; -webkit-text-stroke: .2px currentColor; }
+[data-page="process"] .tp-src { font-size: 14px; -webkit-text-stroke: .2px currentColor; }
+[data-page="process"] .px-warn { font-size: 14.5px; -webkit-text-stroke: .2px currentColor; }
+[data-page="process"] .px-step { font-size: 13.5px; -webkit-text-stroke: .2px currentColor; }
+[data-page="process"] .px-24 { font-size: 13.5px; -webkit-text-stroke: .2px currentColor; }
+[data-page="process"] .px-aside h5 { font-size: 14px; -webkit-text-stroke: .2px currentColor; }
+[data-page="process"] .joint-list li { font-size: 15px; -webkit-text-stroke: .2px currentColor; }
+[data-page="process"] .joint-note, [data-page="process"] .joint-extra { font-size: 15px; -webkit-text-stroke: .2px currentColor; }
+[data-page="process"] .color-list li { font-size: 15px; -webkit-text-stroke: .2px currentColor; }
+[data-page="process"] .color-extra { font-size: 15px; -webkit-text-stroke: .2px currentColor; }
+[data-page="process"] .px-mat p { font-size: 15px; -webkit-text-stroke: .2px currentColor; }
+[data-page="process"] .px-mat .u, [data-page="process"] .px-mat span { font-size: 13.5px; -webkit-text-stroke: .2px currentColor; }
+[data-page="process"] .color-heads figcaption, [data-page="process"] .px-mat figure figcaption { font-size: 13px; -webkit-text-stroke: .15px currentColor; }
+[data-page="process"] .jfig figcaption { font-size: 13px; -webkit-text-stroke: .15px currentColor; }
+[data-page="process"] .px-step em { font-size: 13.5px; -webkit-text-stroke: .2px currentColor; }
+[data-page="process"] .px-step span { font-size: 13px; -webkit-text-stroke: .15px currentColor; }
+[data-page="process"] .px-detail figcaption { font-size: 13.5px; -webkit-text-stroke: .2px currentColor; }
+[data-page="process"] .px-24 span { font-size: 13.5px; -webkit-text-stroke: .2px currentColor; }
+[data-page="process"] .tp-foot p { font-size: 14px; -webkit-text-stroke: .2px currentColor; }
+[data-page="process"] .joint-modes button { font-size: 14px; -webkit-text-stroke: .2px currentColor; }
+[data-page="process"] .color-heads figcaption { font-size: 13.5px; -webkit-text-stroke: .2px currentColor; }
+[data-page="process"] .color-heads figcaption b { font-size: 14px; -webkit-text-stroke: .2px currentColor; }
+[data-page="process"] .tp-kick { font-size: 13.5px; -webkit-text-stroke: .2px currentColor; }
+[data-page="process"] .tp-sec-no { font-size: 13px; -webkit-text-stroke: .15px currentColor; }
+[data-page="process"] .jfig figcaption { font-size: 13.5px; -webkit-text-stroke: .2px currentColor; }
+[data-page="process"] .color-photo figcaption { font-size: 13.5px; -webkit-text-stroke: .2px currentColor; }
+[data-page="process"] .px-mat figure figcaption { font-size: 13.5px; -webkit-text-stroke: .2px currentColor; }
+
+/* ---- assets/css/studio.css ---- */
+.studio-page .page-hero .kicker { font-size: 16px; -webkit-text-stroke: .2px currentColor; }
+.studio-page .page-hero .lede { font-size: 21px; -webkit-text-stroke: .2px currentColor; }
+.studio-page .ph-stat span { font-size: 15.5px; -webkit-text-stroke: .2px currentColor; }
+.studio-page .sec-head p:not(.sec-note) { font-size: 19px; -webkit-text-stroke: .2px currentColor; }
+.studio-page .sec-note { font-size: 17px; -webkit-text-stroke: .2px currentColor; }
+.studio-page .chip { font-size: 18px; -webkit-text-stroke: .2px currentColor; }
+.studio-page .gwh-idle-n { font-size: 16px; -webkit-text-stroke: .2px currentColor; }
+.studio-page .gwl-t { font-size: 16.5px; -webkit-text-stroke: .2px currentColor; }
+.studio-page .gwm-line { font-size: 16.5px; -webkit-text-stroke: .2px currentColor; }
+.studio-page .gwm-desc { font-size: 16.5px; -webkit-text-stroke: .2px currentColor; }
+.studio-page .gwh-acts .btn { font-size: 16.5px; -webkit-text-stroke: .2px currentColor; }
+.studio-page .gb-head span { font-size: 14.5px; -webkit-text-stroke: .2px currentColor; }
+.studio-page .gb-no { font-size: 14.5px; -webkit-text-stroke: .2px currentColor; }
+.studio-page .gb-b b { font-size: 19px; -webkit-text-stroke: .2px currentColor; }
+.studio-page .gb-b p { font-size: 15px; -webkit-text-stroke: .2px currentColor; }
+.studio-page .gb-chips .chip { font-size: 16.5px; -webkit-text-stroke: .2px currentColor; }
+.studio-page .gb-sub .chip { font-size: 15.5px; -webkit-text-stroke: .2px currentColor; }
+.studio-page .gb-want textarea { font-size: 17.5px; -webkit-text-stroke: .2px currentColor; }
+.studio-page .gb-want-f { font-size: 14px; -webkit-text-stroke: .2px currentColor; }
+.studio-page .gb-dice { font-size: 14.5px; -webkit-text-stroke: .2px currentColor; }
+.studio-page .gb-go { font-size: 20.5px; -webkit-text-stroke: .2px currentColor; }
+.studio-page .gb-tip { font-size: 14.3px; -webkit-text-stroke: .2px currentColor; }
+.studio-page .gb-prompt summary { font-size: 15px; -webkit-text-stroke: .2px currentColor; }
+.studio-page .gb-prompt summary::before { font-size: 16.5px; -webkit-text-stroke: .2px currentColor; }
+.studio-page .gbp-base { font-size: 16px; -webkit-text-stroke: .2px currentColor; }
+.studio-page .gbp-n { font-size: 14.3px; -webkit-text-stroke: .2px currentColor; }
+.studio-page .gbp-full { font-size: 13.5px; -webkit-text-stroke: .2px currentColor; }
+.studio-page .gk-area { font-size: 13.5px; -webkit-text-stroke: .2px currentColor; }
+.studio-page .gk-row { font-size: 15.5px; -webkit-text-stroke: .2px currentColor; }
+.studio-page .gk-note { font-size: 14.5px; -webkit-text-stroke: .2px currentColor; }
+.studio-page .sec-head .btn { font-size: 16.5px; -webkit-text-stroke: .2px currentColor; }
+.studio-page .gwall-empty { font-size: 16.5px; -webkit-text-stroke: .2px currentColor; }
+.studio-page .gwi-t { font-size: 14px; -webkit-text-stroke: .2px currentColor; }
+.studio-page .gwi-d { font-size: 14.5px; -webkit-text-stroke: .2px currentColor; }
+.studio-page .rig-seg button { font-size: 15.5px; -webkit-text-stroke: .2px currentColor; }
+.studio-page .rig-acts button, .studio-page .rig-cal { font-size: 15.5px; -webkit-text-stroke: .2px currentColor; }
+.studio-page .rig-hint { font-size: 15px; -webkit-text-stroke: .2px currentColor; }
+
+/* ---- assets/css/login.css ---- */
+.lg-kick { font-size: 11.5px; -webkit-text-stroke: .15px currentColor; }
+.lg-sub { font-size: 14px; -webkit-text-stroke: .2px currentColor; }
+.lg-tab { font-size: 15px; -webkit-text-stroke: .2px currentColor; }
+.lg-field > label { font-size: 12px; -webkit-text-stroke: .15px currentColor; }
+.lg-field input { font-size: 15.5px; -webkit-text-stroke: .2px currentColor; }
+.lg-send { font-size: 14px; -webkit-text-stroke: .2px currentColor; }
+.lg-hint { font-size: 12px; -webkit-text-stroke: .15px currentColor; }
+.lg-submit { font-size: 14.5px; -webkit-text-stroke: .2px currentColor; }
+.lg-msg { font-size: 13px; -webkit-text-stroke: .15px currentColor; }
+.lg-foot { font-size: 12px; -webkit-text-stroke: .15px currentColor; }
+
+/* ---- assets/css/community.css ---- */
+.bh-id h2 small { font-size: 12px; -webkit-text-stroke: .15px currentColor; }
+.bh-say { font-size: 14px; -webkit-text-stroke: .2px currentColor; }
+.bh-nums span { font-size: 11.5px; -webkit-text-stroke: .15px currentColor; }
+.bh-nums b { font-size: 21.5px; -webkit-text-stroke: .2px currentColor; }
+.bh-btn { font-size: 14px; -webkit-text-stroke: .2px currentColor; }
+.bh-lv { font-size: 11.5px; -webkit-text-stroke: .15px currentColor; }
+.lv-badge { font-size: 14.5px; -webkit-text-stroke: .2px currentColor; }
+.barcat a { font-size: 14.5px; -webkit-text-stroke: .2px currentColor; }
+.barcat a b { font-size: 11.5px; -webkit-text-stroke: .15px currentColor; }
+.barsearch input { font-size: 13.5px; -webkit-text-stroke: .2px currentColor; }
+.barsearch button { font-size: 13.5px; -webkit-text-stroke: .2px currentColor; }
+.bt-tabs button { font-size: 14px; -webkit-text-stroke: .2px currentColor; }
+.bt-sort { font-size: 13.5px; -webkit-text-stroke: .2px currentColor; }
+.bt-new { font-size: 14.5px; -webkit-text-stroke: .2px currentColor; }
+.bt-new i { font-size: 16.5px; -webkit-text-stroke: .2px currentColor; }
+.br-count i { font-size: 10.5px; -webkit-text-stroke: .15px currentColor; }
+.br-count u { font-size: 12.5px; -webkit-text-stroke: .15px currentColor; }
+.br-title { font-size: 17px; -webkit-text-stroke: .2px currentColor; }
+.br-cat { font-size: 14px; -webkit-text-stroke: .2px currentColor; }
+.br-badge { font-size: 11px; -webkit-text-stroke: .15px currentColor; }
+.br-ex { font-size: 13.5px; -webkit-text-stroke: .2px currentColor; }
+.br-meta { font-size: 12px; -webkit-text-stroke: .15px currentColor; }
+.br-av { font-size: 13.5px; -webkit-text-stroke: .2px currentColor; }
+.br-tags span { font-size: 11.5px; -webkit-text-stroke: .15px currentColor; }
+.br-last { font-size: 12px; -webkit-text-stroke: .15px currentColor; }
+.br-last b { font-size: 13px; -webkit-text-stroke: .15px currentColor; }
+.br-last b i { font-size: 11.5px; -webkit-text-stroke: .15px currentColor; }
+.barempty { font-size: 14px; -webkit-text-stroke: .2px currentColor; }
+.bpager button { font-size: 13.5px; -webkit-text-stroke: .2px currentColor; }
+.bpager span { font-size: 13.5px; -webkit-text-stroke: .2px currentColor; }
+.side-card .sc-tight { font-size: 13px; -webkit-text-stroke: .15px currentColor; }
+.barlord .folk span { font-size: 13.5px; -webkit-text-stroke: .2px currentColor; }
+.side-links a { font-size: 13.5px; -webkit-text-stroke: .2px currentColor; }
+.side-links a i { font-size: 11.5px; -webkit-text-stroke: .15px currentColor; }
+.friendbar a { font-size: 12.5px; -webkit-text-stroke: .15px currentColor; }
+.tw-crumb { font-size: 12.5px; -webkit-text-stroke: .15px currentColor; }
+.tw-sub { font-size: 12px; -webkit-text-stroke: .15px currentColor; }
+.tw-onlyop { font-size: 12px; -webkit-text-stroke: .15px currentColor; }
+.fl-name { font-size: 13.5px; -webkit-text-stroke: .2px currentColor; }
+.fl-tag { font-size: 11px; -webkit-text-stroke: .15px currentColor; }
+.fl-lv { font-size: 11px; -webkit-text-stroke: .15px currentColor; }
+.fl-region { font-size: 11px; -webkit-text-stroke: .15px currentColor; }
+.fl-meta { font-size: 11.5px; -webkit-text-stroke: .15px currentColor; }
+.fl-meta .no { font-size: 15.5px; -webkit-text-stroke: .2px currentColor; }
+.fl-tx p { font-size: 15.5px; -webkit-text-stroke: .2px currentColor; }
+.fl-fig figcaption { font-size: 12px; -webkit-text-stroke: .15px currentColor; }
+.fl-acts button { font-size: 12.5px; -webkit-text-stroke: .15px currentColor; }
+.fl-acts .fl-time { font-size: 11.5px; -webkit-text-stroke: .15px currentColor; }
+.fl-sub .si { font-size: 14px; -webkit-text-stroke: .2px currentColor; }
+.fl-sub .si u { font-size: 11.5px; -webkit-text-stroke: .15px currentColor; }
+.tw-reply h3 { font-size: 21.5px; -webkit-text-stroke: .2px currentColor; }
+.tw-reply textarea { font-size: 14.5px; -webkit-text-stroke: .2px currentColor; }
+.tw-rfoot p { font-size: 12px; -webkit-text-stroke: .15px currentColor; }
+.tw-send { font-size: 14px; -webkit-text-stroke: .2px currentColor; }
+.tw-side-note { font-size: 12.5px; -webkit-text-stroke: .15px currentColor; }
+.cm-head span { font-size: 11.5px; -webkit-text-stroke: .15px currentColor; }
+.cm-x { font-size: 18.5px; -webkit-text-stroke: .2px currentColor; }
+.cf > label { font-size: 12.5px; -webkit-text-stroke: .15px currentColor; }
+.cf input[type="text"], .cf textarea { font-size: 14.5px; -webkit-text-stroke: .2px currentColor; }
+.cf-cats button { font-size: 13.5px; -webkit-text-stroke: .2px currentColor; }
+.cf-tags button { font-size: 12.5px; -webkit-text-stroke: .15px currentColor; }
+.cf-tip { font-size: 12px; -webkit-text-stroke: .15px currentColor; }
+.cm-foot p { font-size: 12px; -webkit-text-stroke: .15px currentColor; }
+.cm-pub { font-size: 14.5px; -webkit-text-stroke: .2px currentColor; }
+.ctoast { font-size: 13.5px; -webkit-text-stroke: .2px currentColor; }
+@media (max-width: 1000px) {
+  .br-count b { font-size: 20.5px; -webkit-text-stroke: .2px currentColor; }
+  .brow.is-pin .br-title { font-size: 16.5px; -webkit-text-stroke: .2px currentColor; }
+}
+@media (max-width: 900px) {
+  .fl-av { font-size: 18.5px; -webkit-text-stroke: .2px currentColor; }
+  .fl-name { font-size: 14px; -webkit-text-stroke: .2px currentColor; }
+}
+@media (max-width: 760px) {
+  .barcat a { font-size: 14px; -webkit-text-stroke: .2px currentColor; }
+  .br-count b { font-size: 19.5px; -webkit-text-stroke: .2px currentColor; }
+  .br-count i { font-size: 9.5px; -webkit-text-stroke: .15px currentColor; }
+  .br-count u { font-size: 13.5px; -webkit-text-stroke: .2px currentColor; }
+  .br-title { font-size: 16px; -webkit-text-stroke: .2px currentColor; }
+}
+.csec-h b { font-size: 12px; -webkit-text-stroke: .15px currentColor; }
+.cc-name { font-size: 17px; -webkit-text-stroke: .2px currentColor; }
+.cc-zone { font-size: 11px; -webkit-text-stroke: .15px currentColor; }
+.cc-desc { font-size: 13px; -webkit-text-stroke: .15px currentColor; }
+.cc-meta { font-size: 11.5px; -webkit-text-stroke: .15px currentColor; }
+.cc-go { font-size: 21.5px; -webkit-text-stroke: .2px currentColor; }
+.cempty p { font-size: 14px; -webkit-text-stroke: .2px currentColor; }
+.ce-btn { font-size: 14.5px; -webkit-text-stroke: .2px currentColor; }
+.kstep li { font-size: 13px; -webkit-text-stroke: .15px currentColor; }
+.kstep li::before { font-size: 12.5px; -webkit-text-stroke: .15px currentColor; }
+.kstep li b { font-size: 13.5px; -webkit-text-stroke: .2px currentColor; }
+.cf-half label { font-size: 12.5px; -webkit-text-stroke: .15px currentColor; }
+.bh-nums b { font-size: 18.5px; -webkit-text-stroke: .2px currentColor; }
+.br-count b { font-size: 21.5px; -webkit-text-stroke: .2px currentColor; }
+.br-count u { font-size: 12.5px; -webkit-text-stroke: .15px currentColor; }
+.lv-badge { font-size: 12px; -webkit-text-stroke: .15px currentColor; }
+.ce-sugs span { font-size: 12.5px; -webkit-text-stroke: .15px currentColor; }
+.ce-sugs button { font-size: 13.5px; -webkit-text-stroke: .2px currentColor; }
+.sc-del { font-size: 12px; -webkit-text-stroke: .15px currentColor; }
+
+/* ---- assets/css/profile.css ---- */
+.pc-handle { font-size: 12px; -webkit-text-stroke: .15px currentColor; }
+.pc-quote { font-size: 16px; -webkit-text-stroke: .2px currentColor; }
+.pc-quote.is-empty { font-size: 13px; -webkit-text-stroke: .15px currentColor; }
+.pc-meta dt { font-size: 12px; -webkit-text-stroke: .15px currentColor; }
+.pc-meta dd { font-size: 13px; -webkit-text-stroke: .15px currentColor; }
+.pc-meta dd b { font-size: 15.5px; -webkit-text-stroke: .2px currentColor; }
+.pc-acts .btn { font-size: 13.5px; -webkit-text-stroke: .2px currentColor; }
+.pc-h span { font-size: 12px; -webkit-text-stroke: .15px currentColor; }
+.pc-h-a { font-size: 12px; -webkit-text-stroke: .15px currentColor; }
+.sg-empty { font-size: 14px; -webkit-text-stroke: .2px currentColor; }
+.sg-stamp { font-size: 21.5px; -webkit-text-stroke: .2px currentColor; }
+.sg-chips button { font-size: 13px; -webkit-text-stroke: .15px currentColor; }
+.sg-write { font-size: 13px; -webkit-text-stroke: .15px currentColor; }
+.sg-edit-l { font-size: 12px; -webkit-text-stroke: .15px currentColor; }
+.sg-edit textarea { font-size: 15.5px; -webkit-text-stroke: .2px currentColor; }
+.sg-count { font-size: 12px; -webkit-text-stroke: .15px currentColor; }
+.sg-mini { font-size: 13px; -webkit-text-stroke: .15px currentColor; }
+.sg-note { font-size: 12px; -webkit-text-stroke: .15px currentColor; }
+.pw-i figcaption b { font-size: 13px; -webkit-text-stroke: .15px currentColor; }
+.pw-i figcaption i { font-size: 11.5px; -webkit-text-stroke: .15px currentColor; }
+.pw-x { font-size: 15.5px; -webkit-text-stroke: .2px currentColor; }
+.pw-bad { font-size: 12px; -webkit-text-stroke: .15px currentColor; }
+.pw-e-t { font-size: 21.5px; -webkit-text-stroke: .2px currentColor; }
+.pw-e-n { font-size: 13px; -webkit-text-stroke: .15px currentColor; }
+.pw-add-t { font-size: 13.5px; -webkit-text-stroke: .2px currentColor; }
+.pw-add-n { font-size: 11.5px; -webkit-text-stroke: .15px currentColor; }
+.pw-note { font-size: 12px; -webkit-text-stroke: .15px currentColor; }
+.pc-sect h3 { font-size: 16.5px; -webkit-text-stroke: .2px currentColor; }
+.pc-sect h3 em { font-size: 12.5px; -webkit-text-stroke: .15px currentColor; }
+.pc-list a { font-size: 13.5px; -webkit-text-stroke: .2px currentColor; }
+.pc-list .pc-sub { font-size: 11.5px; -webkit-text-stroke: .15px currentColor; }
+.pc-list .pc-none { font-size: 12.5px; -webkit-text-stroke: .15px currentColor; }
+.pc-comm-note { font-size: 12px; -webkit-text-stroke: .15px currentColor; }
+.pc-cir i { font-size: 15.5px; -webkit-text-stroke: .2px currentColor; }
+.pc-cir span { font-size: 13.5px; -webkit-text-stroke: .2px currentColor; }
+.acct-k { font-size: 12px; -webkit-text-stroke: .15px currentColor; }
+.acct-v { font-size: 13.5px; -webkit-text-stroke: .2px currentColor; }
+.acct-t { font-size: 11.5px; -webkit-text-stroke: .15px currentColor; }
+.acct-b { font-size: 12px; -webkit-text-stroke: .15px currentColor; }
+.acct-form input { font-size: 14.5px; -webkit-text-stroke: .2px currentColor; }
+.acct-msg { font-size: 12px; -webkit-text-stroke: .15px currentColor; }
+.acct-mini { font-size: 12.5px; -webkit-text-stroke: .15px currentColor; }
+.acct-hint { font-size: 11.5px; -webkit-text-stroke: .15px currentColor; }
+.pwl-kick { font-size: 11.5px; -webkit-text-stroke: .15px currentColor; }
+.pwl-dl dt { font-size: 12px; -webkit-text-stroke: .15px currentColor; }
+.pwl-dl dd { font-size: 13px; -webkit-text-stroke: .15px currentColor; }
+.pwl-desc { font-size: 13.5px; -webkit-text-stroke: .2px currentColor; }
+.pwl-p summary { font-size: 12px; -webkit-text-stroke: .15px currentColor; }
+.pwl-p pre { font-size: 12.5px; -webkit-text-stroke: .15px currentColor; }
+.pwl-acts .btn { font-size: 13px; -webkit-text-stroke: .15px currentColor; }
+.pwl-note { font-size: 11.5px; -webkit-text-stroke: .15px currentColor; }
+.pwl-x { font-size: 20.5px; -webkit-text-stroke: .2px currentColor; }
+.pc-toast { font-size: 13.5px; -webkit-text-stroke: .2px currentColor; }
+@media (max-width: 620px) {
+  .sg-line { font-size: 20.5px; -webkit-text-stroke: .2px currentColor; }
+  .sg-stamp { font-size: 18.5px; -webkit-text-stroke: .2px currentColor; }
+  .pw-i figcaption b { font-size: 12px; -webkit-text-stroke: .15px currentColor; }
+}
+
+/* ---- assets/css/vault.css ---- */
+.psec-lede { font-size: 17px; -webkit-text-stroke: .2px currentColor; }
+.psec-fine { font-size: 14.5px; -webkit-text-stroke: .2px currentColor; }
+.part-tag b { font-size: 15px; -webkit-text-stroke: .2px currentColor; }
+.part-tag i { font-size: 11px; -webkit-text-stroke: .15px currentColor; }
+.ps-num span { font-size: 14.5px; -webkit-text-stroke: .2px currentColor; }
+.pf-desc { font-size: 16.5px; -webkit-text-stroke: .2px currentColor; }
+.pf-meta { font-size: 14.5px; -webkit-text-stroke: .2px currentColor; }
+.sd-lab { font-size: 16.5px; -webkit-text-stroke: .2px currentColor; }
+.lib-count span { font-size: 13.5px; -webkit-text-stroke: .2px currentColor; }
+.chip { font-size: 14.5px; -webkit-text-stroke: .2px currentColor; }
+.chip i { font-size: 12.5px; -webkit-text-stroke: .15px currentColor; }
+.chip.sm { font-size: 14px; -webkit-text-stroke: .2px currentColor; }
+.lib-prov > span, .lib-sub > span { font-size: 13.5px; -webkit-text-stroke: .2px currentColor; }
+.lc-txt b { font-size: 15.5px; -webkit-text-stroke: .2px currentColor; }
+.lc-txt i { font-size: 13px; -webkit-text-stroke: .15px currentColor; }
+.lib-empty { font-size: 15.5px; -webkit-text-stroke: .2px currentColor; }
+.lib-src, .parts-src { font-size: 14px; -webkit-text-stroke: .2px currentColor; }
+.lb-tag { font-size: 11.5px; -webkit-text-stroke: .15px currentColor; }
+.lb-kick { font-size: 12px; -webkit-text-stroke: .15px currentColor; }
+.lb-note { font-size: 14px; -webkit-text-stroke: .2px currentColor; }
+.lb-desc { font-size: 16px; -webkit-text-stroke: .2px currentColor; }
+.lb-meta { font-size: 14.5px; -webkit-text-stroke: .2px currentColor; }
+.lb-links a { font-size: 14.5px; -webkit-text-stroke: .2px currentColor; }
+.lb-nav button { font-size: 14.5px; -webkit-text-stroke: .2px currentColor; }
+.lb-idx { font-size: 14px; -webkit-text-stroke: .2px currentColor; }
+
+/* ---- assets/css/chat.css ---- */
+body { font-size: 16.5px; -webkit-text-stroke: .2px currentColor; }
+.ch-back, .ch-new { font-size: 14.5px; -webkit-text-stroke: .2px currentColor; }
+.ch-name { font-size: 16.5px; -webkit-text-stroke: .2px currentColor; }
+.ch-sub { font-size: 13.5px; -webkit-text-stroke: .2px currentColor; }
+.msg-ava { font-size: 16.5px; -webkit-text-stroke: .2px currentColor; }
+.msg-who { font-size: 13.5px; -webkit-text-stroke: .2px currentColor; }
+.msg-txt { font-size: 16.5px; -webkit-text-stroke: .2px currentColor; }
+.msg-more button { font-size: 14px; -webkit-text-stroke: .2px currentColor; }
+.msg-me .msg-body { font-size: 16.5px; -webkit-text-stroke: .2px currentColor; }
+.ch-sugs button { font-size: 14px; -webkit-text-stroke: .2px currentColor; }
+.ch-input { font-size: 16.5px; -webkit-text-stroke: .2px currentColor; }
+.ch-tip { font-size: 13px; -webkit-text-stroke: .15px currentColor; }
+@media (max-width: 720px) {
+  .msg-txt { font-size: 16px; -webkit-text-stroke: .2px currentColor; }
+}
+
+/* ---- assets/css/site.css ---- */
+.phero-kick { font-size: 12.5px; -webkit-text-stroke: .15px currentColor; }
+.phero-lede { font-size: 17.5px; -webkit-text-stroke: .2px currentColor; }
+.pstat span { font-size: 14px; -webkit-text-stroke: .2px currentColor; }
+.psec-h span { font-size: 12px; -webkit-text-stroke: .15px currentColor; }
+.psec-note { font-size: 13px; -webkit-text-stroke: .15px currentColor; }
+.craft-no { font-size: 11.5px; -webkit-text-stroke: .15px currentColor; }
+.craft-say { font-size: 14.5px; -webkit-text-stroke: .2px currentColor; }
+.craft-more { font-size: 13px; -webkit-text-stroke: .15px currentColor; }
+.th-title { font-size: 17px; -webkit-text-stroke: .2px currentColor; }
+.th-ex { font-size: 14px; -webkit-text-stroke: .2px currentColor; }
+.th-meta { font-size: 12px; -webkit-text-stroke: .15px currentColor; }
+.th-side { font-size: 12px; -webkit-text-stroke: .15px currentColor; }
+.side-card h3 { font-size: 19.5px; -webkit-text-stroke: .2px currentColor; }
+.tag-cloud span { font-size: 12.5px; -webkit-text-stroke: .15px currentColor; }
+.rule-list li { font-size: 13px; -webkit-text-stroke: .15px currentColor; }
+.folk i { font-size: 16.5px; -webkit-text-stroke: .2px currentColor; }
+.folk b { font-size: 13.5px; -webkit-text-stroke: .2px currentColor; }
+.folk span { font-size: 11.5px; -webkit-text-stroke: .15px currentColor; }
+.vault-no { font-size: 11px; -webkit-text-stroke: .15px currentColor; }
+.vault-desc { font-size: 13.5px; -webkit-text-stroke: .2px currentColor; }
+.vault-rec { font-size: 11.5px; -webkit-text-stroke: .15px currentColor; }
+.pf-handle { font-size: 12.5px; -webkit-text-stroke: .15px currentColor; }
+.pf-meta dt { font-size: 12px; -webkit-text-stroke: .15px currentColor; }
+.pf-meta dd { font-size: 13.5px; -webkit-text-stroke: .2px currentColor; }
+.pf-meta dd b { font-size: 17.5px; -webkit-text-stroke: .2px currentColor; }
+.btn { font-size: 14px; -webkit-text-stroke: .2px currentColor; }
+.prof-block-h a { font-size: 12px; -webkit-text-stroke: .15px currentColor; }
+.mini b { font-size: 13px; -webkit-text-stroke: .15px currentColor; }
+.post-list li { font-size: 14px; -webkit-text-stroke: .2px currentColor; }
+.post-list span { font-size: 12px; -webkit-text-stroke: .15px currentColor; }
+.login-art-in p { font-size: 14px; -webkit-text-stroke: .2px currentColor; }
+.login-form .lf-kick { font-size: 12px; -webkit-text-stroke: .15px currentColor; }
+.login-form .lf-sub { font-size: 13.5px; -webkit-text-stroke: .2px currentColor; }
+.field label { font-size: 12px; -webkit-text-stroke: .15px currentColor; }
+.field input { font-size: 15.5px; -webkit-text-stroke: .2px currentColor; }
+.lf-tip { font-size: 12px; -webkit-text-stroke: .15px currentColor; }
+.lf-err { font-size: 13px; -webkit-text-stroke: .15px currentColor; }
+.foot-brand { font-size: 21.5px; -webkit-text-stroke: .2px currentColor; }
+.foot-brand i { font-size: 19.5px; -webkit-text-stroke: .2px currentColor; }
+.foot-note { font-size: 12px; -webkit-text-stroke: .15px currentColor; }
+
+/* ---- assets/css/layout.css ---- */
+.ask-kicker { font-size: 13.5px; -webkit-text-stroke: .2px currentColor; }
+.ask-lede { font-size: 16.5px; -webkit-text-stroke: .2px currentColor; }
+.ask-input { font-size: 17.5px; -webkit-text-stroke: .2px currentColor; }
+.ask-chips button { font-size: 14.5px; -webkit-text-stroke: .2px currentColor; }
+.ask-live-head { font-size: 14px; -webkit-text-stroke: .2px currentColor; }
+.ask-live-body { font-size: 16px; -webkit-text-stroke: .2px currentColor; }
+.ask-live-foot { font-size: 14px; -webkit-text-stroke: .2px currentColor; }
+.ask-live-close { font-size: 13.5px; -webkit-text-stroke: .2px currentColor; }
+@media (max-width: 900px) {
+  .ask-live-body { font-size: 15.5px; -webkit-text-stroke: .2px currentColor; }
+}
+@media (min-width: 901px) and (max-height: 760px) {
+  .ask-lede { font-size: 15.5px; -webkit-text-stroke: .2px currentColor; }
+  .ask-live-body { font-size: 15.1px; -webkit-text-stroke: .2px currentColor; }
+}
+.ask-note { font-size: 13.5px; -webkit-text-stroke: .2px currentColor; }
+.p-more { font-size: calc(clamp(13px, .95vw, 15px) + 1.5px); -webkit-text-stroke: .2px currentColor; }
+.p-more::after { font-size: 14px; -webkit-text-stroke: .2px currentColor; }
+.col-title { font-size: 16.5px; -webkit-text-stroke: .2px currentColor; }
+.nw-fig figcaption { font-size: 12.5px; -webkit-text-stroke: .15px currentColor; }
+.nw-kicker { font-size: 12.5px; -webkit-text-stroke: .15px currentColor; }
+.nw-title { font-size: calc(clamp(18px, 1.6vw, 28px) + 1.5px); -webkit-text-stroke: .2px currentColor; }
+.nw-title--sm { font-size: calc(clamp(15px, 1.25vw, 22px) + 1.5px); -webkit-text-stroke: .2px currentColor; }
+.nw-text { font-size: calc(clamp(11.6px, 0.95vw, 17px) + 1.5px); -webkit-text-stroke: .15px currentColor; }
+.nw-sum { font-size: calc(clamp(11.2px, 0.9vw, 16px) + 1.5px); -webkit-text-stroke: .15px currentColor; }
+@media (max-width: 1200px) {
+  .nw-fig figcaption { font-size: 11.5px; -webkit-text-stroke: .15px currentColor; }
+  .nw-kicker { font-size: 11.5px; -webkit-text-stroke: .15px currentColor; }
+}
+.map-h { font-size: calc(clamp(19px, 1.55vw, 27px) + 1.5px); -webkit-text-stroke: .2px currentColor; }
+.map-sub { font-size: 13px; -webkit-text-stroke: .15px currentColor; }
+.cn-inset i { font-size: 9.5px; -webkit-text-stroke: .15px currentColor; }
+.cn-legend { font-size: 12px; -webkit-text-stroke: .15px currentColor; }
+.cn-lg-t { font-size: 11.5px; -webkit-text-stroke: .15px currentColor; }
+.map-note { font-size: 11px; -webkit-text-stroke: .15px currentColor; }
+.mp-kick { font-size: 12px; -webkit-text-stroke: .15px currentColor; }
+.mp-h { font-size: calc(clamp(17px, 1.32vw, 22px) + 1.5px); -webkit-text-stroke: .2px currentColor; }
+.mp-lead { font-size: 13.5px; -webkit-text-stroke: .2px currentColor; }
+.mp-syslist b { font-size: 15px; -webkit-text-stroke: .2px currentColor; }
+.mp-syslist span { font-size: 12.5px; -webkit-text-stroke: .15px currentColor; }
+.mp-hint { font-size: 12px; -webkit-text-stroke: .15px currentColor; }
+.mp-sys { font-size: 12px; -webkit-text-stroke: .15px currentColor; }
+.mp-close { font-size: 12px; -webkit-text-stroke: .15px currentColor; }
+.mp-area { font-size: 12.5px; -webkit-text-stroke: .15px currentColor; }
+.mp-quote { font-size: 14.5px; -webkit-text-stroke: .2px currentColor; }
+.mp-meta dt { font-size: 11px; -webkit-text-stroke: .15px currentColor; }
+.mp-meta dd { font-size: 13px; -webkit-text-stroke: .15px currentColor; }
+.mp-scroll h4 { font-size: 13.5px; -webkit-text-stroke: .2px currentColor; }
+.mp-scroll p { font-size: 13.5px; -webkit-text-stroke: .2px currentColor; }
+.mp-fact { font-size: 12.5px; -webkit-text-stroke: .15px currentColor; }
+.mp-arrow { font-size: 14.5px; -webkit-text-stroke: .2px currentColor; }
+.mp-count { font-size: 12px; -webkit-text-stroke: .15px currentColor; }
+@media (max-width: 1200px) {
+  .map-sub { font-size: 12px; -webkit-text-stroke: .15px currentColor; }
+  .mp-kick { font-size: 11px; -webkit-text-stroke: .15px currentColor; }
+  .mp-h { font-size: 17.5px; -webkit-text-stroke: .2px currentColor; }
+  .mp-lead { font-size: 12.5px; -webkit-text-stroke: .15px currentColor; }
+  .mp-syslist b { font-size: 14px; -webkit-text-stroke: .2px currentColor; }
+  .mp-syslist span { font-size: 12px; -webkit-text-stroke: .15px currentColor; }
+  .mp-hint { font-size: 11px; -webkit-text-stroke: .15px currentColor; }
+  .mp-quote { font-size: 13.5px; -webkit-text-stroke: .2px currentColor; }
+  .mp-meta dd { font-size: 12.5px; -webkit-text-stroke: .15px currentColor; }
+  .mp-scroll p { font-size: 13px; -webkit-text-stroke: .15px currentColor; }
+  .cn-legend { font-size: 11px; -webkit-text-stroke: .15px currentColor; }
+  .cn-lg-t { font-size: 10.5px; -webkit-text-stroke: .15px currentColor; }
+}
+.inh-idx { font-size: 11.5px; -webkit-text-stroke: .15px currentColor; }
+.inh-word { font-size: calc(clamp(11.5px, .98vw, 14.5px) + 1.5px); -webkit-text-stroke: .15px currentColor; }
+.inh-cap { font-size: 11.5px; -webkit-text-stroke: .15px currentColor; }
+.inh-kick { font-size: 12px; -webkit-text-stroke: .15px currentColor; }
+.inh-lede { font-size: calc(clamp(12px, 1.02vw, 17px) + 1.5px); -webkit-text-stroke: .2px currentColor; }
+.in-word { font-size: calc(clamp(11px, .86vw, 13px) + 1.5px); -webkit-text-stroke: .15px currentColor; }
+.in-place { font-size: 11.5px; -webkit-text-stroke: .15px currentColor; }
+.ind-life { font-size: 14px; -webkit-text-stroke: .2px currentColor; }
+.ind-back { font-size: 14px; -webkit-text-stroke: .2px currentColor; }
+.ind-text p { font-size: calc(clamp(15px, 1.2vw, 17.5px) + 1.5px); -webkit-text-stroke: .2px currentColor; }
+.inh-src { font-size: 13px; -webkit-text-stroke: .15px currentColor; }
+.ps-kick { font-size: 11.5px; -webkit-text-stroke: .15px currentColor; }
+.ps-sub { font-size: calc(clamp(10.5px, .86vw, 12.5px) + 1.5px); -webkit-text-stroke: .15px currentColor; }
+.ps-no { font-size: calc(clamp(14px, 1.1vw, 17px) + 1.5px); -webkit-text-stroke: .2px currentColor; }
+.ps-row h3 { font-size: calc(clamp(15px, 1.28vw, 22px) + 1.5px); -webkit-text-stroke: .2px currentColor; }
+.ps-row p { font-size: calc(clamp(10.4px, .87vw, 13.6px) + 1.5px); -webkit-text-stroke: .15px currentColor; }
+.ps-tags span { font-size: 11.1px; -webkit-text-stroke: .15px currentColor; }
+.ps-min { font-size: calc(clamp(13px, 1.05vw, 16px) + 1.5px); -webkit-text-stroke: .2px currentColor; }
+.ps-min b { font-size: 11px; -webkit-text-stroke: .15px currentColor; }
+.ps-note { font-size: 11px; -webkit-text-stroke: .15px currentColor; }
+.ly-head b { font-size: calc(clamp(12px, 1vw, 15px) + 1.5px); -webkit-text-stroke: .2px currentColor; }
+.ly-show { font-size: calc(clamp(14px, 1.24vw, 19px) + 1.5px); -webkit-text-stroke: .2px currentColor; }
+.ly-line { font-size: calc(clamp(18px, 1.82vw, 32px) + 1.5px); -webkit-text-stroke: .2px currentColor; }
+.ly-acts { font-size: 14.5px; -webkit-text-stroke: .2px currentColor; }
+.ly-play { font-size: 12px; -webkit-text-stroke: .15px currentColor; }
+.ly-time { font-size: 13.5px; -webkit-text-stroke: .2px currentColor; }
+.ly-min { font-size: 13.5px; -webkit-text-stroke: .2px currentColor; }
+.ly-src { font-size: 13.5px; -webkit-text-stroke: .2px currentColor; }
+@media (max-width: 1200px) {
+  .in-place { font-size: 10.5px; -webkit-text-stroke: .15px currentColor; }
+}
+.six-no { font-size: 12.5px; -webkit-text-stroke: .15px currentColor; }
+.six-more { font-size: calc(clamp(11.5px, .95vw, 14.5px) + 1.5px); -webkit-text-stroke: .15px currentColor; }
+.sec-foot { font-size: 13.5px; -webkit-text-stroke: .2px currentColor; }
+.ft-nav a { font-size: 14.5px; -webkit-text-stroke: .2px currentColor; }
+.ft-nav i { font-size: 11.5px; -webkit-text-stroke: .15px currentColor; }
+.ft-dim { font-size: 13px; -webkit-text-stroke: .15px currentColor; }
+@media (max-height: 800px) and (min-width: 901px) {
+  .sec-foot { font-size: 12.5px; -webkit-text-stroke: .15px currentColor; }
+  .ft-nav a { font-size: 13.5px; -webkit-text-stroke: .2px currentColor; }
+  .ft-dim { font-size: 12px; -webkit-text-stroke: .15px currentColor; }
+}
+@media (max-width: 1180px) {
+  .ft-row, .ft-dim { font-size: 13px; -webkit-text-stroke: .15px currentColor; }
+}
+@media (max-width: 900px) {
+  .ft-row, .ft-dim { font-size: 13px; -webkit-text-stroke: .15px currentColor; }
+}
+@media (max-width: 560px) {
+  .ft-nav a { font-size: 13.5px; -webkit-text-stroke: .2px currentColor; }
+  .ft-row, .ft-dim { font-size: 12.5px; -webkit-text-stroke: .15px currentColor; }
+}
+@media (max-width: 900px) {
+  .ask-input { font-size: 16.5px; -webkit-text-stroke: .2px currentColor; }
+  .ask-chips button { font-size: 13.5px; -webkit-text-stroke: .2px currentColor; }
+}
+.more { font-size: calc(clamp(13px, .95vw, 15px) + 1.5px); -webkit-text-stroke: .2px currentColor; }
+.more::after { font-size: 14px; -webkit-text-stroke: .2px currentColor; }
+@media (max-height: 760px) and (min-width: 901px) {
+  #page4 .nw-title { font-size: calc(clamp(16px, 1.42vw, 22px) + 1.5px); -webkit-text-stroke: .2px currentColor; }
+  #page4 .nw-title--sm { font-size: calc(clamp(14px, 1.08vw, 18px) + 1.5px); -webkit-text-stroke: .2px currentColor; }
+  #page4 .nw-text, #page4 .nw-sum { font-size: 13.5px; -webkit-text-stroke: .2px currentColor; }
+  #page4 .nw-kicker { font-size: 11.5px; -webkit-text-stroke: .15px currentColor; }
+}
