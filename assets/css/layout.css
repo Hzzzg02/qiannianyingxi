@@ -3058,7 +3058,7 @@ body[data-dir="up"] .panels i:nth-child(even) { --sh: -9%; }
   position: absolute;
   left: 0;
   right: 0;
-  bottom: clamp(26px, 4vh, 52px);
+  bottom: clamp(74px, 9.4vh, 112px);
   z-index: 2;
   display: flex;
   flex-direction: row-reverse;
@@ -3072,7 +3072,7 @@ body[data-dir="up"] .panels i:nth-child(even) { --sh: -9%; }
   writing-mode: vertical-rl;
   text-orientation: upright;
   font-family: "Songti SC", "SimSun", "STSong", serif;
-  font-size: clamp(23px, 2vw, 33px);
+  font-size: clamp(26px, 2.25vw, 37px);
   font-weight: 500;
   line-height: 1;
   letter-spacing: .18em;
