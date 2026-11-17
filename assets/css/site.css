@@ -819,7 +819,7 @@ body.login-page::before { display: none; }
 }
 /* 手机上匾额收薄一点：--hd-h 同时管着导航高度和正文的让位 */
 @media (max-width: 560px) {
-  :root { --hd-h: 68px; }
+  :root { --hd-h: 56px; }
 }
 @media (max-width: 760px) {
   main.page { padding: 0 18px; }

@@ -35,19 +35,19 @@ body.past-first .site-head { transform: translateY(-104%); }
   height: 100%;
   max-width: 1440px;
   margin: 0 auto;
-  padding: 0 40px;
+  padding: 0 36px;
   display: flex;
   align-items: center;
-  gap: 26px;
+  gap: 22px;
 }
 
 /* 左：一枚圆形皮影徽标 + 站名
    原来是「影」字白文印，换成圆形的皮影头茬图。
    米白底圈 + 一道暗影，把圆从朱红横匾上隔开，不然红脸跟红底会糊在一起。 */
-.brand { display: flex; align-items: center; gap: 12px; text-decoration: none; }
+.brand { display: flex; align-items: center; gap: 10px; text-decoration: none; }
 .brand-seal {
   display: block;
-  width: 40px; height: 40px;
+  width: 34px; height: 34px;
   flex: none;
   border-radius: 50%;
   overflow: hidden;
@@ -67,18 +67,18 @@ body.past-first .site-head { transform: translateY(-104%); }
   transform: scale(1.16);
 }
 .brand:hover .brand-seal { transform: rotate(-5deg); }
-.brand-txt { display: flex; flex-direction: column; gap: 4px; }
+.brand-txt { display: flex; flex-direction: column; gap: 3px; }
 .brand-txt b {
   font-family: "MSZ", "STKaiti", "KaiTi", serif;
   font-weight: 400;
-  font-size: 22px;
+  font-size: 19px;
   line-height: 1;
   letter-spacing: .1em;
   color: #fbefd8;
 }
 .brand-txt i {
   font-style: normal;
-  font-size: 10px;
+  font-size: 9px;
   line-height: 1;
   letter-spacing: .26em;
   color: rgba(250, 232, 199, .6);
@@ -88,16 +88,16 @@ body.past-first .site-head { transform: translateY(-104%); }
 .head-nav {
   display: flex;
   align-items: center;
-  gap: 30px;
+  gap: 26px;
   margin: 0 auto;
 }
 .head-nav a {
   /* --ls 记着字距：字距会在末字后面留一段空白，下划线要按这个值往回让 */
   --ls: .12em;
   position: relative;
-  padding: 7px 2px 9px;
+  padding: 5px 2px 7px;
   font-family: "MSZ", "STKaiti", "KaiTi", serif;
-  font-size: 21px;
+  font-size: 19px;
   line-height: 1;
   letter-spacing: var(--ls);
   color: rgba(252, 240, 214, .82);
@@ -138,21 +138,21 @@ body.past-first .site-head { transform: translateY(-104%); }
   display: flex;
   align-items: center;
   /* 拉大字与头像的间距：头像自然往左靠，字留在最右 */
-  gap: 26px;
-  padding-left: 24px;
+  gap: 22px;
+  padding-left: 20px;
   border-left: 1px solid rgba(246, 226, 190, .24);
   text-decoration: none;
 }
 .hu-av {
   display: grid;
   place-items: center;
-  width: 34px; height: 34px;
+  width: 30px; height: 30px;
   flex: none;
   border-radius: 50%;
   background: #f8eeda;
   color: #ad2026;
   font-family: "MSZ", "STKaiti", "KaiTi", serif;
-  font-size: 20px;
+  font-size: 18px;
   line-height: 1;
   box-shadow:
     0 0 0 1px rgba(255, 240, 210, .55),
@@ -162,7 +162,7 @@ body.past-first .site-head { transform: translateY(-104%); }
 .hu:hover .hu-av { transform: scale(1.08); }
 .hu-tx {
   font-family: "MSZ", "STKaiti", "KaiTi", serif;
-  font-size: 15px;
+  font-size: 14px;
   letter-spacing: .08em;
   color: rgba(250, 236, 210, .9);
   max-width: 6em;
@@ -176,14 +176,14 @@ body.past-first .site-head { transform: translateY(-104%); }
 @media (max-width: 1180px) {
   .head-inner { padding: 0 26px; gap: 18px; }
   .head-nav { gap: 20px; }
-  .head-nav a { font-size: 19px; }
+  .head-nav a { font-size: 17px; }
   .brand-txt i { display: none; }
 }
 @media (max-width: 860px) {
   .head-inner { padding: 0 16px; gap: 12px; }
   .brand-txt { display: none; }
   .head-nav { gap: 14px; }
-  .head-nav a { font-size: 17px; --ls: .06em; }
+  .head-nav a { font-size: 15px; --ls: .06em; }
   .hu { padding-left: 12px; }
   .hu-tx { display: none; }
 }

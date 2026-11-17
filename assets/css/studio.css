@@ -236,7 +236,7 @@
   gap: clamp(24px, 2.8vw, 52px);
   align-items: start;
 }
-.studio-page .gw-heart { position: sticky; top: 92px; }
+.studio-page .gw-heart { position: sticky; top: calc(var(--hd-h, 78px) + 14px); }
 .studio-page .gwh-frame {
   padding: clamp(9px, .9vw, 15px);
   border: 1px solid rgba(120, 88, 40, .34);

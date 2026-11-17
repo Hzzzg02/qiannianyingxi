@@ -16,7 +16,7 @@
   --ph-3: rgba(29, 31, 33, .28);
   --ph-line: rgba(29, 31, 33, .16);
 
-  --hd-h: 78px;
+  --hd-h: 64px;
   --ease-out: cubic-bezier(.22, 1, .36, 1);
   --ease-back: cubic-bezier(.34, 1.56, .64, 1);
   --dur: .9s;
