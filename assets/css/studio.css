@@ -862,3 +862,38 @@
 }
 
 .studio-page .sec.tight { padding-top: 26px; }
+
+/* ---------- 工坊比例：画纸收窄、戏箱放宽 ----------
+   画纸是 3:4，左栏越宽纸就越高，一屏里同时看不见画纸和戏箱。
+   这里不动任何字号、间距和画幅比例，只把两栏的分法调一下：
+   左栏让出一部分宽度，纸跟着矮下来；右栏变宽，选项一行能多排几个。
+   再给纸一个按视口高度算出来的宽度上限，矮屏上自动更小。 */
+.studio-page .gw {
+  grid-template-columns: minmax(0, .84fr) minmax(430px, 1fr);
+  gap: clamp(20px, 2.2vw, 40px);
+}
+.studio-page .gwh-frame {
+  width: 100%;
+  max-width: clamp(340px, calc((100vh - 180px) * .75), 100%);
+  margin-inline: auto;
+}
+/* 单栏堆叠时恢复原样 */
+@media (max-width: 900px) {
+  .studio-page .gw {
+    grid-template-columns: minmax(0, 1fr);
+    gap: 28px;
+  }
+  .studio-page .gwh-frame { max-width: 100%; }
+}
+
+/* ---------- 戏箱内部竖向留白收紧 ----------
+   只压上下间距和按钮内边距，字号、颜色、chip 大小都不动。
+   目标是滚到工坊顶部时，「落笔」能落进一屏。 */
+.studio-page .gw-box .gb-head { padding-bottom: 11px; margin-bottom: 15px; }
+.studio-page .gw-box .gb-step { margin: 15px 0 9px; }
+.studio-page .gw-box .gb-step:first-of-type { margin-top: 0; }
+.studio-page .gw-box .chips.gb-chips { gap: 7px 8px; }
+.studio-page .gw-box .gb-want { margin-top: 2px; }
+.studio-page .gw-box .gb-go { margin-top: 15px; padding: 14px 20px; }
+.studio-page .gw-box .gb-tip { margin: 9px 0; }
+.studio-page .gw-box .gb-prompt { margin-top: 14px; }
