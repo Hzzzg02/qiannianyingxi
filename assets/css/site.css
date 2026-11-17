@@ -763,48 +763,35 @@ body.login-page::before { display: none; }
   mix-blend-mode: multiply;
 }
 
-/* ---------- 页脚 ---------- */
+/* ---------- 页脚：与首页第九屏（关于本站）同一套版式 ----------
+   内页不再用「品牌 + 一句说明」的横排页脚，改成和首页末屏一样的居中竖排：
+   站内导航 → 参赛信息 → 版权 → 在线演示 → 著录 → 浏览器建议。
+   .ft-in / .ft-nav / .ft-row 的样式在 layout.css，内页都引了，不用重复定义。 */
 .foot {
   margin-top: 64px;
-  border-top: 1px solid var(--line);
-  background: linear-gradient(180deg, rgba(239, 231, 214, .5), rgba(239, 231, 214, .9));
+  padding: 44px 52px 38px;
+  border-top: 1px solid rgba(157, 44, 28, .16);
+  background: #f4efe3;
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, .68),
+    0 -14px 34px rgba(24, 16, 8, .10);
 }
-.foot-in {
-  max-width: 1520px;
-  margin: 0 auto;
-  padding: 30px 52px 34px;
-  display: flex;
-  align-items: flex-start;
-  justify-content: space-between;
-  gap: 28px;
-  flex-wrap: wrap;
-}
-.foot-brand {
-  display: flex;
-  align-items: center;
-  gap: 12px;
-  font-family: var(--brush);
-  font-size: 20px;
-  letter-spacing: .1em;
-  color: #2a2119;
-}
-.foot-brand i {
-  display: grid;
-  place-items: center;
-  width: 30px; height: 30px;
-  font-style: normal;
-  font-size: 18px;
-  color: var(--cream);
-  background: var(--red);
-}
-.foot-note {
-  max-width: 46em;
-  font-size: 10.5px;
-  line-height: 1.95;
+.foot .ft-in { margin: 0 auto; }
+/* 页尾统一回首页第九屏的规格：小字、不加粗。
+   readability.css 会把内页页尾的字放大（.ft-nav a 14.5、.ft-dim 13、.ft-row 随正文到 16.5），
+   这里用更高优先级压回首页的 12 / 13 / 11.5 / 10，并去掉文字描边。 */
+.foot {
+  font-size: 12px;
   letter-spacing: .02em;
-  color: rgba(91, 74, 53, .6);
+  color: rgba(62, 46, 30, .58);
+  -webkit-text-stroke: 0;
 }
-.foot-note b { font-weight: 400; color: rgba(91, 74, 53, .78); }
+.foot .ft-nav a { font-size: 13px; -webkit-text-stroke: 0; }
+.foot .ft-nav i { font-size: 10px; -webkit-text-stroke: 0; }
+.foot .ft-row { font-size: 12px; -webkit-text-stroke: 0; }
+.foot .ft-dim { font-size: 11.5px; -webkit-text-stroke: 0; }
+/* 专题页保留「回到首页 / 下一篇」，排成一行接在导航下面 */
+.ft-jump { letter-spacing: .04em; }
 
 /* ---------- 响应 ---------- */
 @media (max-width: 1080px) {
@@ -815,7 +802,7 @@ body.login-page::before { display: none; }
   .craft-grid { grid-template-columns: 1fr; }
   .vault-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
   .board, .prof { grid-template-columns: 1fr; }
-  .foot-in { padding: 26px; }
+  .foot { padding: 34px 26px 30px; }
 }
 /* 手机上匾额收薄一点：--hd-h 同时管着导航高度和正文的让位 */
 @media (max-width: 560px) {
@@ -823,6 +810,7 @@ body.login-page::before { display: none; }
 }
 @media (max-width: 760px) {
   main.page { padding: 0 18px; }
+  .foot { padding: 28px 18px 26px; }
   .phero h1 { font-size: 34px; }
   .phero-stats { gap: 18px; flex-wrap: wrap; }
   .craft-card { grid-template-columns: 108px minmax(0, 1fr); }
