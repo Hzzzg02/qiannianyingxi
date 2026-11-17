@@ -77,26 +77,77 @@
   }
 
   function myName() {
+    if (ME) return ME;
     var u = (window.QNYX && window.QNYX.user) ? window.QNYX.user() : null;
     return (u && u.name) ? u.name : '';
   }
   function loginHint() { return '<a href="login.html?next=community.html">先登录</a>'; }
   function uid(prefix) { return prefix + Date.now().toString(36) + Math.floor(Math.random() * 90 + 10); }
 
-  /* ---------------- 存取 ---------------- */
-  function load() {
-    try {
-      var d = JSON.parse(localStorage.getItem(KEY) || 'null');
-      if (d && d.circles && d.circles.map) DB = { circles: d.circles };
-    } catch (e) {}
-    try { US = JSON.parse(localStorage.getItem(UKEY) || '{}') || {}; } catch (e) { US = {}; }
+  /* ---------------- 存取 ----------------
+     数据在服务器（/api/comm），不再放本机。
+     一次把整棵「吧 → 帖 → 楼」拉下来放 DB 里，渲染逻辑照旧；
+     写操作单条提交，成功后再拉一遍，免得本地和服务器各有各的说法。
+     只有关注与签到还留在本机——那是个人偏好，不共享。 */
+  var API = '/api/comm';
+  var ME = '';
+
+  function api(method, path, body) {
+    var opt = {
+      method: method,
+      credentials: 'same-origin',
+      headers: { 'Content-Type': 'application/json' }
+    };
+    if (body) opt.body = JSON.stringify(body);
+    return fetch(API + path, opt).then(function (r) {
+      return r.json().catch(function () { return { ok: false, error: '服务器返回的不是 JSON' }; })
+        .then(function (j) {
+          if (!r.ok || !j || j.ok === false) {
+            throw new Error((j && (j.error || j.message)) || ('请求失败 ' + r.status));
+          }
+          return j;
+        });
+    });
   }
-  function save() {
-    try { localStorage.setItem(KEY, JSON.stringify(DB)); }
-    catch (e) { toast('这台机器存不下了，删几个旧帖再试'); }
+
+  function pull() {
+    return fetch(API, { credentials: 'same-origin' })
+      .then(function (r) { return r.json(); })
+      .then(function (j) {
+        if (!j || j.ok === false) throw new Error((j && j.error) || '读不到社区数据');
+        DB.circles = j.circles || [];
+        ME = j.me ? j.me.name : '';
+        /* 服务端的登录态（cookie）才是准的，把名字同步回本地，
+           免得出现「社区里能发帖、导航却显示未登录」 */
+        if (ME && window.QNYX && window.QNYX.login) {
+          var cur = window.QNYX.user ? window.QNYX.user() : null;
+          if (!cur || cur.name !== ME) {
+            window.QNYX.login(ME);
+            var tx = document.querySelector('.hu-tx');
+            var av = document.querySelector('.hu-av');
+            if (tx) tx.textContent = ME;
+            if (av) av.textContent = ME.slice(0, 1);
+          }
+        }
+        /* 服务端给每一楼带了「我赞过没有」，转成本地那张表，楼层渲染就不用改 */
+        liked = {};
+        DB.circles.forEach(function (c) {
+          (c.posts || []).forEach(function (t) {
+            (t.floors || []).forEach(function (f, i) {
+              if (f.liked) liked[c.id + ':' + t.id + ':' + i] = true;
+            });
+          });
+        });
+        return DB;
+      });
   }
+
+  function save() { /* 写操作都走接口了，留个空实现防止漏改处报错 */ }
   function saveU() {
     try { localStorage.setItem(UKEY, JSON.stringify(US)); } catch (e) {}
+  }
+  function loadU() {
+    try { US = JSON.parse(localStorage.getItem(UKEY) || '{}') || {}; } catch (e) { US = {}; }
   }
   function usOf(cid) {
     if (!US[cid]) US[cid] = { join: false, check: '', days: 0 };
@@ -133,15 +184,7 @@
     return false;
   }
 
-  function dropPost(c, tid) {
-    if (!c) return;
-    c.posts = (c.posts || []).filter(function (x) { return x.id !== tid; });
-    /* 连同这一帖的点赞记录一起清掉，不然下次发到同一个 id 会带着旧赞 */
-    Object.keys(liked).forEach(function (k) {
-      if (k.indexOf(c.id + ':' + tid + ':') === 0) delete liked[k];
-    });
-    save();
-  }
+  function dropPost(c, tid) { /* 已改为走 DELETE 接口，保留空壳以防旧调用 */ }
 
   /* ---------------- 由楼层算出来的数 ---------------- */
   function stat(c) {
@@ -707,9 +750,21 @@
         if (!armed(d, '删', '再点一下')) return;
         var tid = d.getAttribute('data-delpost');
         var tt = (curC.posts || []).filter(function (x) { return x.id === tid; })[0];
-        dropPost(curC, tid);
-        repaintBar();
-        toast(tt ? '「' + tt.title + '」已经删掉' : '帖子已经删掉');
+        var cid = curC.id;
+        api('DELETE', '/posts/' + tid)
+          .then(function () {
+            return pull().then(function () {
+              var c2 = findCircle(cid);
+              if (c2) {
+                curC = c2;
+                repaintBar();
+              } else {
+                showSquare();
+              }
+              toast(tt ? '「' + tt.title + '」已经删掉' : '帖子已经删掉');
+            });
+          })
+          .catch(function (e2) { toast(e2.message); });
       }
     });
 
@@ -718,14 +773,18 @@
       if (!btn || !curC) return;
       if (!armed(btn, '删掉这个吧', '再点一下：吧和帖子一起删')) return;
       var id = curC.id;
-      DB.circles = DB.circles.filter(function (c) { return c.id !== id; });
-      delete US[id];
-      save();
-      saveU();
-      curC = null;
-      history.pushState(null, '', location.pathname + location.search);
-      showSquare();
-      toast('吧已经删掉了');
+      api('DELETE', '/circles/' + id)
+        .then(function () {
+          delete US[id];
+          saveU();
+          curC = null;
+          history.pushState(null, '', location.pathname + location.search);
+          return pull().then(function () {
+            showSquare();
+            toast('吧已经删掉了');
+          });
+        })
+        .catch(function (e) { toast(e.message); });
     }
 
     $('#barAside').addEventListener('click', function (e) {
@@ -753,12 +812,19 @@
       if (del) {
         if (!armed(del, '删掉这帖', '再点一下删掉')) return;
         var gone = t.title;
-        dropPost(c, del.getAttribute('data-delpost'));
-        curT = null;
-        onlyOp = false;
-        history.pushState(null, '', '#/c/' + c.id);
-        showBar(c);
-        toast('「' + gone + '」和它下面的回复一起删掉了');
+        var cid = c.id;
+        api('DELETE', '/posts/' + del.getAttribute('data-delpost'))
+          .then(function () {
+            curT = null;
+            onlyOp = false;
+            history.pushState(null, '', '#/c/' + cid);
+            return pull().then(function () {
+              var c2 = findCircle(cid);
+              if (c2) showBar(c2); else showSquare();
+              toast('「' + gone + '」和它下面的回复一起删掉了');
+            });
+          })
+          .catch(function (e2) { toast(e2.message); });
         return;
       }
 
@@ -767,11 +833,14 @@
         var i = parseInt(like.getAttribute('data-like'), 10);
         var key = c.id + ':' + t.id + ':' + i;
         var f = t.floors[i];
-        if (liked[key]) { delete liked[key]; f.like = Math.max(0, (f.like || 0) - 1); }
-        else { liked[key] = true; f.like = (f.like || 0) + 1; }
-        save();
-        like.classList.toggle('on', !!liked[key]);
-        like.textContent = '赞 ' + f.like;
+        api('POST', '/posts/' + t.id + '/like', { floor: i })
+          .then(function (d) {
+            f.like = d.like;
+            if (d.liked) liked[key] = true; else delete liked[key];
+            like.classList.toggle('on', !!d.liked);
+            like.textContent = '赞 ' + d.like;
+          })
+          .catch(function (e2) { toast(e2.message); });
         return;
       }
 
@@ -790,19 +859,26 @@
       if (e.target.closest('#twSend')) {
         var txt = ($('#twInput').value || '').trim();
         if (!txt) { toast('写两句再发'); return; }
-        var me = myName();
-        if (!me) { toast('回复之前请先登录'); return; }
-        var paras = txt.split(/\n{2,}/).map(function (x) { return x.trim(); }).filter(Boolean);
-        t.floors.push({ u: me, at: Date.now(), like: 0, tx: paras });
-        onlyOp = false;
-        save();
-        renderThread();
-        paintBarHead(c);
-        renderBarCats(c);
-        renderBarList(c);
-        renderBarAside(c);
-        toast('回帖已发，占第 ' + t.floors.length + ' 楼');
-        window.scrollTo(0, document.body.scrollHeight);
+        if (!myName()) { toast('回复之前请先登录'); return; }
+        api('POST', '/posts/' + t.id + '/replies', { body: txt })
+          .then(function (d) {
+            onlyOp = false;
+            return pull().then(function () {
+              var hit = findThread(t.id);
+              if (!hit) { toast('这帖已经不在了'); showSquare(); return; }
+              curC = hit.c;
+              curT = hit.t;
+              $('#twInput').value = '';
+              renderThread();
+              paintBarHead(curC);
+              renderBarCats(curC);
+              renderBarList(curC);
+              renderBarAside(curC);
+              toast('回帖已发，占第 ' + d.total + ' 楼');
+              window.scrollTo(0, document.body.scrollHeight);
+            });
+          })
+          .catch(function (e2) { toast(e2.message); });
       }
     });
   }
@@ -851,35 +927,23 @@
 
     if (name.length < 2) { toast('吧名至少两个字'); $('#kfName').focus(); return; }
     if (name.length > 12) { toast('吧名最多十二个字'); $('#kfName').focus(); return; }
-    if (DB.circles.some(function (c) { return c.name === name; })) {
-      toast('「' + name + '吧」已经有人开了，换个名字');
-      $('#kfName').focus();
-      return;
-    }
 
-    var c = {
-      id: uid('c'),
-      name: name,
-      seal: seal ? seal.slice(0, 1) : name.slice(0, 1),
-      zone: zone,
-      desc: desc,
-      owner: me,
-      at: Date.now(),
-      posts: []
-    };
-    DB.circles.push(c);
-    US[c.id] = { join: true, check: '', days: 0 };
-    save();
-    saveU();
-
-    closeKModal();
-    $('#kfName').value = '';
-    $('#kfDesc').value = '';
-    $('#kfSeal').value = '';
-
-    renderSquare();
-    location.hash = '#/c/' + c.id;
-    toast('「' + name + '吧」开好了，第一帖归你');
+    /* 重名由服务端判，本机那份列表可能是几分钟前的 */
+    api('POST', '/circles', { name: name, seal: seal, zone: zone, desc: desc })
+      .then(function (d) {
+        US[d.id] = { join: true, check: '', days: 0 };
+        saveU();
+        closeKModal();
+        $('#kfName').value = '';
+        $('#kfDesc').value = '';
+        $('#kfSeal').value = '';
+        return pull().then(function () {
+          renderSquare();
+          location.hash = '#/c/' + d.id;
+          toast('「' + name + '吧」开好了，第一帖归你');
+        });
+      })
+      .catch(function (e) { toast(e.message); });
   }
 
   function openModal() {
@@ -911,32 +975,29 @@
 
     var cb = $('#cfCats').querySelector('button.on');
     var tags = [].slice.call($('#cfTags').querySelectorAll('button.on')).map(function (b) { return b.textContent.trim(); });
-    var paras = body.split(/\n{2,}/).map(function (x) { return x.trim(); }).filter(Boolean);
+    var cat = cb ? cb.getAttribute('data-c') : TCATS[0].id;
+    var cid = curC.id;
 
-    var t = {
-      id: uid('t'),
-      cat: cb ? cb.getAttribute('data-c') : TCATS[0].id,
-      title: title,
-      tags: tags,
-      author: me,
-      at: Date.now(),
-      floors: [{ u: me, at: Date.now(), like: 0, tx: paras }]
-    };
-    curC.posts.push(t);
+    api('POST', '/circles/' + cid + '/posts', { title: title, cat: cat, tags: tags, body: body })
+      .then(function () {
+        $('#cfTitle').value = '';
+        $('#cfBody').value = '';
+        [].slice.call($('#cfTags').querySelectorAll('button.on')).forEach(function (b) { b.classList.remove('on'); });
+        closeModal();
 
-    $('#cfTitle').value = '';
-    $('#cfBody').value = '';
-    [].slice.call($('#cfTags').querySelectorAll('button.on')).forEach(function (b) { b.classList.remove('on'); });
-    closeModal();
+        S.cat = 'all'; S.kind = 'all'; S.page = 1; S.bq = '';
+        $('#barQ').value = '';
+        [].slice.call($('#btTabs').children).forEach(function (b, i) { b.classList.toggle('on', i === 0); });
 
-    S.cat = 'all'; S.kind = 'all'; S.page = 1; S.bq = '';
-    $('#barQ').value = '';
-    [].slice.call($('#btTabs').children).forEach(function (b, i) { b.classList.toggle('on', i === 0); });
-
-    save();
-    repaintBar();
-    toast('帖子发好了，就在这个吧的顶上');
-    window.scrollTo(0, $('#barlist').getBoundingClientRect().top + window.pageYOffset - 110);
+        return pull().then(function () {
+          var c2 = findCircle(cid);
+          if (c2) curC = c2;
+          repaintBar();
+          toast('帖子发好了，就在这个吧的顶上');
+          window.scrollTo(0, $('#barlist').getBoundingClientRect().top + window.pageYOffset - 110);
+        });
+      })
+      .catch(function (e) { toast(e.message); });
   }
 
   function bindModals() {
@@ -983,13 +1044,22 @@
     });
   }
 
-  /* ---------------- 启动 ---------------- */
-  load();
+  /* ---------------- 启动 ----------------
+     先把服务器上的数据拉下来再渲染；拉不到就给个空台子并说一声，
+     不要让页面停在「加载中」那种既不空也不满的状态。 */
   bindSquare();
   bindBar();
   bindThread();
   bindModals();
   window.addEventListener('hashchange', route);
   window.addEventListener('popstate', route);
-  route();
+
+  loadU();
+  pull()
+    .then(function () { route(); })
+    .catch(function (e) {
+      DB.circles = [];
+      route();
+      toast('没连上社区服务：' + e.message);
+    });
 })();

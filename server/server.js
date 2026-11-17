@@ -52,6 +52,9 @@ function load() {
       db.puppets = db.puppets || [];
       db.forum = db.forum || { posts: [], seeded: false };
       db.forum.posts = db.forum.posts || [];
+      /* 社区：吧 → 帖 → 楼。形状和前端 community.js 用的一致，
+         多存 ownerId / authorId / uid，好按账号判权限（昵称会重名） */
+      db.circles = db.circles || [];
       db.seq = db.seq || { user: 1, puppet: 1, post: 1, reply: 1 };
       db.seq.post = db.seq.post || 1;
       db.seq.reply = db.seq.reply || 1;
@@ -1688,6 +1691,192 @@ const server = http.createServer(async (req, res) => {
           by: owner ? owner.name : '佚名'
         }
       });
+    }
+
+    /* ================= 社区：吧 / 帖 / 楼 =================
+       和上面那套 /api/forum 是两回事：这里按「吧 → 帖子 → 楼层」组织，
+       存 db.circles。前端 community.js 一次把整棵数拉走，写操作再单条提交，
+       这样渲染逻辑不用改，换掉的只是数据从哪来。 */
+
+    function commPick(uidNow) {
+      return db.circles.map((c) => ({
+        id: c.id,
+        name: c.name,
+        seal: c.seal,
+        zone: c.zone || '',
+        desc: c.desc || '',
+        owner: c.owner,
+        ownerId: c.ownerId || null,
+        at: c.at,
+        posts: (c.posts || []).map((t) => ({
+          id: t.id,
+          title: t.title,
+          cat: t.cat || '',
+          tags: t.tags || [],
+          author: t.author,
+          authorId: t.authorId || null,
+          at: t.at || ((t.floors && t.floors[0] && t.floors[0].at) || 0),
+          floors: (t.floors || []).map((f) => ({
+            u: f.u,
+            uid: f.uid || null,
+            at: f.at,
+            like: (f.likedBy || []).length,
+            liked: uidNow ? (f.likedBy || []).indexOf(uidNow) >= 0 : false,
+            tx: f.tx || []
+          }))
+        }))
+      }));
+    }
+
+    function commFindPost(tid) {
+      for (let i = 0; i < db.circles.length; i++) {
+        const ps = db.circles[i].posts || [];
+        for (let j = 0; j < ps.length; j++) {
+          if (ps[j].id === tid) return { c: db.circles[i], t: ps[j] };
+        }
+      }
+      return null;
+    }
+
+    /* ---- 全量读取 ---- */
+    if (p === '/api/comm' && req.method === 'GET') {
+      const u = userOf(req);
+      return ok(res, {
+        circles: commPick(u ? u.id : null),
+        me: u ? { id: u.id, name: u.name } : null
+      });
+    }
+
+    /* ---- 开吧 ---- */
+    if (p === '/api/comm/circles' && req.method === 'POST') {
+      const u = userOf(req);
+      if (!u) return fail(res, 401, '先登录再开吧');
+      if (!rateLimit(ip, 'ccircle' + u.id, 8, 86400000)) return fail(res, 429, '今天开的吧够多了，明天再来');
+
+      const b = await readBody(req);
+      const name = cleanText(b.name, 14).replace(/吧$/, '');
+      const desc = cleanText(b.desc, 40);
+      const zone = String(b.zone || '').slice(0, 20);
+      const seal = cleanText(b.seal, 1) || name.slice(0, 1);
+
+      if (name.length < 2) return fail(res, 400, '吧名至少两个字');
+      if (name.length > 12) return fail(res, 400, '吧名最多十二个字');
+      if (db.circles.some((c) => c.name === name)) return fail(res, 409, '「' + name + '吧」已经有人开了');
+
+      const c = {
+        id: 'c' + Date.now().toString(36) + crypto.randomInt(100, 999),
+        name: name,
+        seal: seal.slice(0, 1),
+        zone: zone,
+        desc: desc,
+        owner: u.name,
+        ownerId: u.id,
+        at: Date.now(),
+        posts: []
+      };
+      db.circles.push(c);
+      save();
+      return ok(res, { id: c.id, name: c.name });
+    }
+
+    /* ---- 删吧：只有吧主 ---- */
+    let cmA = p.match(/^\/api\/comm\/circles\/([A-Za-z0-9_-]+)$/);
+    if (cmA && req.method === 'DELETE') {
+      const u = userOf(req);
+      if (!u) return fail(res, 401, '先登录');
+      const c = db.circles.find((x) => x.id === cmA[1]);
+      if (!c) return fail(res, 404, '这个吧已经不在了');
+      if (c.ownerId !== u.id) return fail(res, 403, '只有吧主能删这个吧');
+      db.circles = db.circles.filter((x) => x.id !== c.id);
+      save();
+      return ok(res, { id: c.id });
+    }
+
+    /* ---- 在吧里发帖 ---- */
+    let cmB = p.match(/^\/api\/comm\/circles\/([A-Za-z0-9_-]+)\/posts$/);
+    if (cmB && req.method === 'POST') {
+      const u = userOf(req);
+      if (!u) return fail(res, 401, '先登录再发帖');
+      const c = db.circles.find((x) => x.id === cmB[1]);
+      if (!c) return fail(res, 404, '这个吧已经不在了');
+      if (!rateLimit(ip, 'cpost' + u.id, 30, 3600000)) return fail(res, 429, '发得有点快，歇一会儿再发');
+
+      const b = await readBody(req);
+      const title = cleanText(b.title, 46);
+      const body = cleanText(b.body, 4000);
+      if (title.length < 4) return fail(res, 400, '标题至少四个字');
+      if (body.length < 10) return fail(res, 400, '正文太短，写具体一点');
+
+      const tx = body.split(/\n{2,}/).map((s) => s.trim()).filter(Boolean);
+      const t = {
+        id: 't' + Date.now().toString(36) + crypto.randomInt(100, 999),
+        title: title,
+        cat: String(b.cat || '').slice(0, 20) || 'craft',
+        tags: cleanTags(b.tags),
+        author: u.name,
+        authorId: u.id,
+        at: Date.now(),
+        floors: [{ u: u.name, uid: u.id, at: Date.now(), likedBy: [], tx: tx }]
+      };
+      c.posts = c.posts || [];
+      c.posts.push(t);
+      save();
+      return ok(res, { id: t.id, circleId: c.id });
+    }
+
+    /* ---- 删帖：作者本人或吧主 ---- */
+    let cmC = p.match(/^\/api\/comm\/posts\/([A-Za-z0-9_-]+)$/);
+    if (cmC && req.method === 'DELETE') {
+      const u = userOf(req);
+      if (!u) return fail(res, 401, '先登录');
+      const hit = commFindPost(cmC[1]);
+      if (!hit) return fail(res, 404, '这帖已经不在了');
+      if (hit.t.authorId !== u.id && hit.c.ownerId !== u.id) {
+        return fail(res, 403, '只有作者本人或吧主能删这帖');
+      }
+      hit.c.posts = hit.c.posts.filter((x) => x.id !== hit.t.id);
+      save();
+      return ok(res, { id: hit.t.id, circleId: hit.c.id });
+    }
+
+    /* ---- 回帖 ---- */
+    let cmD = p.match(/^\/api\/comm\/posts\/([A-Za-z0-9_-]+)\/replies$/);
+    if (cmD && req.method === 'POST') {
+      const u = userOf(req);
+      if (!u) return fail(res, 401, '先登录再回复');
+      if (!rateLimit(ip, 'creply' + u.id, 60, 3600000)) return fail(res, 429, '回得有点快，歇一会儿');
+      const hit = commFindPost(cmD[1]);
+      if (!hit) return fail(res, 404, '这帖已经不在了');
+
+      const b = await readBody(req);
+      const body = cleanText(b.body, LEN_REPLY);
+      if (body.length < 2) return fail(res, 400, '写两句再发');
+
+      const tx = body.split(/\n{2,}/).map((s) => s.trim()).filter(Boolean);
+      hit.t.floors.push({ u: u.name, uid: u.id, at: Date.now(), likedBy: [], tx: tx });
+      save();
+      return ok(res, { floor: hit.t.floors.length - 1, total: hit.t.floors.length });
+    }
+
+    /* ---- 点赞：一楼一点，再点取消 ---- */
+    let cmE = p.match(/^\/api\/comm\/posts\/([A-Za-z0-9_-]+)\/like$/);
+    if (cmE && req.method === 'POST') {
+      const u = userOf(req);
+      if (!u) return fail(res, 401, '先登录再点赞');
+      const hit = commFindPost(cmE[1]);
+      if (!hit) return fail(res, 404, '这帖已经不在了');
+
+      const b = await readBody(req);
+      const i = parseInt(b.floor, 10);
+      if (!(i >= 0 && i < hit.t.floors.length)) return fail(res, 400, '没有这一楼');
+
+      const f = hit.t.floors[i];
+      f.likedBy = f.likedBy || [];
+      const at = f.likedBy.indexOf(u.id);
+      if (at >= 0) f.likedBy.splice(at, 1);
+      else f.likedBy.push(u.id);
+      save();
+      return ok(res, { floor: i, like: f.likedBy.length, liked: at < 0 });
     }
 
     /* ================= 论坛 ================= */
