@@ -129,6 +129,7 @@
     modal.classList.add('is-on');
     modal.setAttribute('aria-hidden', 'false');
     document.body.classList.add('nw-lock');
+    document.documentElement.classList.add('nw-lock');   // 锁主页面滚动（滚轮只滚正文）
 
     /* 焦点落到正文区：方向键、PageDown、空格都能滚这一页纸，
        而 deck.js 见到 nw-lock 就不再翻屏。
@@ -144,6 +145,7 @@
     modal.classList.remove('is-on');
     modal.setAttribute('aria-hidden', 'true');
     document.body.classList.remove('nw-lock');
+    document.documentElement.classList.remove('nw-lock');
     if (lastFocus && lastFocus.focus) {
       lastFocus.focus({ preventScroll: true });
     }

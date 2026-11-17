@@ -569,15 +569,17 @@ body.is-viewing-8 .dot-nav {
 }
 
 /* ---------- 分屏容器 ---------- */
+/* 原生滚动 + scroll-snap：不再用 transform 位移，deck 就是普通文档流 */
 .deck {
-  will-change: transform;
-  transition: transform .95s var(--ease-out);
+  /* 无 transform / 过渡，位移交给浏览器的原生滚动 */
 }
 .sec {
   position: relative;
   width: 100%;
   height: 100vh;
   overflow: hidden;
+  scroll-snap-align: start;
+  scroll-snap-stop: always;
 }
 
 /* 各屏底色（纯色，不用任何背景图） */
@@ -3103,6 +3105,8 @@ body[data-dir="up"] .panels i:nth-child(even) { --sh: -9%; }
    传承屏本身不受影响，仍是满屏居中。 */
 .sec-foot {
   height: auto;
+  /* 末屏比一屏矮，吸附时贴底（不是贴顶），保持"页脚接着上一屏"的观感 */
+  scroll-snap-align: end;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -3190,6 +3194,18 @@ body[data-dir="up"] .panels i:nth-child(even) { --sh: -9%; }
   .ft-nav i { display: none; }
   .ft-row, .ft-dim { font-size: 11px; }
 }
+
+/* ---------- 宽屏：原生滚动 + 整屏吸附 ----------
+   原整屏翻页用 translate3d 平移 deck 并锁定动画：滚轮被劫持、原生滚动条
+   被 overflow:hidden 干掉，滑动要等 0.95s 动画走完才吃下一次，卡手。
+   改成原生滚动 + scroll-snap：浏览器滚动条恢复、滚动跟手不卡，滚一下吸附一屏。 */
+@media (min-width: 901px) {
+  html, body:not(.inner) { overflow: auto; }
+  html { scroll-snap-type: y mandatory; }
+}
+
+/* 影讯详情层开着时锁住主页面滚动，滚轮只滚正文那页纸 */
+html.nw-lock { overflow: hidden; }
 
 /* ---------- 窄屏：退化为普通滚动 ---------- */
 @media (max-width: 900px) {
