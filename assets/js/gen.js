@@ -146,14 +146,35 @@
         '</article>';
     }).join('');
     Array.prototype.forEach.call(box.querySelectorAll('.gk'), function (c) {
+      c.setAttribute('role', 'button');
+      c.setAttribute('tabindex', '0');
       c.addEventListener('click', function () {
         st.school = c.getAttribute('data-k');
         renderChips();
         markGong();
-        window.scrollTo({ top: 0, behavior: 'smooth' });
+        jumpToSchool();
+      });
+      c.addEventListener('keydown', function (e) {
+        if (e.key === 'Enter' || e.key === ' ' || e.key === 'Spacebar') {
+          e.preventDefault();
+          c.click();
+        }
       });
     });
     markGong();
+  }
+
+  /* 点图鉴里的某一路，回到上面的「壹 · 选流派」，不要一路滚到页顶。
+     固定头会挡住目标，所以减去它的高度再留 18px 呼吸。 */
+  function jumpToSchool() {
+    var note = $('s-note');
+    var step = note && note.closest ? note.closest('.gb-step') : null;
+    var target = step || $('c-school');
+    if (!target) { window.scrollTo({ top: 0, behavior: 'smooth' }); return; }
+    var head = document.querySelector('.site-head');
+    var gap = (head ? head.offsetHeight : 0) + 18;
+    var top = target.getBoundingClientRect().top + window.pageYOffset - gap;
+    window.scrollTo({ top: top < 0 ? 0 : top, behavior: 'smooth' });
   }
 
   /* ------------------------------------------------------------------ 画心 */
