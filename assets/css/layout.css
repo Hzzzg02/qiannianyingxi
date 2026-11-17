@@ -3072,7 +3072,7 @@ body[data-dir="up"] .panels i:nth-child(even) { --sh: -9%; }
   writing-mode: vertical-rl;
   text-orientation: upright;
   font-family: "Songti SC", "SimSun", "STSong", serif;
-  font-size: clamp(26px, 2.25vw, 37px);
+  font-size: clamp(30px, 2.6vw, 42px);
   font-weight: 500;
   line-height: 1;
   letter-spacing: .18em;
@@ -3087,7 +3087,7 @@ body[data-dir="up"] .panels i:nth-child(even) { --sh: -9%; }
   overflow: hidden;
   writing-mode: vertical-rl;
   text-orientation: upright;
-  font-size: clamp(10.5px, .86vw, 13px);
+  font-size: clamp(11.5px, .95vw, 14.5px);
   line-height: 1.95;
   letter-spacing: .1em;
   color: rgba(238, 222, 194, .62);
