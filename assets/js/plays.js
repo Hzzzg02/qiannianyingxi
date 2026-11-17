@@ -1,7 +1,8 @@
 /* ==========================================================
    plays.js —— 07 经典剧目
    · 四出戏排成一张戏单，点一出 → 右栏换它的折子、唱词与试听
-   · 「听一段」放的是真录音：只取其中 30 余秒，四句唱词按拍点亮
+   · 「听一段」放的是真录音：每出戏只取一段高潮唱段（23~36 秒），
+     四句唱词按各自真实起唱点（marks）逐句点亮，不再均分
    · 录音都是各剧种/院团的公开演出，出处写在栏底；没有音频时退回静默按拍
    ========================================================== */
 (function () {
@@ -14,9 +15,10 @@
       acts: ['金沙滩', '五台会'],
       lyrics: ['金沙滩前风卷旗', '五台山上钟声急', '一门忠烈存肝胆', '留得青史照西陲'],
       audio: {
-        src: 'assets/audio/plays/wufeng.m4a',
-        at: 8, clip: 32,
-        src_text: '唐山皮影《五峰会》第十八集　曲艺大剧院（腾讯音乐）'
+        src: 'assets/audio/plays/wufeng.m4a?v=2',
+        at: 0, clip: 32,
+        marks: [0, 8, 17, 24],
+        src_text: '唐山皮影《五峰会》选段　曲艺大剧院（网络音频）'
       }
     },
     {
@@ -27,11 +29,11 @@
       acts: ['铡美', '镇冤'],
       lyrics: ['乌纱一顶压清廉', '铁面无私对苍天', '塔下冤魂终得雪', '包公明镜照人间'],
       audio: {
-        /* 原始录音在浏览器里跳不动（MP3 没有索引，python 的静态服务也不支持 Range），
-           所以按帧把它从 0:12 处裁成 34 秒的一段，切成独立文件后从 0 秒起播 */
-        src: 'assets/audio/plays/zhenyuan-a.mp3',
-        at: 0, clip: 32,
-        src_text: '唐山皮影《镇冤塔》第一回　曲艺大剧院（酷我音乐）'
+        /* 已从完整选段裁成 36 秒的唱腔爆发段，独立文件从 0 秒起播 */
+        src: 'assets/audio/plays/zhenyuan.m4a?v=2',
+        at: 0, clip: 36,
+        marks: [3.7, 10, 15, 22],
+        src_text: '唐山皮影《镇冤塔》选段　曲艺大剧院（网络音频）'
       }
     },
     {
@@ -42,8 +44,9 @@
       acts: ['游湖', '盗草', '断桥'],
       lyrics: ['西湖三月雨如烟', '借伞还伞两相牵', '端阳一盏雄黄酒', '千年道行化云烟'],
       audio: {
-        src: 'assets/audio/plays/baishe.m4a',
-        at: 6, clip: 32,
+        src: 'assets/audio/plays/baishe.m4a?v=2',
+        at: 0, clip: 23,
+        marks: [2.3, 6, 9.9, 14],
         src_text: '皮影戏《白蛇传》　海宁皮影艺术团（2025 越韵中国年·越剧春晚）'
       }
     },
@@ -55,8 +58,9 @@
       acts: ['三打白骨精', '火焰山'],
       lyrics: ['云头一转化人形', '火眼金睛识妖气', '金箍棒起鬼神惊', '一路西天取真经'],
       audio: {
-        src: 'assets/audio/plays/xiyou.m4a',
-        at: 4, clip: 31,
+        src: 'assets/audio/plays/xiyou.m4a?v=2',
+        at: 0, clip: 36,
+        marks: [0.25, 6.65, 18.95, 32.95],
         src_text: '唐山皮影戏《孙悟空三借芭蕉扇》　赵卫东 等（2022 元宵戏曲晚会）'
       }
     }
@@ -151,7 +155,7 @@
     }, STEP);
   }
 
-  /* ---------- 有声：按音频时间推四句 ---------- */
+  /* ---------- 有声：按每句唱词的真实起唱点推四句 ---------- */
   function tick() {
     raf = null;
     var a = PLAYS[cur].audio;
@@ -160,8 +164,14 @@
     if (!isFinite(t)) t = 0;
     if (t >= a.clip) { stopAll(true); return; }
     setBar(t / a.clip, t);
-    var seg = a.clip / 4;
-    paint(Math.min(3, Math.max(0, Math.floor(t / seg))));
+    /* 按 marks（每句唱词的起唱时间点）点亮，而不是 clip/4 均分；
+       起唱点之前是过门/前奏，不点亮任何句（idx=-1） */
+    var marks = a.marks || [];
+    var idx = -1;
+    for (var m = 0; m < marks.length; m++) {
+      if (t >= marks[m]) idx = m;
+    }
+    paint(idx);
     raf = window.requestAnimationFrame(tick);
   }
 
