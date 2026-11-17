@@ -897,3 +897,82 @@
 .studio-page .gw-box .gb-go { margin-top: 15px; padding: 14px 20px; }
 .studio-page .gw-box .gb-tip { margin: 9px 0; }
 .studio-page .gw-box .gb-prompt { margin-top: 14px; }
+
+/* ---------- 戏箱：选项改成横滑，整块与左侧画框等高 ----------
+   四组选项原本各占一两行，撑得戏箱比画框高出一大截。
+   改成一行横滑后，戏箱缩短；再让它跟左栏同高、内容在内部滚，
+   底部的「落笔」始终留在原地，两栏下沿平齐。 */
+.studio-page .chips.gb-chips {
+  flex-wrap: nowrap;
+  overflow-x: auto;
+  overflow-y: hidden;
+  padding-bottom: 2px;
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+  overscroll-behavior-x: contain;
+  -webkit-overflow-scrolling: touch;
+}
+.studio-page .chips.gb-chips::-webkit-scrollbar { height: 0; display: none; }
+.studio-page .chips.gb-chips > .chip { flex: none; }
+/* 右侧还有没滑到的选项时留一道渐隐，提示可以横着拖 */
+.studio-page .chips.gb-chips.is-more {
+  -webkit-mask-image: linear-gradient(90deg, #000 0, #000 calc(100% - 28px), transparent 100%);
+  mask-image: linear-gradient(90deg, #000 0, #000 calc(100% - 28px), transparent 100%);
+}
+
+/* 戏箱上下两段：中间可滚，「落笔」与提示钉在底部 */
+.studio-page .gw-box {
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+.studio-page .gb-body {
+  flex: 1 1 auto;
+  min-height: 0;
+  overflow-y: auto;
+  padding-right: 6px;
+  margin-right: -6px;
+  scrollbar-width: thin;
+  scrollbar-color: rgba(107, 69, 41, .26) transparent;
+}
+.studio-page .gb-body::-webkit-scrollbar { width: 6px; }
+.studio-page .gb-body::-webkit-scrollbar-track { background: transparent; }
+.studio-page .gb-body::-webkit-scrollbar-thumb {
+  background: rgba(107, 69, 41, .2);
+  border-radius: 6px;
+}
+.studio-page .gb-go, .studio-page .gb-tip { flex: none; }
+/* 单栏堆叠时恢复原样：选项换行、整页自然滚动 */
+@media (max-width: 900px) {
+  .studio-page .chips.gb-chips { flex-wrap: wrap; overflow-x: visible; }
+  .studio-page .gw-box { overflow: visible; }
+  .studio-page .gb-body { overflow: visible; }
+}
+
+/* 戏箱内容比可视区还高一截，把前面几段间距再收一格，
+   让「说一句」和输入框尽量落在可视区内，剩下的靠内部滚动 */
+.studio-page .gw-box .gb-head { padding-bottom: 9px; margin-bottom: 11px; }
+.studio-page .gw-box .gb-step { margin: 11px 0 7px; }
+.studio-page .gw-box .gb-step p { line-height: 1.7; }
+.studio-page .gw-box .chips.gb-chips .chip { padding: 8px 18px; }
+.studio-page .gw-box .gb-want textarea { height: 82px; }
+.studio-page .gw-box .gb-prompt { margin-top: 10px; }
+/* 不再用渐隐遮罩：它会把输入框下面的字数提示压得看不清，
+   改用稍明显的滚动条来说明「下面还有」 */
+.studio-page .gb-body::-webkit-scrollbar-thumb { background: rgba(107, 69, 41, .34); }
+.studio-page .gb-body { scrollbar-color: rgba(107, 69, 41, .36) transparent; }
+
+/* 再收一档：让「说一句」整块（含输入框）都落在可视区内 */
+.studio-page .gw-box .gb-head h2 { font-size: clamp(24px, 2vw, 28px); }
+.studio-page .gw-box .gb-head { padding-bottom: 7px; margin-bottom: 9px; }
+.studio-page .gw-box .gb-step { margin: 9px 0 6px; }
+.studio-page .gw-box .gb-step p { line-height: 1.6; }
+.studio-page .gw-box .chips.gb-chips .chip { padding: 7px 17px; }
+.studio-page .gw-box .gb-want textarea { height: 74px; }
+.studio-page .gw-box .gb-step-last { margin: 9px 0 6px; }
+.studio-page .gw-box .gb-prompt { margin-top: 8px; }
+
+/* 最后 12px */
+.studio-page .gw-box .gb-step { margin: 8px 0 5px; }
+.studio-page .gw-box .gb-tip { margin: 5px 0 0; }
+.studio-page .gw-box .gb-go { margin-top: 12px; }

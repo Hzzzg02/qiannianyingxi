@@ -12,7 +12,7 @@
 <link rel="stylesheet" href="assets/css/token.css?v=11377">
 <link rel="stylesheet" href="assets/css/layout.css?v=11377">
 <link rel="stylesheet" href="assets/css/site.css?v=11377">
-<link rel="stylesheet" href="assets/css/studio.css?v=11720">
+<link rel="stylesheet" href="assets/css/studio.css?v=11830">
 <link rel="stylesheet" href="assets/css/paper-bg.css?v=4">
 <link rel="stylesheet" href="assets/css/readability.css?v=1">
 </head>
@@ -111,6 +111,7 @@
 
       <!-- ================= 右：戏箱 ================= -->
       <aside class="gw-box">
+        <div class="gb-body" id="gb-body">
         <div class="gb-head">
           <h2>戏箱</h2>
           <span>三步成图</span>
@@ -143,7 +144,7 @@
           </div>
         </div>
         <div class="gb-want">
-          <textarea id="gw-want" rows="3" maxlength="120" placeholder="例如：守边的老兵，风雪里抱着刀，鬓角结霜"></textarea>
+          <textarea id="gw-want" rows="2" maxlength="120" placeholder="例如：守边的老兵，风雪里抱着刀，鬓角结霜"></textarea>
           <div class="gb-want-f">
             <span id="gw-count">0 / 120</span>
             <button class="gb-dice" id="gw-dice" type="button">换一个例子</button>
@@ -156,15 +157,16 @@
         </div>
         <div class="chips gb-chips" id="c-pose"></div>
 
-        <button class="btn gb-go" id="gw-go" type="button">落 笔</button>
-        <p class="gb-tip" id="gw-tip">一张约 15–30 秒。同一句话每次画出来都不一样。</p>
-
         <details class="gb-prompt" id="gb-prompt">
           <summary>看看底层提示词</summary>
           <p class="gbp-base" id="p-base">检索资料库中的皮影形象，根据用户提供的提示词来生成个性化皮影。</p>
           <p class="gbp-n">这一句永远排在最前面。后面接的是检索到的流派、行当、姿态和你那句话，最后才是成品规格：单件、全身、白底、不画操纵杆。</p>
           <pre class="gbp-full" id="p-full">还没画过，画一张就能看到完整提示词。</pre>
         </details>
+        </div>
+
+        <button class="btn gb-go" id="gw-go" type="button">落 笔</button>
+        <p class="gb-tip" id="gw-tip">一张约 15–30 秒。同一句话每次画出来都不一样。</p>
       </aside>
 
     </div>
@@ -209,5 +211,6 @@
 <script src="assets/js/site.js?v=11377"></script>
 <script src="assets/js/rig.js?v=11377a"></script>
 <script src="assets/js/gen.js?v=11730"></script>
+<script src="assets/js/gwfit.js?v=1"></script>
 </body>
 </html>
