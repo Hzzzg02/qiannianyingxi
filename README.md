@@ -123,7 +123,8 @@
 
 ### 后端：`server/server.js`（单文件 Node，无框架）
 
-- 原生 `http.createServer`，18 个接口，JSON 文件库（`server/data/db.json`），无需数据库服务。
+- 原生 `http.createServer`，32 个接口（20 个固定路径 + 12 个带参路径），
+  JSON 文件库（生产环境 `/var/lib/qnyx/db.json`），无需数据库服务。
 - 邮件验证码、图形验证码、登录态、改密、找回、帖子与回帖、影偶记录与出图。
 - 配置优先取环境变量，其次 `server/config/*.json`，最后 `/etc/qnyx/*.json`；
   Key 只在服务端，前端拿不到。
@@ -131,8 +132,20 @@
 
 ### 部署
 
-阿里云 Ubuntu 22.04 + nginx 直出静态文件，`/api/` 反代到 `127.0.0.1:3100`，
-后端由 systemd 单元 `qnyx.service` 托管，Key 放 `/etc/qnyx/`。
+阿里云 ECS（Ubuntu 22.04.5 LTS）+ nginx 直出静态文件，`/api/` 反代到 `127.0.0.1:3100`，
+后端 Node.js 20 由 systemd 单元 `qnyx.service` 托管，Key 放 `/etc/qnyx/`（`600 www-data`）。
+
+系统单元里两个路径型环境变量必须设对，否则会出现「接口通但读不到配置 / 出图在页面上看不见」：
+
+| 变量 | 值 | 作用 |
+|---|---|---|
+| `QN_DATA` | `/var/lib/qnyx/db.json` | JSON 库落盘位置 |
+| `QN_UPLOAD` | `/var/www/html/uploads/ai` | AI 出图落盘目录，必须与站点静态目录一致 |
+
+配置查找顺序为「环境变量 → `server/config/*.json` → `/etc/qnyx/*.json`」，
+所以换机器时把 `/etc/qnyx/` 搬过去即可，无需改代码。
+
+当前线上：主站 `120.55.204.70`，备用站 `121.41.66.240`（同版本快照，可随时切换）。
 
 ---
 
