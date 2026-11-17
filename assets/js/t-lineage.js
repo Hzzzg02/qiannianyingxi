@@ -210,17 +210,7 @@
     }
   ];
 
-  /* 能查到公开照片的传承人（照片来自公开报道，见页尾说明） */
-  var PHOTOS = {
-    '范正安': 'assets/img/people/fan.jpg',
-    '宋国超': 'assets/img/people/song.jpg',
-    '汪天稳': 'assets/img/people/wang.jpg',
-    '魏金全': 'assets/img/people/wei.jpg',
-    '张向东': 'assets/img/people/zhang.jpg'
-  };
-
   var treeBox = $('#lxTree');
-  var side = $('#lxSide');
 
   function drawTree() {
     if (!treeBox) return;
@@ -229,7 +219,7 @@
     /* 窄屏排两列（两批一行），宽屏四批一排 */
     var narrow = window.innerWidth < 780;
     var cols = narrow ? 2 : BATCHES.length;
-    var colW = narrow ? 150 : 168, gapX = 12, top = 54, boxH = 28, gapY = 8;
+    var colW = narrow ? 150 : 300, gapX = narrow ? 12 : 22, top = 54, boxH = 44, gapY = 10;
     var rowH = top + maxG * (boxH + gapY) + 22;
     var rows = Math.ceil(BATCHES.length / cols);
     var width = cols * (colW + gapX) + 20;
@@ -268,9 +258,6 @@
         var y = oy + top + gi * (boxH + gapY);
         var grp = document.createElementNS(NS, 'g');
         grp.setAttribute('class', 'lx-p');
-        grp.setAttribute('data-b', ci);
-        grp.setAttribute('data-g', gi);
-        grp.style.cursor = 'pointer';
 
         var rect = document.createElementNS(NS, 'rect');
         rect.setAttribute('x', x);
@@ -283,17 +270,17 @@
         grp.appendChild(rect);
 
         var t1 = document.createElementNS(NS, 'text');
-        t1.setAttribute('x', x + 10);
+        t1.setAttribute('x', x + 12);
         t1.setAttribute('y', y + 18);
         t1.setAttribute('font-family', '"Songti SC","SimSun",serif');
-        t1.setAttribute('font-size', '11.5');
+        t1.setAttribute('font-size', '12');
         t1.setAttribute('fill', '#3b2d1d');
         t1.textContent = g.n;
         grp.appendChild(t1);
 
         var t2 = document.createElementNS(NS, 'text');
         t2.setAttribute('class', 'lx-p-sub');
-        t2.setAttribute('x', x + colW - 10);
+        t2.setAttribute('x', x + colW - 12);
         t2.setAttribute('y', y + 18);
         t2.setAttribute('text-anchor', 'end');
         t2.setAttribute('font-family', '"Songti SC","SimSun",serif');
@@ -302,7 +289,16 @@
         t2.textContent = g.names.length + ' 人';
         grp.appendChild(t2);
 
-        grp.addEventListener('click', function () { showGroup(ci, gi); });
+        var t3 = document.createElementNS(NS, 'text');
+        t3.setAttribute('class', 'lx-p-names');
+        t3.setAttribute('x', x + 12);
+        t3.setAttribute('y', y + 34);
+        t3.setAttribute('font-family', '"Songti SC","SimSun",serif');
+        t3.setAttribute('font-size', '9.5');
+        t3.setAttribute('fill', 'rgba(91,74,53,.62)');
+        t3.textContent = g.names.join('、');
+        grp.appendChild(t3);
+
         svg.appendChild(grp);
       });
     });
@@ -311,32 +307,11 @@
     treeBox.appendChild(svg);
   }
 
-  var cur = [0, 0];
-  function showGroup(ci, gi) {
-    cur = [ci, gi];
-    var b = BATCHES[ci], g = b.groups[gi];
-    $$('.lx-p', treeBox).forEach(function (n) {
-      n.classList.toggle('on', +n.dataset.b === ci && +n.dataset.g === gi);
-    });
-    var photos = g.names.filter(function (n) { return PHOTOS[n]; }).map(function (n) {
-      return '<figure><img src="' + PHOTOS[n] + '" alt="' + esc(n) + '" loading="lazy"><figcaption>' + esc(n) + '</figcaption></figure>';
-    }).join('');
-    side.innerHTML =
-      '<h4>' + esc(g.n) + '</h4>' +
-      '<p class="lx-side-meta">' + esc(b.y + ' ' + b.t) + ' · ' + esc(g.p) + ' · ' + esc(g.sys) + '</p>' +
-      (photos ? '<div class="lx-side-photos">' + photos + '</div>' : '') +
-      '<p>' + esc(g.names.join('、')) + '</p>' +
-      '<div class="lx-chain">这一格是 <b>' + g.names.length + ' 位</b>国家级代表性传承人，' +
-      (g.names.length > 1 ? '同一地往往同时认定掌签、说唱、雕刻几个方向的人。' : '这一地只认定了一位，通常是最具代表性的那一位。') +
-      '所在流派见「流派地图」一页。</div>';
-  }
-
   drawTree();
-  if (side) showGroup(0, 0);
   var rt;
   window.addEventListener('resize', function () {
     clearTimeout(rt);
-    rt = setTimeout(function () { drawTree(); showGroup(cur[0], cur[1]); }, 220);
+    rt = setTimeout(drawTree, 220);
   });
 
   /* ==========================================================
@@ -366,8 +341,7 @@
     BATCHES.forEach(function (b) {
       b.groups.forEach(function (g) {
         g.names.forEach(function (n) {
-          html += '<div class="lx-person' + (PHOTOS[n] ? ' has-photo' : '') + '">' +
-            (PHOTOS[n] ? '<img src="' + PHOTOS[n] + '" alt="' + esc(n) + '" loading="lazy">' : '') +
+          html += '<div class="lx-person">' +
             '<b>' + esc(n) + '</b><span>' + esc(g.n + ' · ' + g.p) + '</span>' +
             '<em>' + esc(b.y + ' ' + b.t) + '</em></div>';
         });

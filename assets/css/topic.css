@@ -2412,8 +2412,7 @@
 .lx-tree {
   margin-top: 26px;
   display: grid;
-  grid-template-columns: minmax(0, 1.55fr) minmax(0, 1fr);
-  gap: 34px;
+  grid-template-columns: minmax(0, 1fr);
   align-items: start;
 }
 .lx-tree-stage {
@@ -2431,9 +2430,6 @@
   transition: stroke .3s, stroke-width .3s;
 }
 .lx-link.on { stroke: #9d2c1c; stroke-width: 2; }
-.lx-p {
-  cursor: pointer;
-}
 .lx-p rect {
   fill: #fbf6ea;
   stroke: rgba(90, 62, 32, .3);
@@ -2447,64 +2443,6 @@
   letter-spacing: .04em;
 }
 .lx-p text.lx-p-sub { font-size: 9px; fill: rgba(91, 74, 53, .6); }
-.lx-p.on rect { fill: #9d2c1c; stroke: #7b2013; }
-.lx-p.on text { fill: #f8eeda; }
-.lx-p.on text.lx-p-sub { fill: rgba(248, 238, 218, .7); }
-.lx-p.dim { opacity: .42; }
-.lx-side {
-  padding: 22px 24px;
-  background: var(--paper-3);
-  border: 1px solid var(--line);
-  min-height: 240px;
-}
-.lx-side h4 {
-  margin: 0 0 4px;
-  font-family: var(--brush);
-  font-weight: 400;
-  font-size: 24px;
-  letter-spacing: .06em;
-  color: #241a11;
-}
-.lx-side .lx-side-meta {
-  margin: 0 0 12px;
-  font-size: 10.5px;
-  letter-spacing: .08em;
-  color: rgba(91, 74, 53, .6);
-}
-.lx-side p {
-  margin: 0 0 10px;
-  font-size: 12.5px;
-  line-height: 1.95;
-  color: #3f3122;
-}
-.lx-chain {
-  margin-top: 12px;
-  padding-top: 12px;
-  border-top: 1px dashed var(--line-2);
-  font-size: 11.5px;
-  line-height: 1.9;
-  color: rgba(74, 58, 39, .78);
-}
-.lx-chain b { color: var(--red); font-weight: 600; }
-
-/* 谱系侧栏 · 有照片的传承人 */
-.lx-side-photos {
-  display: grid;
-  grid-template-columns: repeat(3, minmax(0, 1fr));
-  gap: 10px;
-  margin: 4px 0 14px;
-}
-.lx-side-photos figure { margin: 0; }
-.lx-side-photos img {
-  display: block;
-  width: 100%;
-  height: auto;
-  aspect-ratio: 4 / 3;
-  object-fit: cover;
-  background: #fff;
-  border: 1px solid var(--line);
-}
-.lx-side-photos figcaption { margin-top: 4px; font-size: 10px; text-align: center; color: rgba(91, 74, 53, .66); }
 
 /* 传承方式 */
 .lx-ways {
@@ -2578,15 +2516,6 @@
   font-size: 10px;
   letter-spacing: .06em;
   color: rgba(157, 44, 28, .8);
-}
-.lx-person.has-photo { display: grid; grid-template-columns: 52px minmax(0, 1fr); gap: 0 12px; }
-.lx-person.has-photo img {
-  grid-row: 1 / span 3;
-  width: 52px; height: 52px;
-  object-fit: cover;
-  border: 1px solid var(--line);
-  border-radius: 3px;
-  background: #fff;
 }
 .lx-roster-legend {
   margin-top: 12px;

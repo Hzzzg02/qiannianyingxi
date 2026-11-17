@@ -31,15 +31,25 @@
     return out;
   }
 
-  /* 藏品图：按省份取 */
+  /* 藏品图：按省份取；山西/山东/青海/广东四省馆藏图库无藏品条目，
+     用中国非遗网（皮影数字博物馆同源）官方代表图补齐 */
+  var PROV_IMG = {
+    '山西省': { s: 'images/shanxi/shanxi-01.jpg', n: '孝义皮影戏' },
+    '山东省': { s: 'images/shandong/shandong-01.jpg', n: '泰山皮影戏' },
+    '青海省': { s: 'images/qinghai/qinghai-01.jpg', n: '河湟皮影戏影人' },
+    '广东省': { s: 'images/guangdong/guangdong-01.jpg', n: '陆丰皮影戏' }
+  };
+
   function libOf(prov, n) {
     var D = window.LIB_DATA;
-    if (!D || !D.items) return [];
     var out = [];
-    D.items.forEach(function (it) {
-      if (it.p !== prov || out.length >= n) return;
-      out.push(it);
-    });
+    if (D && D.items) {
+      D.items.forEach(function (it) {
+        if (it.p !== prov || out.length >= n) return;
+        out.push(it);
+      });
+    }
+    if (!out.length && PROV_IMG[prov]) out.push(PROV_IMG[prov]);
     return out;
   }
 
