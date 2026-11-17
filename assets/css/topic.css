@@ -3027,3 +3027,46 @@
   .tp-foot { grid-template-columns: 1fr; }
   .tp-foot-back { align-self: flex-start; }
 }
+
+/* ---------- 工序页：整体字号上调一号 ----------
+   只挂在 data-page="process" 上，另外五个专题页不受影响。
+   正文与说明各提一档（约 +1.5px），图注、标签这类 10px 的小字也提上来，
+   标题（20–26px）保持原样，免得层级反过来。 */
+[data-page="process"] .tp-hero-lede { font-size: 17.5px; }
+[data-page="process"] .tp-lede { font-size: 17px; line-height: 2; }
+[data-page="process"] .tp-note { font-size: 13px; }
+[data-page="process"] .tp-src { font-size: 12.5px; }
+[data-page="process"] .px-warn { font-size: 13px; }
+[data-page="process"] .px-step { font-size: 12px; }
+[data-page="process"] .px-24 { font-size: 12px; }
+[data-page="process"] .px-aside h5 { font-size: 12.5px; }
+[data-page="process"] .joint-list li { font-size: 13.5px; }
+[data-page="process"] .joint-note,
+[data-page="process"] .joint-extra { font-size: 13.5px; }
+[data-page="process"] .color-list li { font-size: 13.5px; }
+[data-page="process"] .color-extra { font-size: 13.5px; }
+[data-page="process"] .px-mat p { font-size: 13.5px; }
+[data-page="process"] .px-mat .u,
+[data-page="process"] .px-mat span { font-size: 12px; }
+[data-page="process"] .color-heads figcaption,
+[data-page="process"] .px-mat figure figcaption { font-size: 11.5px; }
+[data-page="process"] .jfig figcaption { font-size: 11.5px; }
+/* 七道工序的标签：序号与小字各自有字号，容器那条管不到它们 */
+[data-page="process"] .px-step em { font-size: 12px; }
+[data-page="process"] .px-step span { font-size: 11.5px; }
+/* 工序详情里的现场图注（原本 10.5px，比正文低太多） */
+[data-page="process"] .px-detail figcaption { font-size: 12px; }
+/* 「刮皮 / 刮里 / 绷紧」这类小标签，原本 10.5px，子元素另有字号，容器管不到 */
+[data-page="process"] .px-24 span { font-size: 12px; }
+/* 页脚说明、三签/五签切换钮、五色图注里的色名 */
+[data-page="process"] .tp-foot p { font-size: 12.5px; }
+[data-page="process"] .joint-modes button { font-size: 12.5px; }
+[data-page="process"] .color-heads figcaption { font-size: 12px; }
+[data-page="process"] .color-heads figcaption b { font-size: 12.5px; }
+/* 眉标与章节序号、关节图注，也一并提到 12px 档 */
+[data-page="process"] .tp-kick { font-size: 12px; }
+[data-page="process"] .tp-sec-no { font-size: 11.5px; }
+[data-page="process"] .jfig figcaption { font-size: 12px; }
+/* 敷彩现场图注与九样材料的图注，统一到 12px */
+[data-page="process"] .color-photo figcaption { font-size: 12px; }
+[data-page="process"] .px-mat figure figcaption { font-size: 12px; }
