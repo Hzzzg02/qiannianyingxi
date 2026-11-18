@@ -345,6 +345,20 @@ systemd 单元里两个路径型环境变量必须设对，否则会出现「接
 
 `/api/forum` 系列是早期论坛的遗留接口，前端已改用 `/api/comm`。
 
+### 技术文档
+
+技术文档（30 页，PDF）有三个位置，任选其一：
+
+| 位置 | 链接 |
+|---|---|
+| 仓库内（英文路径，推荐） | [`docs/technical-document.pdf`](docs/technical-document.pdf) |
+| 仓库内（中文路径） | [`文档/千年影韵-技术文档.pdf`](文档/千年影韵-技术文档.pdf) |
+| 在线直接打开（不依赖 GitHub） | <http://120.55.204.70/docs/technical-document.pdf> |
+
+Word 源文件在 [`docs/technical-document.docx`](docs/technical-document.docx)，如需修改可直接下载编辑后重新导出。
+
+> 如果 GitHub 的页面内预览一直转圈或报 `Invalid PDF`，那是站点查看器在你的网络环境下加载失败，不是文件损坏——用上表第三个链接或点文件页右上角的 Download 下载后本地打开即可。
+
 ### 演示视频资料
 
 `文档/` 下是录屏配套材料：分镜时间表、解说词文案、字幕文件与字幕说明。原始录屏 MP4 体积超过 GitHub 单文件上限，未随仓库分发。
