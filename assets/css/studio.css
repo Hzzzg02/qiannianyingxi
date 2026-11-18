@@ -746,7 +746,7 @@
   display: flex;
   flex-wrap: wrap;
   align-items: center;
-  gap: 10px 14px;
+  gap: 10px;
   padding: 14px 0 2px;
 }
 .studio-page .rig-bar[hidden] { display: none !important; }
@@ -769,9 +769,9 @@
 }
 .studio-page .rig-seg button + button { border-left: 1px solid var(--line); }
 .studio-page .rig-seg button.on { background: var(--red); color: #fdf6e6; }
-.studio-page .rig-acts { display: inline-flex; flex-wrap: wrap; gap: 8px; }
+.studio-page .rig-acts { display: inline-flex; flex-wrap: wrap; gap: 7px; }
 .studio-page .rig-acts button, .studio-page .rig-cal {
-  padding: 8px 15px;
+  padding: 8px 10px;
   border: 1px solid var(--line-2);
   border-radius: 3px;
   background: rgba(255, 253, 247, .72);
@@ -783,7 +783,7 @@
   transition: border-color .2s, color .2s, background .2s;
 }
 .studio-page .rig-acts button:hover, .studio-page .rig-cal:hover { border-color: var(--red); color: var(--red); }
-.studio-page .rig-cal { margin-left: auto; }
+.studio-page .rig-cal { margin-left: 0; }
 .studio-page .rig-cal.on { background: var(--red); border-color: var(--red); color: #fdf6e6; }
 .studio-page .rig-hint {
   margin: 10px 0 0;
